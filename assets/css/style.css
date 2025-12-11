@@ -405,7 +405,7 @@ body {
     justify-content: center;
     padding: calc(80px + var(--spacing-xl)) var(--spacing-md) var(--spacing-xl);
     overflow: hidden;
-    background: var(--gradient-poster);
+    background: var(--color-primary-600);
 }
 
 .hero-background {
