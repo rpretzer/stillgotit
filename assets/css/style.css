@@ -6,22 +6,40 @@
 /* ===== CSS Variables (Color Palette) ===== */
 :root {
     /* Primary Colors */
-    --coral: #FFAB91;
-    --cream: #FFF8E1;
-    --light-teal: #E1F5FE;
+    --magenta: #FF2DB3;
+    --cyan: #1CE0E0;
+    --yellow: #FFD91A;
+    --blue: #189BCC;
     
-    /* Accent Colors */
-    --sunny-orange: #FFB74D;
-    --mint-tan: #C5E1A5;
-    --soft-peach: #FFCCBC;
+    /* Neutral Colors */
+    --black: #050505;
+    --ink: #1A1A1A;
+    --paper: #F4F2EC;
+    --gray: #C7C7C7;
+    --midnight: #0A0F1A;
     
-    /* Text Colors */
-    --dark-gray: #333333;
-    --white: #FFFFFF;
+    /* Semantic Colors */
+    --success: #32D18A;
+    --warning: #FFAA33;
+    --danger: #FF3B50;
+    --info: #189BCC;
     
     /* Background Gradients */
-    --gradient-warm: linear-gradient(135deg, #FFF8E1 0%, #FFCCBC 100%);
-    --gradient-sunny: linear-gradient(135deg, #FFB74D 0%, #FFAB91 100%);
+    --gradient-poster: linear-gradient(135deg, #FF2DB3 0%, #1CE0E0 60%, #189BCC 100%);
+    --gradient-vapor: linear-gradient(120deg, #189BCC 0%, #FFD91A 100%);
+    --gradient-nightclub: radial-gradient(circle, #1CE0E0 0%, #0A0F1A 70%);
+    
+    /* Legacy aliases for backward compatibility during transition */
+    --coral: #FF2DB3;
+    --cream: #F4F2EC;
+    --light-teal: #1CE0E0;
+    --sunny-orange: #FFD91A;
+    --mint-tan: #32D18A;
+    --soft-peach: #FFAA33;
+    --dark-gray: #1A1A1A;
+    --white: #F4F2EC;
+    --gradient-warm: var(--gradient-poster);
+    --gradient-sunny: var(--gradient-vapor);
     
     /* Typography */
     --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
