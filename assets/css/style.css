@@ -105,8 +105,8 @@ body {
     width: auto;
     height: auto;
     padding: 0.75rem 1.5rem;
-    background: var(--coral);
-    color: var(--white);
+    background: var(--magenta);
+    color: var(--paper);
     text-decoration: none;
     border-radius: var(--radius-sm);
     z-index: 1000;
@@ -148,13 +148,13 @@ body {
     font-family: var(--font-display);
     font-size: 1.5rem;
     letter-spacing: 0.05em;
-    color: var(--coral);
+    color: var(--magenta);
     text-decoration: none;
     transition: var(--transition);
 }
 
 .logo:hover {
-    color: var(--sunny-orange);
+    color: var(--cyan);
     transform: scale(1.05);
 }
 
@@ -203,7 +203,7 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--white);
+    background: var(--paper);
     box-shadow: var(--shadow-md);
     list-style: none;
     padding: var(--spacing-md);
@@ -270,7 +270,7 @@ body {
     justify-content: center;
     padding: calc(80px + var(--spacing-xl)) var(--spacing-md) var(--spacing-xl);
     overflow: hidden;
-    background: var(--gradient-warm);
+    background: var(--gradient-poster);
 }
 
 .hero-background {
@@ -306,7 +306,7 @@ body {
 .hero-title {
     font-family: var(--font-display);
     font-size: 3rem;
-    color: var(--coral);
+    color: var(--magenta);
     margin-bottom: var(--spacing-md);
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -315,12 +315,12 @@ body {
 .hero-tagline {
     font-size: 1.5rem;
     font-weight: 300;
-    color: var(--dark-gray);
+    color: var(--ink);
     margin-bottom: var(--spacing-lg);
 }
 
 .announcement-banner {
-    background: var(--gradient-sunny);
+    background: var(--gradient-vapor);
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
@@ -328,13 +328,13 @@ body {
 }
 
 .announcement-banner p {
-    color: var(--white);
+    color: var(--black);
     font-size: 1.1rem;
     margin: 0;
 }
 
 .announcement-banner a {
-    color: var(--white);
+    color: var(--black);
     text-decoration: underline;
     font-weight: 600;
 }
@@ -398,7 +398,7 @@ body {
 
 /* ===== Announcements Section ===== */
 .announcements {
-    background: var(--white);
+    background: var(--paper);
 }
 
 .announcements-grid {
@@ -424,7 +424,8 @@ body {
     width: 100%;
     height: 250px;
     overflow: hidden;
-    background: var(--light-teal);
+    background: var(--cyan);
+}
 }
 
 .card-image img {
@@ -485,8 +486,8 @@ body {
 }
 
 .btn-primary {
-    background: var(--gradient-sunny);
-    color: var(--white);
+    background: var(--gradient-vapor);
+    color: var(--black);
     box-shadow: var(--shadow-sm);
 }
 
@@ -509,7 +510,7 @@ body {
 
 /* ===== Calendar Section ===== */
 .calendar {
-    background: var(--light-teal);
+    background: var(--cyan);
 }
 
 .calendar-wrapper {
