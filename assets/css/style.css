@@ -634,15 +634,15 @@ body {
 }
 
 .btn-primary {
-    background: var(--gradient-vapor);
-    color: var(--text-primary);
+    background: var(--interactive-primary);
+    color: var(--text-inverse);
     box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    background: var(--interactive-primary);
+    background: var(--interactive-primary-hover);
     color: var(--text-inverse);
 }
 
