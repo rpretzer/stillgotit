@@ -459,7 +459,7 @@ body {
 }
 
 .announcement-banner {
-    background: var(--gradient-vapor);
+    background: var(--color-accent-400);
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
@@ -844,7 +844,7 @@ body {
 
 /* ===== Tickets & Merch Section ===== */
 .tickets {
-    background: var(--gradient-poster);
+    background: var(--color-primary-100);
 }
 
 .tickets-grid {
