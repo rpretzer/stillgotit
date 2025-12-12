@@ -319,37 +319,85 @@
         lastScroll = currentScroll;
     });
 
-    // ===== Gallery Lightbox Modal =====
-    const galleryItems = document.querySelectorAll('.gallery-item');
+    // ===== Gallery (Hybrid DAM) + Lightbox Modal =====
+    // Source: /content/gallery.json (editable via /admin)
+    // Each image can be a repo upload (Decap) OR an external CDN/DAM URL.
+    async function loadGallery() {
+        const grid = document.getElementById('gallery-grid');
+        if (!grid) return;
+
+        const source = grid.dataset.gallerySource || 'content/gallery.json';
+        const url = new URL(source, window.location.href);
+
+        try {
+            const res = await fetch(url.toString(), { cache: 'no-store' });
+            if (!res.ok) throw new Error(`Failed to load gallery.json (${res.status})`);
+            const data = await res.json();
+            if (!data || !Array.isArray(data.images)) throw new Error('Invalid gallery.json format');
+
+            const items = [...data.images].sort((a, b) => {
+                const af = a?.featured ? 1 : 0;
+                const bf = b?.featured ? 1 : 0;
+                return bf - af;
+            });
+
+            // Clear fallback HTML once CMS content is ready
+            grid.innerHTML = '';
+
+            items.forEach((img, idx) => {
+                if (!img?.src) return;
+                const cell = document.createElement('div');
+                cell.className = 'gallery-item';
+                cell.dataset.galleryIndex = String(idx);
+
+                const el = document.createElement('img');
+                el.loading = 'lazy';
+                el.src = img.thumb || img.src;
+                el.alt = img.alt || `Gallery image ${idx + 1}`;
+                // store full-res for lightbox
+                el.dataset.fullSrc = img.src;
+                cell.appendChild(el);
+                grid.appendChild(cell);
+            });
+
+            if (typeof window.__observeFadeIns === 'function') {
+                window.__observeFadeIns(grid);
+            }
+        } catch (err) {
+            console.warn('Gallery load failed:', err);
+        }
+    }
+
+    function getGalleryImagesFromDOM() {
+        const grid = document.getElementById('gallery-grid');
+        if (!grid) return [];
+        return Array.from(grid.querySelectorAll('.gallery-item img')).map((img) => ({
+            src: img.dataset.fullSrc || img.src,
+            alt: img.alt || 'Gallery image'
+        }));
+    }
+
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightbox-image');
     const lightboxClose = document.getElementById('lightbox-close');
     const lightboxPrev = document.getElementById('lightbox-prev');
     const lightboxNext = document.getElementById('lightbox-next');
     const lightboxCounter = document.getElementById('lightbox-counter');
-    
+
     let currentImageIndex = 0;
-    const images = Array.from(galleryItems).map(item => ({
-        src: item.querySelector('img').src,
-        alt: item.querySelector('img').alt
-    }));
 
-    // Open lightbox when clicking on gallery item
-    galleryItems.forEach((item, index) => {
-        item.addEventListener('click', function() {
-            currentImageIndex = index;
-            openLightbox();
-        });
-    });
+    function openLightboxAt(index) {
+        const images = getGalleryImagesFromDOM();
+        if (!images.length) return;
+        currentImageIndex = Math.max(0, Math.min(index, images.length - 1));
+        openLightbox(images);
+    }
 
-    function openLightbox() {
+    function openLightbox(images) {
         if (!lightbox || !lightboxImage) return;
-        
-        updateLightboxImage();
+        updateLightboxImage(images);
         lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        
-        // Update counter
+        document.body.style.overflow = 'hidden';
         if (lightboxCounter) {
             lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
         }
@@ -357,79 +405,58 @@
 
     function closeLightbox() {
         if (!lightbox) return;
-        
         lightbox.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
+        document.body.style.overflow = '';
     }
 
-    function updateLightboxImage() {
+    function updateLightboxImage(images) {
         if (!lightboxImage || !images[currentImageIndex]) return;
-        
         lightboxImage.src = images[currentImageIndex].src;
         lightboxImage.alt = images[currentImageIndex].alt;
     }
 
     function showPrevImage() {
+        const images = getGalleryImagesFromDOM();
+        if (!images.length) return;
         currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-        updateLightboxImage();
-        if (lightboxCounter) {
-            lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-        }
+        updateLightboxImage(images);
+        if (lightboxCounter) lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
     }
 
     function showNextImage() {
+        const images = getGalleryImagesFromDOM();
+        if (!images.length) return;
         currentImageIndex = (currentImageIndex + 1) % images.length;
-        updateLightboxImage();
-        if (lightboxCounter) {
-            lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
-        }
+        updateLightboxImage(images);
+        if (lightboxCounter) lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
     }
 
-    // Close lightbox
-    if (lightboxClose) {
-        lightboxClose.addEventListener('click', closeLightbox);
+    // Delegated click handler so dynamically-rendered items work
+    const galleryGrid = document.getElementById('gallery-grid');
+    if (galleryGrid) {
+        galleryGrid.addEventListener('click', (e) => {
+            const item = e.target?.closest?.('.gallery-item');
+            if (!item) return;
+            const imgs = Array.from(galleryGrid.querySelectorAll('.gallery-item'));
+            const idx = imgs.indexOf(item);
+            if (idx >= 0) openLightboxAt(idx);
+        });
     }
 
-    // Close on backdrop click
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
     if (lightbox) {
         lightbox.addEventListener('click', function(e) {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
+            if (e.target === lightbox) closeLightbox();
         });
     }
-
-    // Keyboard navigation
     document.addEventListener('keydown', function(e) {
         if (!lightbox || !lightbox.classList.contains('active')) return;
-        
-        switch(e.key) {
-            case 'Escape':
-                closeLightbox();
-                break;
-            case 'ArrowLeft':
-                showPrevImage();
-                break;
-            case 'ArrowRight':
-                showNextImage();
-                break;
-        }
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') showPrevImage();
+        if (e.key === 'ArrowRight') showNextImage();
     });
-
-    // Previous/Next buttons
-    if (lightboxPrev) {
-        lightboxPrev.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showPrevImage();
-        });
-    }
-
-    if (lightboxNext) {
-        lightboxNext.addEventListener('click', function(e) {
-            e.stopPropagation();
-            showNextImage();
-        });
-    }
+    if (lightboxPrev) lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); showPrevImage(); });
+    if (lightboxNext) lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); showNextImage(); });
 
     // ===== Back to Top Button =====
     const backToTop = document.getElementById('back-to-top');
@@ -489,6 +516,7 @@
         console.log('The Still Got It Collective website loaded successfully!');
         loadSiteSettings();
         loadLatestUpdates();
+        loadGallery();
     });
 
 })();

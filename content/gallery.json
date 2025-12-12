@@ -1,0 +1,52 @@
+{
+  "images": [
+    {
+      "src": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=600&fit=crop",
+      "alt": "Event photo 1",
+      "featured": true
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=600&h=600&fit=crop",
+      "alt": "Event photo 2",
+      "featured": true
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600&h=600&fit=crop",
+      "alt": "Event photo 3",
+      "featured": true
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&h=600&fit=crop",
+      "alt": "Event photo 4",
+      "featured": false
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&h=600&fit=crop",
+      "alt": "Event photo 5",
+      "featured": false
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop",
+      "alt": "Event photo 6",
+      "featured": false
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop",
+      "alt": "Event photo 7",
+      "featured": false
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200&h=1200&fit=crop",
+      "thumb": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=600&fit=crop",
+      "alt": "Event photo 8",
+      "featured": false
+    }
+  ]
+}

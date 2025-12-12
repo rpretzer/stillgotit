@@ -26,6 +26,27 @@ collections:
   - name: "site"
     label: "Site Content"
     files:
+      - name: "gallery"
+        label: "Event Gallery"
+        file: "content/gallery.json"
+        format: "json"
+        fields:
+          - label: "Images"
+            name: "images"
+            widget: "list"
+            summary: "{{fields.alt}}"
+            fields:
+              - label: "Full image (lightbox)"
+                name: "src"
+                widget: "image"
+              - label: "Thumbnail (grid) — optional"
+                name: "thumb"
+                widget: "image"
+                required: false
+                hint: "If blank, the full image URL will be used in the grid."
+              - { label: "Alt text", name: "alt", widget: "string" }
+              - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
+
       - name: "settings"
         label: "Site Settings (Hero / Banner / Links)"
         file: "content/site.json"
