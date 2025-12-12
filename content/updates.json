@@ -1,37 +1,37 @@
 {
   "updates": [
     {
-      "title": "Upcoming Summer Festival",
-      "date": "2025-06-15",
-      "pinned": true,
-      "image": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=600&fit=crop",
-      "alt": "Crowd at an outdoor festival",
-      "body": "Join us for our biggest event of the year! Live music, amazing food, and unforgettable memories. Tickets on sale now.",
+      "ctaStyle": "primary",
+      "body": "Cure your cabin fever.",
       "ctaLabel": "Learn More",
-      "ctaUrl": "#tickets",
-      "ctaStyle": "primary"
+      "alt": "Crowd at an outdoor festival",
+      "date": "2026-02-15",
+      "title": "Too much togetherness... :D",
+      "pinned": true,
+      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_43_23-pm.png",
+      "ctaUrl": "#tickets"
     },
     {
-      "title": "New Merch Drop",
-      "date": "2025-05-01",
-      "pinned": false,
-      "image": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop",
-      "alt": "Merchandise on display",
+      "ctaStyle": "secondary",
       "body": "Check out our latest collection! Limited edition items designed with our signature style.",
       "ctaLabel": "Shop Now",
-      "ctaUrl": "#tickets",
-      "ctaStyle": "secondary"
+      "alt": "Merchandise on display",
+      "date": "2025-05-01",
+      "title": "New Merch Drop",
+      "pinned": false,
+      "image": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop",
+      "ctaUrl": "#tickets"
     },
     {
-      "title": "Behind the Scenes",
-      "date": "2025-04-15",
-      "pinned": false,
-      "image": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
-      "alt": "Event planning behind the scenes",
+      "ctaStyle": "primary",
       "body": "Follow our journey on Instagram for exclusive behind-the-scenes content and event previews.",
       "ctaLabel": "Follow Us",
-      "ctaUrl": "#instagram",
-      "ctaStyle": "primary"
+      "alt": "Event planning behind the scenes",
+      "date": "2025-04-15",
+      "title": "Behind the Scenes",
+      "pinned": false,
+      "image": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
+      "ctaUrl": "#instagram"
     }
   ]
 }
