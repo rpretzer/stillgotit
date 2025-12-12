@@ -41,9 +41,9 @@ still-got-it-collective/
 
 ### Update Links
 
-- **Eventbrite**: Replace `YOUR_ORGANIZATION_ID` in the tickets section
-- **Square Store**: Replace `YOUR_SQUARE_STORE_URL` in the merch section
-- **Instagram**: Update Instagram username in all links
+- **Ticketing provider (TicketsCandy, etc.)**: Update the ticketing URL/label in `content/site.json` (via `/admin`)
+- **Square Store**: Update the Square Store URL/label in `content/site.json` (via `/admin`)
+- **Instagram**: Update Instagram username/profile URL (and optional preview tiles) in `content/site.json` (via `/admin`)
 
 ### Add Your Calendar
 

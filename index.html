@@ -229,32 +229,32 @@
             <div class="container">
                 <h2 class="section-title fade-in">Tickets & Merch</h2>
                 <div class="tickets-grid">
-                    <!-- REPLACE: Tickets card - update Eventbrite link -->
+                    <!-- CMS (Decap): Tickets card settings are in content/site.json -->
                     <div class="ticket-card fade-in">
                         <div class="ticket-icon">🎫</div>
-                        <h3>Buy Tickets</h3>
-                        <p>Secure your spot at our upcoming events. Limited availability!</p>
-                        <a id="eventbrite-link" href="https://www.eventbrite.com/o/YOUR_ORGANIZATION_ID" 
+                        <h3 id="tickets-buy-title">Buy Tickets</h3>
+                        <p id="tickets-buy-body">Secure your spot at our upcoming events. Limited availability!</p>
+                        <a id="tickets-link" href="https://ticketscandy.com" 
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="btn btn-primary">
-                            <span id="eventbrite-label">Get Tickets on Eventbrite</span>
+                            <span id="tickets-label">Get Tickets</span>
                         </a>
-                        <p class="note">REPLACE: Update the Eventbrite URL above with your actual organization link</p>
+                        <p class="note" id="tickets-buy-note">REPLACE: Update the ticketing URL above with your actual link</p>
                     </div>
                     
                     <!-- REPLACE: Merch card - update Square Store link -->
                     <div class="ticket-card fade-in">
                         <div class="ticket-icon">🛍️</div>
-                        <h3>Shop Square Store</h3>
-                        <p>Browse our exclusive merchandise and support The Still Got It Collective.</p>
+                        <h3 id="tickets-merch-title">Shop Square Store</h3>
+                        <p id="tickets-merch-body">Browse our exclusive merchandise and support The Still Got It Collective.</p>
                         <a id="square-link" href="https://YOUR_SQUARE_STORE_URL.square.site" 
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="btn btn-secondary">
                             <span id="square-label">Visit Our Store</span>
                         </a>
-                        <p class="note">REPLACE: Update the Square Store URL above with your actual store link</p>
+                        <p class="note" id="tickets-merch-note">REPLACE: Update the Square Store URL above with your actual store link</p>
                     </div>
                 </div>
             </div>
@@ -273,7 +273,7 @@
                     </a> for the latest updates and behind-the-scenes content.
                 </p>
                 <!-- REPLACE: Instagram preview tiles - replace with your actual Instagram image URLs -->
-                <div class="instagram-grid fade-in">
+                <div class="instagram-grid fade-in" id="instagram-grid">
                     <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                        target="_blank" 
                        rel="noopener noreferrer" 
@@ -328,7 +328,7 @@
                 
                 <div class="footer-section">
                     <h4>Connect</h4>
-                    <ul class="social-links">
+                    <ul class="social-links" id="footer-social-links">
                         <!-- REPLACE: Update social media URLs -->
                         <li>
                             <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 

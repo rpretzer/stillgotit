@@ -51,10 +51,16 @@ collections:
             name: "tickets"
             widget: "object"
             fields:
-              - { label: "Eventbrite URL", name: "eventbriteUrl", widget: "string" }
-              - { label: "Eventbrite Button Label", name: "eventbriteLabel", widget: "string" }
+              - { label: "Tickets Card Title", name: "ticketsTitle", widget: "string" }
+              - { label: "Tickets Card Body", name: "ticketsBody", widget: "text" }
+              - { label: "Ticketing URL (TicketsCandy, etc.)", name: "ticketsUrl", widget: "string" }
+              - { label: "Tickets Button Label", name: "ticketsLabel", widget: "string" }
+              - { label: "Tickets Note (small text)", name: "ticketsNote", widget: "string", required: false }
+              - { label: "Merch Card Title", name: "squareTitle", widget: "string" }
+              - { label: "Merch Card Body", name: "squareBody", widget: "text" }
               - { label: "Square Store URL", name: "squareUrl", widget: "string" }
               - { label: "Square Store Button Label", name: "squareLabel", widget: "string" }
+              - { label: "Merch Note (small text)", name: "squareNote", widget: "string", required: false }
 
           - label: "Instagram"
             name: "instagram"
@@ -62,6 +68,28 @@ collections:
             fields:
               - { label: "Username (no @)", name: "username", widget: "string" }
               - { label: "Profile URL", name: "profileUrl", widget: "string" }
+              - label: "Preview tiles"
+                name: "previews"
+                widget: "list"
+                required: false
+                summary: "{{fields.alt}}"
+                fields:
+                  - { label: "Image", name: "image", widget: "image" }
+                  - { label: "Alt text", name: "alt", widget: "string", required: false }
+
+          - label: "Footer"
+            name: "footer"
+            widget: "object"
+            required: false
+            fields:
+              - label: "Social links"
+                name: "socialLinks"
+                widget: "list"
+                required: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "URL", name: "url", widget: "string" }
 
           - label: "Calendar"
             name: "calendar"

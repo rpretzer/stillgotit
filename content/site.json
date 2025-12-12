@@ -10,14 +10,46 @@
     "ctaUrl": "#tickets"
   },
   "tickets": {
-    "eventbriteUrl": "https://www.eventbrite.com/o/YOUR_ORGANIZATION_ID",
-    "eventbriteLabel": "Get Tickets on Eventbrite",
+    "ticketsTitle": "Buy Tickets",
+    "ticketsBody": "Secure your spot at our upcoming events. Limited availability!",
+    "ticketsUrl": "https://ticketscandy.com",
+    "ticketsLabel": "Get Tickets",
+    "ticketsNote": "REPLACE: Update the ticketing URL above with your actual link",
+    "squareTitle": "Shop Square Store",
+    "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective.",
     "squareUrl": "https://YOUR_SQUARE_STORE_URL.square.site",
-    "squareLabel": "Visit Our Store"
+    "squareLabel": "Visit Our Store",
+    "squareNote": "REPLACE: Update the Square Store URL above with your actual store link"
   },
   "instagram": {
     "username": "stillgotitcollective",
-    "profileUrl": "https://www.instagram.com/stillgotitcollective"
+    "profileUrl": "https://www.instagram.com/stillgotitcollective",
+    "previews": [
+      {
+        "image": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop",
+        "alt": "Instagram preview 1"
+      },
+      {
+        "image": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=400&fit=crop",
+        "alt": "Instagram preview 2"
+      },
+      {
+        "image": "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=400&h=400&fit=crop",
+        "alt": "Instagram preview 3"
+      },
+      {
+        "image": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=400&fit=crop",
+        "alt": "Instagram preview 4"
+      }
+    ]
+  },
+  "footer": {
+    "socialLinks": [
+      {
+        "label": "Instagram",
+        "url": "https://www.instagram.com/stillgotitcollective"
+      }
+    ]
   },
   "calendar": {
     "embedUrl": ""

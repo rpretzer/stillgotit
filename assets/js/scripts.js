@@ -121,15 +121,29 @@
             if (linkEl && settings?.banner?.ctaLabel) linkEl.textContent = settings.banner.ctaLabel;
 
             // Tickets
-            const ebLink = document.getElementById('eventbrite-link');
-            const ebLabel = document.getElementById('eventbrite-label');
-            if (ebLink && settings?.tickets?.eventbriteUrl) ebLink.href = settings.tickets.eventbriteUrl;
-            if (ebLabel && settings?.tickets?.eventbriteLabel) ebLabel.textContent = settings.tickets.eventbriteLabel;
+            const ticketsLink = document.getElementById('tickets-link');
+            const ticketsLabel = document.getElementById('tickets-label');
+            if (ticketsLink && settings?.tickets?.ticketsUrl) ticketsLink.href = settings.tickets.ticketsUrl;
+            if (ticketsLabel && settings?.tickets?.ticketsLabel) ticketsLabel.textContent = settings.tickets.ticketsLabel;
+
+            const ticketsTitle = document.getElementById('tickets-buy-title');
+            const ticketsBody = document.getElementById('tickets-buy-body');
+            const ticketsNote = document.getElementById('tickets-buy-note');
+            if (ticketsTitle && settings?.tickets?.ticketsTitle) ticketsTitle.textContent = settings.tickets.ticketsTitle;
+            if (ticketsBody && settings?.tickets?.ticketsBody) ticketsBody.textContent = settings.tickets.ticketsBody;
+            if (ticketsNote && typeof settings?.tickets?.ticketsNote === 'string') ticketsNote.textContent = settings.tickets.ticketsNote;
 
             const sqLink = document.getElementById('square-link');
             const sqLabel = document.getElementById('square-label');
             if (sqLink && settings?.tickets?.squareUrl) sqLink.href = settings.tickets.squareUrl;
             if (sqLabel && settings?.tickets?.squareLabel) sqLabel.textContent = settings.tickets.squareLabel;
+
+            const sqTitle = document.getElementById('tickets-merch-title');
+            const sqBody = document.getElementById('tickets-merch-body');
+            const sqNote = document.getElementById('tickets-merch-note');
+            if (sqTitle && settings?.tickets?.squareTitle) sqTitle.textContent = settings.tickets.squareTitle;
+            if (sqBody && settings?.tickets?.squareBody) sqBody.textContent = settings.tickets.squareBody;
+            if (sqNote && typeof settings?.tickets?.squareNote === 'string') sqNote.textContent = settings.tickets.squareNote;
 
             // Instagram
             const igHandle = document.getElementById('instagram-handle');
@@ -139,6 +153,48 @@
             if (igProfileUrl) {
                 document.querySelectorAll('a[data-instagram-profile]').forEach((a) => {
                     a.href = igProfileUrl;
+                });
+            }
+
+            // Instagram preview tiles (optional)
+            const igGrid = document.getElementById('instagram-grid');
+            if (igGrid && Array.isArray(settings?.instagram?.previews) && settings.instagram.previews.length > 0) {
+                igGrid.innerHTML = '';
+                settings.instagram.previews.forEach((p, idx) => {
+                    if (!p?.image) return;
+                    const a = document.createElement('a');
+                    a.className = 'instagram-tile';
+                    a.setAttribute('data-instagram-profile', '');
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.href = igProfileUrl || '#';
+
+                    const img = document.createElement('img');
+                    img.loading = 'lazy';
+                    img.src = p.image;
+                    img.alt = p.alt || `Instagram preview ${idx + 1}`;
+                    a.appendChild(img);
+                    igGrid.appendChild(a);
+                });
+            }
+
+            // Footer social links (optional)
+            const footerLinks = document.getElementById('footer-social-links');
+            if (footerLinks && Array.isArray(settings?.footer?.socialLinks) && settings.footer.socialLinks.length > 0) {
+                footerLinks.innerHTML = '';
+                settings.footer.socialLinks.forEach((s) => {
+                    if (!s?.label || !s?.url) return;
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.textContent = s.label;
+                    a.href = s.url;
+                    a.setAttribute('aria-label', s.label);
+                    if (/^https?:\/\//i.test(s.url)) {
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                    }
+                    li.appendChild(a);
+                    footerLinks.appendChild(li);
                 });
             }
 
