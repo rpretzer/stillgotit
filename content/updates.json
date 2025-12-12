@@ -1,17 +1,6 @@
 {
   "updates": [
     {
-      "ctaStyle": "primary",
-      "body": "Cure your cabin fever.",
-      "ctaLabel": "Learn More",
-      "alt": "Crowd at an outdoor festival",
-      "date": "2026-02-15",
-      "title": "Too. much. togetherness.",
-      "pinned": true,
-      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_43_23-pm.png",
-      "ctaUrl": "#tickets"
-    },
-    {
       "ctaStyle": "secondary",
       "body": "Check out our latest collection! Limited edition items designed with our signature style.",
       "ctaLabel": "Shop Now",
@@ -24,6 +13,17 @@
     },
     {
       "ctaStyle": "primary",
+      "body": "Cure your cabin fever.",
+      "ctaLabel": "Learn More",
+      "alt": "Crowd at an outdoor festival",
+      "date": "2026-02-15",
+      "title": "Too. much. togetherness.",
+      "pinned": true,
+      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_43_23-pm.png",
+      "ctaUrl": "#tickets"
+    },
+    {
+      "ctaStyle": "primary",
       "body": "Follow our journey on Instagram for exclusive behind-the-scenes content and event previews.",
       "ctaLabel": "Follow Us",
       "alt": "Event planning behind the scenes",
@@ -32,6 +32,15 @@
       "pinned": false,
       "image": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
       "ctaUrl": "#instagram"
+    },
+    {
+      "pinned": false,
+      "ctaStyle": "primary",
+      "title": "Big Energy 80's",
+      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_54_21-pm.png",
+      "ctaLabel": "#TICKETS",
+      "date": "2025-12-12",
+      "body": "Come Dance you fools"
     }
   ]
 }
