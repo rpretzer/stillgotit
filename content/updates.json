@@ -1,0 +1,37 @@
+{
+  "updates": [
+    {
+      "title": "Upcoming Summer Festival",
+      "date": "2025-06-15",
+      "pinned": true,
+      "image": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&h=600&fit=crop",
+      "alt": "Crowd at an outdoor festival",
+      "body": "Join us for our biggest event of the year! Live music, amazing food, and unforgettable memories. Tickets on sale now.",
+      "ctaLabel": "Learn More",
+      "ctaUrl": "#tickets",
+      "ctaStyle": "primary"
+    },
+    {
+      "title": "New Merch Drop",
+      "date": "2025-05-01",
+      "pinned": false,
+      "image": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop",
+      "alt": "Merchandise on display",
+      "body": "Check out our latest collection! Limited edition items designed with our signature style.",
+      "ctaLabel": "Shop Now",
+      "ctaUrl": "#tickets",
+      "ctaStyle": "secondary"
+    },
+    {
+      "title": "Behind the Scenes",
+      "date": "2025-04-15",
+      "pinned": false,
+      "image": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
+      "alt": "Event planning behind the scenes",
+      "body": "Follow our journey on Instagram for exclusive behind-the-scenes content and event previews.",
+      "ctaLabel": "Follow Us",
+      "ctaUrl": "#instagram",
+      "ctaStyle": "primary"
+    }
+  ]
+}

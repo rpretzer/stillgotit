@@ -1,0 +1,53 @@
+# Decap CMS configuration
+#
+# IMPORTANT (GitHub Pages auth):
+# - GitHub Pages is static, so Decap needs an OAuth service.
+# - Easiest path: create a free Netlify site pointing to this repo
+#   and enable GitHub as an OAuth provider in Netlify.
+# - Then keep base_url/auth_endpoint as below.
+# - Alternative: deploy your own OAuth server and change base_url/auth_endpoint.
+
+backend:
+  name: github
+  repo: rpretzer/stillgotit
+  branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+
+# Where uploaded images are stored in the repo
+media_folder: "assets/images/uploads"
+# How uploaded images are referenced in the site
+public_folder: "/assets/images/uploads"
+
+# Optional: nicer editorial flow (drafts/PRs) — uncomment if you want it
+# publish_mode: editorial_workflow
+
+collections:
+  - name: "site"
+    label: "Site Content"
+    files:
+      - name: "updates"
+        label: "Latest Updates"
+        file: "content/updates.json"
+        format: "json"
+        fields:
+          - label: "Updates"
+            name: "updates"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: "Pinned", name: "pinned", widget: "boolean", default: false, required: false }
+              - { label: "Image", name: "image", widget: "image", required: false }
+              - { label: "Image alt text", name: "alt", widget: "string", required: false }
+              - { label: "Body", name: "body", widget: "text" }
+              - { label: "CTA label", name: "ctaLabel", widget: "string", required: false }
+              - { label: "CTA URL", name: "ctaUrl", widget: "string", required: false }
+              - label: "CTA style"
+                name: "ctaStyle"
+                widget: "select"
+                options:
+                  - { label: "Primary", value: "primary" }
+                  - { label: "Secondary", value: "secondary" }
+                default: "primary"

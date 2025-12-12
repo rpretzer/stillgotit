@@ -96,8 +96,9 @@
         <section id="announcements" class="announcements section">
             <div class="container">
                 <h2 class="section-title fade-in">Latest Updates</h2>
-                <div class="announcements-grid">
-                    <!-- REPLACE: Announcement cards - add/edit/remove as needed -->
+                <div class="announcements-grid" id="announcements-grid" data-updates-source="content/updates.json">
+                    <!-- CMS (Decap): This section is auto-rendered from content/updates.json by assets/js/scripts.js -->
+                    <!-- Fallback content (shown if JS fails or while loading): -->
                     <article class="announcement-card fade-in">
                         <div class="card-image">
                             <!-- REPLACE: Add your announcement image URL -->
