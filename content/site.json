@@ -1,0 +1,25 @@
+{
+  "hero": {
+    "tagline": "Curating moments you'll never forget"
+  },
+  "banner": {
+    "emoji": "🎉",
+    "strongText": "Next Event:",
+    "text": "Join us for an unforgettable night!",
+    "ctaLabel": "Get tickets",
+    "ctaUrl": "#tickets"
+  },
+  "tickets": {
+    "eventbriteUrl": "https://www.eventbrite.com/o/YOUR_ORGANIZATION_ID",
+    "eventbriteLabel": "Get Tickets on Eventbrite",
+    "squareUrl": "https://YOUR_SQUARE_STORE_URL.square.site",
+    "squareLabel": "Visit Our Store"
+  },
+  "instagram": {
+    "username": "stillgotitcollective",
+    "profileUrl": "https://www.instagram.com/stillgotitcollective"
+  },
+  "calendar": {
+    "embedUrl": ""
+  }
+}

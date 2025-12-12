@@ -26,6 +26,53 @@ collections:
   - name: "site"
     label: "Site Content"
     files:
+      - name: "settings"
+        label: "Site Settings (Hero / Banner / Links)"
+        file: "content/site.json"
+        format: "json"
+        fields:
+          - label: "Hero"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Tagline", name: "tagline", widget: "string" }
+
+          - label: "Announcement Banner"
+            name: "banner"
+            widget: "object"
+            fields:
+              - { label: "Emoji", name: "emoji", widget: "string", required: false }
+              - { label: "Bold label (strong)", name: "strongText", widget: "string" }
+              - { label: "Text", name: "text", widget: "string" }
+              - { label: "CTA Label", name: "ctaLabel", widget: "string" }
+              - { label: "CTA URL", name: "ctaUrl", widget: "string" }
+
+          - label: "Tickets / Merch Links"
+            name: "tickets"
+            widget: "object"
+            fields:
+              - { label: "Eventbrite URL", name: "eventbriteUrl", widget: "string" }
+              - { label: "Eventbrite Button Label", name: "eventbriteLabel", widget: "string" }
+              - { label: "Square Store URL", name: "squareUrl", widget: "string" }
+              - { label: "Square Store Button Label", name: "squareLabel", widget: "string" }
+
+          - label: "Instagram"
+            name: "instagram"
+            widget: "object"
+            fields:
+              - { label: "Username (no @)", name: "username", widget: "string" }
+              - { label: "Profile URL", name: "profileUrl", widget: "string" }
+
+          - label: "Calendar"
+            name: "calendar"
+            widget: "object"
+            fields:
+              - label: "Embed URL (optional)"
+                name: "embedUrl"
+                widget: "string"
+                required: false
+                hint: "Paste your Google Calendar embed URL or Notion embed URL. Leave blank to show the placeholder instructions."
+
       - name: "updates"
         label: "Latest Updates"
         file: "content/updates.json"

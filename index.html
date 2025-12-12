@@ -82,11 +82,17 @@
                         <!-- OR use text logo if no image: -->
                         <!-- <h1 class="hero-title">Still Got It Collective</h1> -->
                     </div>
-                    <p class="hero-tagline">Curating moments you'll never forget</p>
+                    <p class="hero-tagline" id="hero-tagline">Curating moments you'll never forget</p>
                     
                     <!-- REPLACE: Editable announcement banner -->
                     <div class="announcement-banner">
-                        <p>🎉 <strong>Next Event:</strong> Join us for an unforgettable night! <a href="#tickets">Get tickets</a></p>
+                        <!-- CMS (Decap): Controlled by content/site.json -->
+                        <p>
+                          <span id="banner-emoji" aria-hidden="true">🎉</span>
+                          <strong id="banner-strong">Next Event:</strong>
+                          <span id="banner-text">Join us for an unforgettable night!</span>
+                          <a id="banner-link" href="#tickets">Get tickets</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -145,7 +151,7 @@
         <section id="calendar" class="calendar section">
             <div class="container">
                 <h2 class="section-title fade-in">Event Calendar</h2>
-                <div class="calendar-wrapper fade-in">
+                <div class="calendar-wrapper fade-in" id="calendar-wrapper">
                     <!-- REPLACE: Replace this iframe with your actual Google Calendar embed code -->
                     <!-- Option 1: Google Calendar -->
                     <!-- 
@@ -160,7 +166,8 @@
                     -->
                     
                     <!-- Placeholder: Replace with actual calendar embed -->
-                    <div class="calendar-placeholder">
+                    <!-- CMS (Decap): If content/site.json.calendar.embedUrl is set, JS will replace this placeholder with an iframe -->
+                    <div class="calendar-placeholder" id="calendar-placeholder">
                         <p>📅 Calendar coming soon!</p>
                         <p>To add your calendar:</p>
                         <ol>
@@ -227,11 +234,11 @@
                         <div class="ticket-icon">🎫</div>
                         <h3>Buy Tickets</h3>
                         <p>Secure your spot at our upcoming events. Limited availability!</p>
-                        <a href="https://www.eventbrite.com/o/YOUR_ORGANIZATION_ID" 
+                        <a id="eventbrite-link" href="https://www.eventbrite.com/o/YOUR_ORGANIZATION_ID" 
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="btn btn-primary">
-                            Get Tickets on Eventbrite
+                            <span id="eventbrite-label">Get Tickets on Eventbrite</span>
                         </a>
                         <p class="note">REPLACE: Update the Eventbrite URL above with your actual organization link</p>
                     </div>
@@ -241,11 +248,11 @@
                         <div class="ticket-icon">🛍️</div>
                         <h3>Shop Square Store</h3>
                         <p>Browse our exclusive merchandise and support The Still Got It Collective.</p>
-                        <a href="https://YOUR_SQUARE_STORE_URL.square.site" 
+                        <a id="square-link" href="https://YOUR_SQUARE_STORE_URL.square.site" 
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="btn btn-secondary">
-                            Visit Our Store
+                            <span id="square-label">Visit Our Store</span>
                         </a>
                         <p class="note">REPLACE: Update the Square Store URL above with your actual store link</p>
                     </div>
@@ -258,34 +265,34 @@
             <div class="container">
                 <h2 class="section-title fade-in">Follow Us on Instagram</h2>
                 <p class="section-subtitle fade-in">
-                    Stay connected! Follow <a href="https://www.instagram.com/stillgotitcollective" 
+                    Stay connected! Follow <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                                                target="_blank" 
                                                rel="noopener noreferrer" 
                                                class="instagram-link">
-                        @stillgotitcollective
+                        <span id="instagram-handle">@stillgotitcollective</span>
                     </a> for the latest updates and behind-the-scenes content.
                 </p>
                 <!-- REPLACE: Instagram preview tiles - replace with your actual Instagram image URLs -->
                 <div class="instagram-grid fade-in">
-                    <a href="https://www.instagram.com/stillgotitcollective" 
+                    <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="instagram-tile">
                         <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=400&fit=crop" alt="Instagram post 1" loading="lazy">
                     </a>
-                    <a href="https://www.instagram.com/stillgotitcollective" 
+                    <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="instagram-tile">
                         <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=400&fit=crop" alt="Instagram post 2" loading="lazy">
                     </a>
-                    <a href="https://www.instagram.com/stillgotitcollective" 
+                    <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="instagram-tile">
                         <img src="https://images.unsplash.com/photo-1478147427282-58a87a120781?w=400&h=400&fit=crop" alt="Instagram post 3" loading="lazy">
                     </a>
-                    <a href="https://www.instagram.com/stillgotitcollective" 
+                    <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="instagram-tile">
@@ -324,7 +331,7 @@
                     <ul class="social-links">
                         <!-- REPLACE: Update social media URLs -->
                         <li>
-                            <a href="https://www.instagram.com/stillgotitcollective" 
+                            <a data-instagram-profile href="https://www.instagram.com/stillgotitcollective" 
                                target="_blank" 
                                rel="noopener noreferrer" 
                                aria-label="Instagram">

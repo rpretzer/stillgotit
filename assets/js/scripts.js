@@ -94,6 +94,71 @@
         }
     }
 
+    // ===== Site Settings (Decap CMS) =====
+    // Source: /content/site.json
+    async function loadSiteSettings() {
+        const url = new URL('content/site.json', window.location.href);
+        try {
+            const res = await fetch(url.toString(), { cache: 'no-store' });
+            if (!res.ok) throw new Error(`Failed to load site.json (${res.status})`);
+            const settings = await res.json();
+
+            // Hero tagline
+            const heroTagline = document.getElementById('hero-tagline');
+            if (heroTagline && settings?.hero?.tagline) {
+                heroTagline.textContent = settings.hero.tagline;
+            }
+
+            // Banner
+            const emojiEl = document.getElementById('banner-emoji');
+            const strongEl = document.getElementById('banner-strong');
+            const textEl = document.getElementById('banner-text');
+            const linkEl = document.getElementById('banner-link');
+            if (emojiEl && typeof settings?.banner?.emoji === 'string') emojiEl.textContent = settings.banner.emoji;
+            if (strongEl && settings?.banner?.strongText) strongEl.textContent = settings.banner.strongText;
+            if (textEl && settings?.banner?.text) textEl.textContent = ` ${settings.banner.text} `;
+            if (linkEl && settings?.banner?.ctaUrl) linkEl.href = settings.banner.ctaUrl;
+            if (linkEl && settings?.banner?.ctaLabel) linkEl.textContent = settings.banner.ctaLabel;
+
+            // Tickets
+            const ebLink = document.getElementById('eventbrite-link');
+            const ebLabel = document.getElementById('eventbrite-label');
+            if (ebLink && settings?.tickets?.eventbriteUrl) ebLink.href = settings.tickets.eventbriteUrl;
+            if (ebLabel && settings?.tickets?.eventbriteLabel) ebLabel.textContent = settings.tickets.eventbriteLabel;
+
+            const sqLink = document.getElementById('square-link');
+            const sqLabel = document.getElementById('square-label');
+            if (sqLink && settings?.tickets?.squareUrl) sqLink.href = settings.tickets.squareUrl;
+            if (sqLabel && settings?.tickets?.squareLabel) sqLabel.textContent = settings.tickets.squareLabel;
+
+            // Instagram
+            const igHandle = document.getElementById('instagram-handle');
+            if (igHandle && settings?.instagram?.username) igHandle.textContent = `@${settings.instagram.username}`;
+
+            const igProfileUrl = settings?.instagram?.profileUrl;
+            if (igProfileUrl) {
+                document.querySelectorAll('a[data-instagram-profile]').forEach((a) => {
+                    a.href = igProfileUrl;
+                });
+            }
+
+            // Calendar embed (optional)
+            const embedUrl = settings?.calendar?.embedUrl;
+            const placeholder = document.getElementById('calendar-placeholder');
+            const wrapper = document.getElementById('calendar-wrapper');
+            if (wrapper && placeholder && typeof embedUrl === 'string' && embedUrl.trim().length > 0) {
+                const iframe = document.createElement('iframe');
+                iframe.src = embedUrl.trim();
+                iframe.title = 'Event Calendar';
+                iframe.loading = 'lazy';
+                iframe.referrerPolicy = 'no-referrer-when-downgrade';
+                wrapper.replaceChild(iframe, placeholder);
+            }
+        } catch (err) {
+            console.warn('Site settings load failed:', err);
+        }
+    }
+
     // ===== Mobile Hamburger Menu =====
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
@@ -366,6 +431,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Any initialization code that needs to run after DOM is ready
         console.log('The Still Got It Collective website loaded successfully!');
+        loadSiteSettings();
         loadLatestUpdates();
     });
 
