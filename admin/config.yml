@@ -12,7 +12,7 @@ backend:
   branch: main
   # REPLACE: put your Cloudflare Worker URL here (no trailing slash)
   # Example: https://stillgotit-auth.your-subdomain.workers.dev
-  base_url: https://REPLACE_ME_WITH_YOUR_CLOUDFLARE_WORKER_URL
+  base_url: https://sveltia-cms-auth.rpretzer.workers.dev
 
 # Where uploaded images are stored in the repo
 media_folder: "assets/images/uploads"
