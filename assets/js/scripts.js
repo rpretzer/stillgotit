@@ -6,6 +6,94 @@
 (function() {
     'use strict';
 
+    // ===== Latest Updates (Decap CMS) =====
+    // Source: /content/updates.json
+    // Editors: use /admin to update cards (no HTML edits needed)
+    async function loadLatestUpdates() {
+        const grid = document.getElementById('announcements-grid');
+        if (!grid) return;
+
+        const source = grid.dataset.updatesSource || 'content/updates.json';
+        const url = new URL(source, window.location.href);
+
+        try {
+            const res = await fetch(url.toString(), { cache: 'no-store' });
+            if (!res.ok) throw new Error(`Failed to load updates.json (${res.status})`);
+            const data = await res.json();
+            if (!data || !Array.isArray(data.updates)) throw new Error('Invalid updates.json format');
+
+            const updates = [...data.updates].sort((a, b) => {
+                const ap = a?.pinned ? 1 : 0;
+                const bp = b?.pinned ? 1 : 0;
+                if (ap !== bp) return bp - ap;
+                const ad = Date.parse(a?.date || '') || 0;
+                const bd = Date.parse(b?.date || '') || 0;
+                return bd - ad;
+            });
+
+            // Clear fallback HTML once CMS content is ready
+            grid.innerHTML = '';
+
+            const fmt = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+
+            updates.forEach((u) => {
+                const card = document.createElement('article');
+                card.className = 'announcement-card fade-in';
+
+                if (u?.image) {
+                    const media = document.createElement('div');
+                    media.className = 'card-image';
+                    const img = document.createElement('img');
+                    img.loading = 'lazy';
+                    img.src = u.image;
+                    img.alt = u.alt || u.title || 'Update image';
+                    media.appendChild(img);
+                    card.appendChild(media);
+                }
+
+                const content = document.createElement('div');
+                content.className = 'card-content';
+
+                const h3 = document.createElement('h3');
+                h3.textContent = u?.title || 'Update';
+                content.appendChild(h3);
+
+                const dateP = document.createElement('p');
+                dateP.className = 'card-date';
+                if (u?.date && !Number.isNaN(Date.parse(u.date))) {
+                    dateP.textContent = fmt.format(new Date(u.date));
+                } else {
+                    dateP.textContent = '';
+                }
+                content.appendChild(dateP);
+
+                const bodyP = document.createElement('p');
+                bodyP.textContent = u?.body || '';
+                content.appendChild(bodyP);
+
+                if (u?.ctaUrl && u?.ctaLabel) {
+                    const a = document.createElement('a');
+                    const style = (u?.ctaStyle || 'primary').toLowerCase() === 'secondary' ? 'secondary' : 'primary';
+                    a.className = `btn btn-${style}`;
+                    a.href = u.ctaUrl;
+                    a.textContent = u.ctaLabel;
+                    content.appendChild(a);
+                }
+
+                card.appendChild(content);
+                grid.appendChild(card);
+            });
+
+            // Observe newly injected fade-ins
+            if (typeof window.__observeFadeIns === 'function') {
+                window.__observeFadeIns(grid);
+            }
+        } catch (err) {
+            // Keep fallback HTML in place if loading fails
+            console.warn('Latest updates load failed:', err);
+        }
+    }
+
     // ===== Mobile Hamburger Menu =====
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
@@ -80,10 +168,17 @@
         });
     }, observerOptions);
 
+    function observeFadeIns(root = document) {
+        root.querySelectorAll('.fade-in:not(.visible)').forEach(el => {
+            fadeInObserver.observe(el);
+        });
+    }
+
+    // Expose for dynamic content (e.g., CMS updates render)
+    window.__observeFadeIns = observeFadeIns;
+
     // Observe all elements with fade-in class
-    document.querySelectorAll('.fade-in').forEach(el => {
-        fadeInObserver.observe(el);
-    });
+    observeFadeIns(document);
 
     // ===== Navbar Scroll Effect =====
     const navbar = document.getElementById('navbar');
@@ -271,6 +366,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Any initialization code that needs to run after DOM is ready
         console.log('The Still Got It Collective website loaded successfully!');
+        loadLatestUpdates();
     });
 
 })();

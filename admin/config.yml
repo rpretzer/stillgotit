@@ -2,17 +2,17 @@
 #
 # IMPORTANT (GitHub Pages auth):
 # - GitHub Pages is static, so Decap needs an OAuth service.
-# - Easiest path: create a free Netlify site pointing to this repo
-#   and enable GitHub as an OAuth provider in Netlify.
-# - Then keep base_url/auth_endpoint as below.
-# - Alternative: deploy your own OAuth server and change base_url/auth_endpoint.
+# - We use a free Cloudflare Worker OAuth client (Sveltia CMS Authenticator).
+# - Deploy it, then set base_url below to your Worker URL.
+# - Your GitHub OAuth App callback URL must be: <YOUR_WORKER_URL>/callback
 
 backend:
   name: github
   repo: rpretzer/stillgotit
   branch: main
-  base_url: https://api.netlify.com
-  auth_endpoint: auth
+  # REPLACE: put your Cloudflare Worker URL here (no trailing slash)
+  # Example: https://stillgotit-auth.your-subdomain.workers.dev
+  base_url: https://REPLACE_ME_WITH_YOUR_CLOUDFLARE_WORKER_URL
 
 # Where uploaded images are stored in the repo
 media_folder: "assets/images/uploads"
