@@ -79,6 +79,24 @@ This workflow lets you drop originals into a folder, push, and GitHub Actions ge
 
 If you prefer, you can copy/paste the paths from `assets/images/uploads/gallery/manifest.json` into `content/gallery.json` as `src`/`thumb` URLs.
 
+**Run on-demand (local):**
+
+```bash
+npm install
+
+# Process everything currently in assets/images/_incoming_raw/
+npm run images:build
+
+# OR: process only specific files (comma-separated)
+node tools/process-images.mjs --files "my-photo.jpg,another.png"
+
+# OR: preview what it would do
+node tools/process-images.mjs --dry-run
+```
+
+**Run on-demand (GitHub Actions):**
+- In GitHub → **Actions** → **Process incoming images** → **Run workflow**
+
 ### Replace Images
 
 - Add your logo to `assets/images/logo.svg` (or update the path in HTML)

@@ -24,13 +24,63 @@ function safeBase(name) {
     .slice(0, 80) || 'image';
 }
 
-async function ensureEmptyDir(dir) {
-  await fs.mkdir(dir, { recursive: true });
-  const entries = await fs.readdir(dir).catch(() => []);
-  await Promise.all(entries.map((e) => fs.rm(path.join(dir, e), { recursive: true, force: true })));
+async function fileExists(p) {
+  try {
+    await fs.access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function parseArgs(argv) {
+  const args = {
+    files: null,
+    dryRun: false,
+    help: false
+  };
+
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--help' || a === '-h') args.help = true;
+    else if (a === '--dry-run') args.dryRun = true;
+    else if (a === '--files') {
+      const next = argv[i + 1];
+      if (!next || next.startsWith('-')) throw new Error('Expected a value after --files');
+      args.files = next.split(',').map((s) => s.trim()).filter(Boolean);
+      i++;
+    } else if (a.startsWith('--files=')) {
+      const val = a.slice('--files='.length);
+      args.files = val.split(',').map((s) => s.trim()).filter(Boolean);
+    } else {
+      throw new Error(`Unknown arg: ${a}`);
+    }
+  }
+
+  return args;
+}
+
+function printHelp() {
+  console.log(`
+Usage:
+  node tools/process-images.mjs [--files <a.jpg,b.png,...>] [--dry-run]
+
+Notes:
+  - Reads originals from: assets/images/_incoming_raw/
+  - Writes full images to: assets/images/uploads/gallery/full/  (max width 1600)
+  - Writes thumbs to:      assets/images/uploads/gallery/thumb/ (600x600 crop)
+  - Writes/merges manifest: assets/images/uploads/gallery/manifest.json
+  - Safe to run repeatedly: never deletes outputs; filenames include a content hash.
+`);
 }
 
 async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  if (args.help) {
+    printHelp();
+    return;
+  }
+
   await fs.mkdir(IN_DIR, { recursive: true });
   // IMPORTANT:
   // Do NOT wipe output dirs. This script should be safe to run repeatedly and
@@ -38,7 +88,19 @@ async function main() {
   await fs.mkdir(OUT_FULL, { recursive: true });
   await fs.mkdir(OUT_THUMB, { recursive: true });
 
-  const files = (await fs.readdir(IN_DIR)).filter((f) => SUPPORTED.has(path.extname(f).toLowerCase()));
+  const allIncoming = (await fs.readdir(IN_DIR)).filter((f) => SUPPORTED.has(path.extname(f).toLowerCase()));
+  const files = args.files ? allIncoming.filter((f) => args.files.includes(f)) : allIncoming;
+
+  // Load existing manifest (append-only). This avoids "overwriting old images"
+  // in the manifest, and makes runs incremental.
+  let existing = null;
+  if (await fileExists(MANIFEST)) {
+    try {
+      existing = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
+    } catch {
+      existing = null;
+    }
+  }
 
   const manifest = {
     generatedAt: new Date().toISOString(),
@@ -47,8 +109,11 @@ async function main() {
       fullDir: 'assets/images/uploads/gallery/full',
       thumbDir: 'assets/images/uploads/gallery/thumb'
     },
-    items: []
+    items: Array.isArray(existing?.items) ? existing.items : []
   };
+
+  let generatedCount = 0;
+  let skippedCount = 0;
 
   for (const filename of files) {
     const inPath = path.join(IN_DIR, filename);
@@ -62,31 +127,76 @@ async function main() {
     const fullOut = path.join(OUT_FULL, fullName);
     const thumbOut = path.join(OUT_THUMB, thumbName);
 
-    // Full: max width 1600, keep aspect, don't enlarge
-    await sharp(buf)
-      .rotate()
-      .resize({ width: 1600, withoutEnlargement: true })
-      .webp({ quality: 82 })
-      .toFile(fullOut);
+    const alreadyInManifest = manifest.items.some((it) =>
+      it?.source === `assets/images/_incoming_raw/${filename}` &&
+      it?.hash === h &&
+      it?.full === `assets/images/uploads/gallery/full/${fullName}` &&
+      it?.thumb === `assets/images/uploads/gallery/thumb/${thumbName}`
+    );
 
-    // Thumb: 600x600 crop (center)
-    await sharp(buf)
-      .rotate()
-      .resize({ width: 600, height: 600, fit: 'cover' })
-      .webp({ quality: 78 })
-      .toFile(thumbOut);
+    const fullExists = await fileExists(fullOut);
+    const thumbExists = await fileExists(thumbOut);
 
-    manifest.items.push({
-      source: `assets/images/_incoming_raw/${filename}`,
-      full: `assets/images/uploads/gallery/full/${fullName}`,
-      thumb: `assets/images/uploads/gallery/thumb/${thumbName}`
-    });
+    if (!args.dryRun) {
+      if (!fullExists) {
+        // Full: max width 1600, keep aspect, don't enlarge
+        await sharp(buf)
+          .rotate()
+          .resize({ width: 1600, withoutEnlargement: true })
+          .webp({ quality: 82 })
+          .toFile(fullOut);
+        generatedCount++;
+      } else {
+        skippedCount++;
+      }
+
+      if (!thumbExists) {
+        // Thumb: 600x600 crop (center)
+        await sharp(buf)
+          .rotate()
+          .resize({ width: 600, height: 600, fit: 'cover' })
+          .webp({ quality: 78 })
+          .toFile(thumbOut);
+        generatedCount++;
+      } else {
+        skippedCount++;
+      }
+    }
+
+    if (!alreadyInManifest) {
+      manifest.items.push({
+        source: `assets/images/_incoming_raw/${filename}`,
+        hash: h,
+        full: `assets/images/uploads/gallery/full/${fullName}`,
+        thumb: `assets/images/uploads/gallery/thumb/${thumbName}`,
+        generatedAt: new Date().toISOString()
+      });
+    }
   }
 
-  await fs.writeFile(MANIFEST, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+  // Stable-ish output: newest last by default; just ensure deterministic order.
+  manifest.items.sort((a, b) => {
+    const as = String(a?.source || '');
+    const bs = String(b?.source || '');
+    if (as !== bs) return as.localeCompare(bs);
+    const ah = String(a?.hash || '');
+    const bh = String(b?.hash || '');
+    return ah.localeCompare(bh);
+  });
 
-  console.log(`Processed ${files.length} image(s).`);
-  console.log(`Wrote manifest: ${MANIFEST}`);
+  if (!args.dryRun) {
+    await fs.writeFile(MANIFEST, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+  }
+
+  if (args.files) {
+    const missing = args.files.filter((f) => !allIncoming.includes(f));
+    if (missing.length) console.warn(`Warning: ${missing.length} requested file(s) not found in _incoming_raw: ${missing.join(', ')}`);
+  }
+
+  console.log(`Incoming images considered: ${files.length}`);
+  console.log(`Outputs generated: ${generatedCount}${args.dryRun ? ' (dry-run: no files written)' : ''}`);
+  console.log(`Outputs skipped (already existed): ${skippedCount}${args.dryRun ? ' (dry-run: existence checks still ran)' : ''}`);
+  console.log(`Manifest: ${args.dryRun ? 'not written (dry-run)' : MANIFEST}`);
 }
 
 main().catch((err) => {
