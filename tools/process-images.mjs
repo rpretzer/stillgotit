@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import sharp from 'sharp';
 
 const ROOT = new URL('..', import.meta.url);
-const IN_DIR = path.resolve(ROOT.pathname, 'assets/images/_incoming_raw');
+const DEFAULT_IN_DIR = path.resolve(ROOT.pathname, 'assets/images/_incoming_raw');
 const OUT_FULL = path.resolve(ROOT.pathname, 'assets/images/uploads/gallery/full');
 const OUT_THUMB = path.resolve(ROOT.pathname, 'assets/images/uploads/gallery/thumb');
 const MANIFEST = path.resolve(ROOT.pathname, 'assets/images/uploads/gallery/manifest.json');
@@ -33,17 +33,47 @@ async function fileExists(p) {
   }
 }
 
+function toPosixPath(p) {
+  return p.split(path.sep).join('/');
+}
+
+async function walkFiles(rootDir) {
+  const out = [];
+  async function walk(dir) {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const ent of entries) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) {
+        await walk(full);
+      } else if (ent.isFile()) {
+        out.push(full);
+      }
+    }
+  }
+  await walk(rootDir);
+  return out;
+}
+
 function parseArgs(argv) {
   const args = {
     files: null,
     dryRun: false,
-    help: false
+    help: false,
+    input: null
   };
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--help' || a === '-h') args.help = true;
     else if (a === '--dry-run') args.dryRun = true;
+    else if (a === '--input') {
+      const next = argv[i + 1];
+      if (!next || next.startsWith('-')) throw new Error('Expected a value after --input');
+      args.input = next;
+      i++;
+    } else if (a.startsWith('--input=')) {
+      args.input = a.slice('--input='.length);
+    }
     else if (a === '--files') {
       const next = argv[i + 1];
       if (!next || next.startsWith('-')) throw new Error('Expected a value after --files');
@@ -63,10 +93,11 @@ function parseArgs(argv) {
 function printHelp() {
   console.log(`
 Usage:
-  node tools/process-images.mjs [--files <a.jpg,b.png,...>] [--dry-run]
+  node tools/process-images.mjs [--input <dir>] [--files <a.jpg,b.png,...>] [--dry-run]
 
 Notes:
-  - Reads originals from: assets/images/_incoming_raw/
+  - Reads originals from: assets/images/_incoming_raw/ (default) or --input <dir>
+  - Tip: to process existing Decap uploads, use --input assets/images/uploads
   - Writes full images to: assets/images/uploads/gallery/full/  (max width 1600)
   - Writes thumbs to:      assets/images/uploads/gallery/thumb/ (600x600 crop)
   - Writes/merges manifest: assets/images/uploads/gallery/manifest.json
@@ -81,15 +112,40 @@ async function main() {
     return;
   }
 
-  await fs.mkdir(IN_DIR, { recursive: true });
+  const inDir = args.input
+    ? (path.isAbsolute(args.input) ? args.input : path.resolve(ROOT.pathname, args.input))
+    : DEFAULT_IN_DIR;
+
+  await fs.mkdir(inDir, { recursive: true });
   // IMPORTANT:
   // Do NOT wipe output dirs. This script should be safe to run repeatedly and
   // must not delete previously-generated images referenced by content.
   await fs.mkdir(OUT_FULL, { recursive: true });
   await fs.mkdir(OUT_THUMB, { recursive: true });
 
-  const allIncoming = (await fs.readdir(IN_DIR)).filter((f) => SUPPORTED.has(path.extname(f).toLowerCase()));
-  const files = args.files ? allIncoming.filter((f) => args.files.includes(f)) : allIncoming;
+  const allPaths = await walkFiles(inDir);
+  const repoRoot = path.resolve(ROOT.pathname);
+  const inDirRel = toPosixPath(path.relative(repoRoot, inDir));
+
+  const isIgnored = (absPath) => {
+    const rel = toPosixPath(path.relative(repoRoot, absPath));
+    // Avoid re-processing our generated outputs if input is broad (e.g., uploads/)
+    if (rel.startsWith('assets/images/uploads/gallery/')) return true;
+    if (rel === 'assets/images/uploads/gallery/manifest.json') return true;
+    return false;
+  };
+
+  const allIncoming = allPaths
+    .filter((p) => !isIgnored(p))
+    .filter((p) => SUPPORTED.has(path.extname(p).toLowerCase()));
+
+  const files = args.files
+    ? allIncoming.filter((abs) => {
+      const relFromInput = toPosixPath(path.relative(inDir, abs));
+      const base = path.basename(abs);
+      return args.files.includes(relFromInput) || args.files.includes(base);
+    })
+    : allIncoming;
 
   // Load existing manifest (append-only). This avoids "overwriting old images"
   // in the manifest, and makes runs incremental.
@@ -105,6 +161,7 @@ async function main() {
   const manifest = {
     generatedAt: new Date().toISOString(),
     inputDir: 'assets/images/_incoming_raw',
+    inputDirs: Array.isArray(existing?.inputDirs) ? existing.inputDirs : [],
     output: {
       fullDir: 'assets/images/uploads/gallery/full',
       thumbDir: 'assets/images/uploads/gallery/thumb'
@@ -112,14 +169,17 @@ async function main() {
     items: Array.isArray(existing?.items) ? existing.items : []
   };
 
+  if (inDirRel && !manifest.inputDirs.includes(inDirRel)) manifest.inputDirs.push(inDirRel);
+
   let generatedCount = 0;
   let skippedCount = 0;
 
   for (const filename of files) {
-    const inPath = path.join(IN_DIR, filename);
+    const inPath = filename; // abs path
+    const relSource = toPosixPath(path.relative(repoRoot, inPath));
     const buf = await fs.readFile(inPath);
     const h = hashBuffer(buf);
-    const base = safeBase(filename);
+    const base = safeBase(path.basename(inPath));
 
     const fullName = `${base}-${h}-full.webp`;
     const thumbName = `${base}-${h}-thumb.webp`;
@@ -128,7 +188,7 @@ async function main() {
     const thumbOut = path.join(OUT_THUMB, thumbName);
 
     const alreadyInManifest = manifest.items.some((it) =>
-      it?.source === `assets/images/_incoming_raw/${filename}` &&
+      it?.source === relSource &&
       it?.hash === h &&
       it?.full === `assets/images/uploads/gallery/full/${fullName}` &&
       it?.thumb === `assets/images/uploads/gallery/thumb/${thumbName}`
@@ -165,7 +225,7 @@ async function main() {
 
     if (!alreadyInManifest) {
       manifest.items.push({
-        source: `assets/images/_incoming_raw/${filename}`,
+        source: relSource,
         hash: h,
         full: `assets/images/uploads/gallery/full/${fullName}`,
         thumb: `assets/images/uploads/gallery/thumb/${thumbName}`,
@@ -189,8 +249,10 @@ async function main() {
   }
 
   if (args.files) {
-    const missing = args.files.filter((f) => !allIncoming.includes(f));
-    if (missing.length) console.warn(`Warning: ${missing.length} requested file(s) not found in _incoming_raw: ${missing.join(', ')}`);
+    // Best-effort: validate requested filenames exist in this input dir
+    const present = new Set(files.map((abs) => path.basename(abs)).concat(files.map((abs) => toPosixPath(path.relative(inDir, abs)))));
+    const missing = args.files.filter((f) => !present.has(f));
+    if (missing.length) console.warn(`Warning: ${missing.length} requested file(s) not found under input dir (${inDirRel || inDir}): ${missing.join(', ')}`);
   }
 
   console.log(`Incoming images considered: ${files.length}`);
