@@ -4,12 +4,13 @@ A modern, mobile-first single-page scrolling website for The Still Got It Collec
 
 ## Features
 
-- **Retro Daylight Design** - 90s-inspired pastel color palette with warm gradients
+- **Brand design system** - Centralized color + typography tokens
 - **Mobile-First Responsive** - Fully responsive design that works on all devices
 - **Smooth Scroll Navigation** - Smooth scrolling between sections
 - **Gallery Lightbox** - Interactive image gallery with lightbox modal
 - **Event Calendar** - Ready for Google Calendar or Notion embed
 - **SEO Optimized** - Complete meta tags and Open Graph support
+- **Decap CMS** - Non-technical editing for site content
 
 ## File Structure
 
@@ -29,6 +30,14 @@ still-got-it-collective/
         └── README.md       # Image guidelines
 ```
 
+## CMS (Decap)
+
+- **Admin UI**: `/admin/`
+- **Editable content**:
+  - `content/site.json` (hero banner, ticketing link, merch link, Instagram, footer socials, optional calendar embed)
+  - `content/updates.json` (Latest Updates cards)
+  - `content/gallery.json` (Event Gallery items + metadata)
+
 ## Setup for GitHub Pages
 
 1. Push this repository to GitHub
@@ -45,38 +54,35 @@ still-got-it-collective/
 - **Square Store**: Update the Square Store URL/label in `content/site.json` (via `/admin`)
 - **Instagram**: Update Instagram username/profile URL (and optional preview tiles) in `content/site.json` (via `/admin`)
 
-### Add Your Calendar
+### Add Your Calendar (CMS-controlled)
 
-Replace the calendar placeholder in `index.html` with your embed code:
+Set `content/site.json.calendar.embedUrl` (via `/admin`) to your embed URL.
 
-**Google Calendar:**
-```html
-<iframe src="https://calendar.google.com/calendar/embed?src=YOUR_CALENDAR_ID&ctz=America%2FNew_York" 
-        style="border: 0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
-```
+### Repo-based image pipeline (free) — recommended for now
 
-**Notion:**
-```html
-<iframe src="YOUR_NOTION_CALENDAR_EMBED_URL" 
-        width="100%" height="600" frameborder="0"></iframe>
-```
+This workflow lets you drop originals into a folder, push, and GitHub Actions generates optimized WebP outputs for the gallery.
+
+- **Drop originals here** (commit these): `assets/images/_incoming_raw/`
+- **Generated outputs here** (auto-committed by CI):
+  - `assets/images/uploads/gallery/full/` (max width 1600)
+  - `assets/images/uploads/gallery/thumb/` (600×600 crop)
+  - `assets/images/uploads/gallery/manifest.json` (maps raw → outputs)
+
+**How to use (day-to-day):**
+1. Add JPG/PNG/etc into `assets/images/_incoming_raw/`
+2. Commit + push
+3. Wait for GitHub Actions “Process incoming images” to finish
+4. In `/admin/` → **Site Content → Event Gallery**, add an item and select:
+   - **Full image upload (fallback)**: pick a file from `assets/images/uploads/gallery/full/`
+   - **Thumbnail upload (fallback)**: pick a file from `assets/images/uploads/gallery/thumb/`
+   - Add tags/location/date as desired
+
+If you prefer, you can copy/paste the paths from `assets/images/uploads/gallery/manifest.json` into `content/gallery.json` as `src`/`thumb` URLs.
 
 ### Replace Images
 
 - Add your logo to `assets/images/logo.svg` (or update the path in HTML)
-- Replace placeholder images in gallery, announcements, and Instagram sections
 - Add `og-image.jpg` for social media previews
-
-### Colors
-
-Colors are defined in CSS variables at the top of `assets/css/style.css`. Update these to match your brand:
-
-- `--coral`: #FFAB91
-- `--cream`: #FFF8E1
-- `--light-teal`: #E1F5FE
-- `--sunny-orange`: #FFB74D
-- `--mint-tan`: #C5E1A5
-- `--soft-peach`: #FFCCBC
 
 ## Deployment
 

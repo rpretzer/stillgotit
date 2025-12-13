@@ -32,8 +32,11 @@ async function ensureEmptyDir(dir) {
 
 async function main() {
   await fs.mkdir(IN_DIR, { recursive: true });
-  await ensureEmptyDir(OUT_FULL);
-  await ensureEmptyDir(OUT_THUMB);
+  // IMPORTANT:
+  // Do NOT wipe output dirs. This script should be safe to run repeatedly and
+  // must not delete previously-generated images referenced by content.
+  await fs.mkdir(OUT_FULL, { recursive: true });
+  await fs.mkdir(OUT_THUMB, { recursive: true });
 
   const files = (await fs.readdir(IN_DIR)).filter((f) => SUPPORTED.has(path.extname(f).toLowerCase()));
 
