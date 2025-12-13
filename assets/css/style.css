@@ -467,7 +467,8 @@ body {
 }
 
 .announcement-banner {
-    background: var(--color-accent-400);
+    /* Match the light blue used by the Event Calendar section */
+    background: var(--color-secondary-100);
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
