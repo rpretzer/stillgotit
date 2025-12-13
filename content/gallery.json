@@ -1,51 +1,285 @@
 {
   "images": [
     {
-      "src": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=600&fit=crop",
-      "alt": "Event photo 1",
-      "featured": true
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=600&h=600&fit=crop",
-      "alt": "Event photo 2",
-      "featured": true
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600&h=600&fit=crop",
-      "alt": "Event photo 3",
-      "featured": true
-    },
-    {
-      "src": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&h=600&fit=crop",
-      "alt": "Event photo 4",
+      "src": "/assets/images/uploads/gallery/full/20251125-175900-2-a34adcbdbc-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/20251125-175900-2-a34adcbdbc-thumb.webp",
+      "alt": "20251125 175900~2",
       "featured": false
     },
     {
-      "src": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&h=600&fit=crop",
-      "alt": "Event photo 5",
+      "src": "/assets/images/uploads/gallery/full/20251125-201930-c47deda0c1-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/20251125-201930-c47deda0c1-thumb.webp",
+      "alt": "20251125 201930",
       "featured": false
     },
     {
-      "src": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop",
-      "alt": "Event photo 6",
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-10-aaa307ef5e-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-10-aaa307ef5e-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 10",
       "featured": false
     },
     {
-      "src": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop",
-      "alt": "Event photo 7",
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-11-ee2d5ab667-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-11-ee2d5ab667-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 11",
       "featured": false
     },
     {
-      "src": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200&h=1200&fit=crop",
-      "thumb": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=600&fit=crop",
-      "alt": "Event photo 8",
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-12-0fe00a6bc1-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-12-0fe00a6bc1-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 12",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-13-dbc67a658e-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-13-dbc67a658e-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 13",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-14-c63938e0f9-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-14-c63938e0f9-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 14",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-15-6d9b5a9bdc-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-15-6d9b5a9bdc-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 15",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-16-660997186b-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-16-660997186b-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 16",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-17-4531d3831d-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-17-4531d3831d-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 17",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-18-de9493ff0d-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-18-de9493ff0d-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 18",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-19-7dffb5a5b6-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-19-7dffb5a5b6-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 19",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-20-a71b49f598-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-20-a71b49f598-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 20",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-21-45d2821741-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-21-45d2821741-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 21",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-22-c7e8028d90-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-22-c7e8028d90-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 22",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-23-f8b1c55bb8-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-23-f8b1c55bb8-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 23",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-24-63eb37847e-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-24-63eb37847e-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 24",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-25-ce46373790-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-25-ce46373790-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 25",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-26-89da8bd75b-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-26-89da8bd75b-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 26",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-27-dc113d7db8-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-27-dc113d7db8-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 27",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-28-63bd7c48f2-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-28-63bd7c48f2-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 28",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-29-714d6c0590-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-29-714d6c0590-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 29",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-3-54f5048c5a-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-3-54f5048c5a-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 3",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-30-bf76c80d2b-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-30-bf76c80d2b-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 30",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-31-85c6ae9f1a-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-31-85c6ae9f1a-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 31",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-32-2df728c80a-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-32-2df728c80a-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 32",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-33-1c79ae5ed7-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-33-1c79ae5ed7-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 33",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-34-63cd018830-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-34-63cd018830-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 34",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-35-b624a5c6e5-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-35-b624a5c6e5-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 35",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-36-600cda9a6a-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-36-600cda9a6a-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 36",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-37-349c2e86be-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-37-349c2e86be-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 37",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-38-c6e40bb7b6-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-38-c6e40bb7b6-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 38",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-39-8d4537d062-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-39-8d4537d062-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 39",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-4-cfc8973725-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-4-cfc8973725-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 4",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-40-142872d7d5-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-40-142872d7d5-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 40",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-41-1460ee6850-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-41-1460ee6850-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 41",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-42-8ebb797de1-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-42-8ebb797de1-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 42",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-43-309d420d8f-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-43-309d420d8f-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 43",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-44-bb997d5e3a-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-44-bb997d5e3a-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 44",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-45-36ce5713b1-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-45-36ce5713b1-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 45",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-46-8eb8c658f0-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-46-8eb8c658f0-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 46",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-6-161149b3ce-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-6-161149b3ce-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 6",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-7-460cbad7c6-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-7-460cbad7c6-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 7",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-8-5919da055a-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-8-5919da055a-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 8",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-9-855ff1e7e5-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-9-855ff1e7e5-thumb.webp",
+      "alt": "Still Got It Collective 11.25.25 9",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/chatgpt-image-dec-12-2025-05-43-23-pm-3d1f37c863-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/chatgpt-image-dec-12-2025-05-43-23-pm-3d1f37c863-thumb.webp",
+      "alt": "chatgpt image dec 12 2025 05 43 23 pm",
+      "featured": false
+    },
+    {
+      "src": "/assets/images/uploads/gallery/full/chatgpt-image-dec-12-2025-05-54-21-pm-26e8a52a18-full.webp",
+      "thumb": "/assets/images/uploads/gallery/thumb/chatgpt-image-dec-12-2025-05-54-21-pm-26e8a52a18-thumb.webp",
+      "alt": "chatgpt image dec 12 2025 05 54 21 pm",
       "featured": false
     }
   ]
