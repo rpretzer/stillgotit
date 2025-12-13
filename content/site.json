@@ -1,25 +1,25 @@
 {
   "hero": {
-    "tagline": "Curating moments you'll never forget"
+    "tagline": "Dance like you did. Sleep like you should."
   },
   "banner": {
-    "emoji": "🎉",
+    "emoji": "",
     "strongText": "Next Event:",
     "text": "Join us for an unforgettable night!",
     "ctaLabel": "Get tickets",
     "ctaUrl": "#tickets"
   },
   "tickets": {
-    "ticketsTitle": "Buy Tickets",
-    "ticketsBody": "Secure your spot at our upcoming events. Limited availability!",
     "ticketsUrl": "https://ticketscandy.com",
+    "ticketsBody": "Secure your spot at our upcoming events. Limited availability!",
     "ticketsLabel": "Get Tickets",
-    "ticketsNote": "REPLACE: Update the ticketing URL above with your actual link",
-    "squareTitle": "Shop Square Store",
-    "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective.",
+    "squareNote": "REPLACE: Update the Square Store URL above with your actual store link",
+    "ticketsTitle": "Buy Tickets",
     "squareUrl": "https://YOUR_SQUARE_STORE_URL.square.site",
     "squareLabel": "Visit Our Store",
-    "squareNote": "REPLACE: Update the Square Store URL above with your actual store link"
+    "ticketsNote": "REPLACE: Update the ticketing URL above with your actual link",
+    "squareTitle": "Shop Square Store",
+    "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective."
   },
   "instagram": {
     "username": "stillgotitcollective",
@@ -48,6 +48,10 @@
       {
         "label": "Instagram",
         "url": "https://www.instagram.com/stillgotitcollective"
+      },
+      {
+        "label": "Facebook",
+        "url": "https://www.facebook.com/profile.php?id=61582473967294"
       }
     ]
   },
