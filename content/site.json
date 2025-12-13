@@ -15,8 +15,8 @@
     "ticketsLabel": "Get Tickets",
     "squareNote": "REPLACE: Update the Square Store URL above with your actual store link",
     "ticketsTitle": "Buy Tickets",
-    "squareUrl": "https://YOUR_SQUARE_STORE_URL.square.site",
-    "squareLabel": "Visit Our Store",
+    "squareUrl": "/merch/",
+    "squareLabel": "Shop Merch",
     "ticketsNote": "REPLACE: Update the ticketing URL above with your actual link",
     "squareTitle": "Shop Square Store",
     "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective."

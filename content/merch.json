@@ -1,0 +1,37 @@
+{
+  "currency": "USD",
+  "apiBase": "/api",
+  "products": [
+    {
+      "id": "tee-classic",
+      "name": "Still Got It Tee (Classic)",
+      "description": "Soft, comfy, and loud in all the right ways.",
+      "priceCents": 2800,
+      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-10-aaa307ef5e-thumb.webp",
+      "variants": [
+        { "id": "tee-classic-s", "label": "Small" },
+        { "id": "tee-classic-m", "label": "Medium" },
+        { "id": "tee-classic-l", "label": "Large" },
+        { "id": "tee-classic-xl", "label": "XL" }
+      ],
+      "fulfillment": {
+        "type": "printful",
+        "note": "Printful mapping will be added in the backend later (sync variant IDs)."
+      }
+    },
+    {
+      "id": "sticker-pack",
+      "name": "Sticker Pack",
+      "description": "A handful of glossy stickers to rep the Collective.",
+      "priceCents": 900,
+      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-11-ee2d5ab667-thumb.webp",
+      "variants": [],
+      "fulfillment": {
+        "type": "manual",
+        "note": "One-off / non-Printful items are supported as manual fulfillment."
+      }
+    }
+  ]
+}
+
+

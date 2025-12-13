@@ -1,0 +1,22 @@
+name = "sgic-merch-backend"
+main = "src/index.ts"
+compatibility_date = "2025-12-13"
+
+# When you’re ready, add a route on Cloudflare:
+# route = { pattern = "www.stillgotitcollective.com/api/*", zone_name = "stillgotitcollective.com" }
+
+[vars]
+# Public site base used for redirect after successful checkout
+SITE_BASE_URL = "https://www.stillgotitcollective.com"
+
+# Where the worker fetches the product catalog (used to validate pricing server-side)
+MERCH_CATALOG_URL = "https://www.stillgotitcollective.com/content/merch.json"
+
+# "sandbox" or "prod"
+SQUARE_ENV = "sandbox"
+
+# REQUIRED: set these as secrets via `wrangler secret put ...`
+# SQUARE_ACCESS_TOKEN
+# SQUARE_LOCATION_ID
+
+

@@ -139,6 +139,23 @@
             if (sqLink && settings?.tickets?.squareUrl) sqLink.href = settings.tickets.squareUrl;
             if (sqLabel && settings?.tickets?.squareLabel) sqLabel.textContent = settings.tickets.squareLabel;
 
+            // If a link is internal (relative path or hash), don't force a new tab.
+            // (index.html sets target=_blank by default for external links)
+            function normalizeLinkTarget(a) {
+                if (!a || !a.href) return;
+                const href = a.getAttribute('href') || '';
+                const isInternal = href.startsWith('/') || href.startsWith('#');
+                if (isInternal) {
+                    a.removeAttribute('target');
+                    a.removeAttribute('rel');
+                } else {
+                    a.setAttribute('target', '_blank');
+                    a.setAttribute('rel', 'noopener noreferrer');
+                }
+            }
+            normalizeLinkTarget(ticketsLink);
+            normalizeLinkTarget(sqLink);
+
             const sqTitle = document.getElementById('tickets-merch-title');
             const sqBody = document.getElementById('tickets-merch-body');
             const sqNote = document.getElementById('tickets-merch-note');

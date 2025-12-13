@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Merch | The Still Got It Collective</title>
+  <meta name="description" content="Shop Still Got It Collective merch. Secure checkout powered by Square." />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/merch.css" />
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="/" class="logo">
+          <span class="logo-text">Still Got It Collective</span>
+        </a>
+
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="#products" class="nav-link">Merch</a></li>
+          <li><a href="#cart" class="nav-link">Cart</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" class="merch-main">
+    <section class="section merch-hero">
+      <div class="container">
+        <h1 class="section-title">Merch</h1>
+        <p class="section-subtitle">
+          Secure checkout powered by Square. US shipping only (international by request).
+        </p>
+      </div>
+    </section>
+
+    <section id="products" class="section merch-products">
+      <div class="container">
+        <div class="merch-toolbar">
+          <div class="merch-pill">
+            <span class="merch-pill-label">Catalog:</span>
+            <code class="merch-pill-value" id="merch-source">content/merch.json</code>
+          </div>
+          <button class="btn btn-secondary merch-cart-button" id="open-cart">
+            Cart <span class="merch-cart-count" id="cart-count">0</span>
+          </button>
+        </div>
+
+        <div class="merch-grid" id="merch-grid" data-merch-source="/content/merch.json">
+          <!-- Filled by assets/js/merch.js -->
+          <div class="ticket-card">
+            <h3>Loading merch…</h3>
+            <p>If this takes too long, refresh the page.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cart" class="section merch-cart">
+      <div class="container">
+        <div class="ticket-card">
+          <div class="merch-cart-header">
+            <h2 class="merch-h2">Your cart</h2>
+            <button class="btn btn-secondary merch-cart-close" id="close-cart" type="button">Close</button>
+          </div>
+
+          <div id="cart-items" class="merch-cart-items"></div>
+
+          <div class="merch-cart-summary">
+            <div class="merch-summary-row">
+              <span>Subtotal</span>
+              <strong id="cart-subtotal">$0.00</strong>
+            </div>
+            <p class="note">
+              Shipping and taxes are collected at checkout.
+            </p>
+          </div>
+
+          <div class="merch-cart-actions">
+            <button class="btn btn-primary" id="checkout" type="button">Checkout</button>
+            <button class="btn btn-secondary" id="clear-cart" type="button">Clear cart</button>
+          </div>
+
+          <p class="note merch-error" id="merch-error" hidden></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 RSP Management Solutions LLC. All rights reserved.</p>
+        <a href="/" class="back-to-top">← Back to site</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/merch.js"></script>
+  <script src="/assets/js/scripts.js"></script>
+</body>
+</html>
+
+

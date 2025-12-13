@@ -1,0 +1,13 @@
+{
+  "name": "sgic-merch-backend",
+  "private": true,
+  "devDependencies": {
+    "wrangler": "^3.114.0"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  }
+}
+
+
