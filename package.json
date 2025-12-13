@@ -1,0 +1,11 @@
+{
+  "name": "stillgotit-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "images:build": "node tools/process-images.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.34.4"
+  }
+}

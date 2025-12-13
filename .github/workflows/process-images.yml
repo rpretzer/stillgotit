@@ -1,0 +1,40 @@
+name: Process incoming images
+
+on:
+  push:
+    paths:
+      - "assets/images/_incoming_raw/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm install
+
+      - name: Build gallery thumbs/full
+        run: npm run images:build
+
+      - name: Commit generated images (if changed)
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git add assets/images/uploads/gallery
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(images): generate gallery thumbs/full"
+          git push

@@ -36,16 +36,34 @@ collections:
             widget: "list"
             summary: "{{fields.alt}}"
             fields:
-              - label: "Full image (lightbox)"
+              - label: "Full image URL (recommended: Cloudflare Images)"
                 name: "src"
-                widget: "image"
-              - label: "Thumbnail (grid) — optional"
-                name: "thumb"
+                widget: "string"
+                required: false
+                hint: "Paste an imagedelivery.net URL (variant like gallery_full). If blank, use Full image upload below."
+              - label: "Full image upload (fallback)"
+                name: "srcUpload"
                 widget: "image"
                 required: false
-                hint: "If blank, the full image URL will be used in the grid."
+                hint: "Uploads to this repo under assets/images/uploads/. Use only if you don't have a CDN URL."
+              - label: "Thumbnail URL (optional)"
+                name: "thumb"
+                widget: "string"
+                required: false
+                hint: "Paste an imagedelivery.net URL (variant like gallery_thumb). If blank, the full image will be used."
+              - label: "Thumbnail upload (fallback)"
+                name: "thumbUpload"
+                widget: "image"
+                required: false
               - { label: "Alt text", name: "alt", widget: "string" }
               - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
+              - label: "Tags"
+                name: "tags"
+                widget: "list"
+                required: false
+                hint: "Optional tags (e.g., 'birthday', 'corporate', 'DJ', 'outdoor')."
+              - { label: "Location", name: "location", widget: "string", required: false }
+              - { label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
 
       - name: "settings"
         label: "Site Settings (Hero / Banner / Links)"
@@ -135,7 +153,16 @@ collections:
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
               - { label: "Pinned", name: "pinned", widget: "boolean", default: false, required: false }
-              - { label: "Image", name: "image", widget: "image", required: false }
+              - label: "Image URL (recommended: Cloudflare Images)"
+                name: "image"
+                widget: "string"
+                required: false
+                hint: "Paste an imagedelivery.net URL (variant like update_thumb/update_full) or any public URL. If blank, use Image upload below."
+              - label: "Image upload (fallback)"
+                name: "imageUpload"
+                widget: "image"
+                required: false
+                hint: "Uploads to this repo under assets/images/uploads/. Use only if you don't have a CDN URL."
               - { label: "Image alt text", name: "alt", widget: "string", required: false }
               - { label: "Body", name: "body", widget: "text" }
               - { label: "CTA label", name: "ctaLabel", widget: "string", required: false }

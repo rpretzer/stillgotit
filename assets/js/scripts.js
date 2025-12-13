@@ -40,12 +40,13 @@
                 const card = document.createElement('article');
                 card.className = 'announcement-card fade-in';
 
-                if (u?.image) {
+                const updateImgSrc = u?.image || u?.imageUpload;
+                if (updateImgSrc) {
                     const media = document.createElement('div');
                     media.className = 'card-image';
                     const img = document.createElement('img');
                     img.loading = 'lazy';
-                    img.src = u.image;
+                    img.src = updateImgSrc;
                     img.alt = u.alt || u.title || 'Update image';
                     media.appendChild(img);
                     card.appendChild(media);
@@ -345,17 +346,19 @@
             grid.innerHTML = '';
 
             items.forEach((img, idx) => {
-                if (!img?.src) return;
+                const fullSrc = img?.src || img?.srcUpload;
+                if (!fullSrc) return;
                 const cell = document.createElement('div');
                 cell.className = 'gallery-item';
                 cell.dataset.galleryIndex = String(idx);
 
                 const el = document.createElement('img');
                 el.loading = 'lazy';
-                el.src = img.thumb || img.src;
+                const thumbSrc = img?.thumb || img?.thumbUpload || fullSrc;
+                el.src = thumbSrc;
                 el.alt = img.alt || `Gallery image ${idx + 1}`;
                 // store full-res for lightbox
-                el.dataset.fullSrc = img.src;
+                el.dataset.fullSrc = fullSrc;
                 cell.appendChild(el);
                 grid.appendChild(cell);
             });
