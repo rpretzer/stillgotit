@@ -503,7 +503,13 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    color: var(--text-primary);
+    color: var(--color-neutral-900);
+    font-weight: var(--font-semibold);
+}
+
+.hero-proof strong {
+    color: var(--color-neutral-900);
+    font-weight: var(--font-black);
 }
 
 .hero-ctas {
