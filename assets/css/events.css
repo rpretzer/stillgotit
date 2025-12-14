@@ -2,66 +2,198 @@
   background: var(--bg-primary);
 }
 
-.events-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
+.events-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-md);
 }
 
-.event-card {
-  background: var(--bg-primary);
+.events-month {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+}
+
+.month-label {
+  font-weight: var(--font-bold);
+}
+
+.events-calendar {
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-default);
   overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr;
 }
 
-.event-media {
-  width: 100%;
-  height: 220px;
+.events-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   background: var(--color-secondary-100);
-  overflow: hidden;
+  color: var(--text-primary);
+  text-align: center;
+  padding: 0.5rem 0;
+  font-weight: var(--font-semibold);
 }
 
-.event-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.events-weekdays div {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
 }
 
-.event-body {
-  padding: var(--spacing-md);
+.events-grid {
   display: grid;
-  gap: var(--spacing-sm);
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: var(--border-default);
 }
 
-.event-title {
+.event-day {
+  background: var(--bg-primary);
+  min-height: 110px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.event-day.disabled {
+  background: var(--bg-secondary);
+  color: var(--text-tertiary);
+}
+
+.event-date {
   font-family: var(--font-heading);
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  font-weight: var(--font-extrabold);
+  font-weight: var(--font-bold);
   color: var(--text-primary);
 }
 
-.event-meta {
+.event-tags {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  color: var(--text-secondary);
-  font-size: var(--text-base);
+  gap: 0.35rem;
+  flex-wrap: wrap;
 }
 
-.event-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  flex-wrap: wrap;
+.event-tag {
+  background: var(--color-secondary-100);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.15rem 0.5rem;
+  font-size: var(--text-sm);
+  line-height: 1.3;
+}
+
+.event-chip {
+  background: var(--color-secondary-100);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.5rem;
+  font-size: var(--text-sm);
+}
+
+.event-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--interactive-primary);
+}
+
+.event-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--interactive-primary);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+}
+
+.event-card-list {
+  display: grid;
+  gap: 0.5rem;
 }
 
 .events-empty {
   text-align: center;
   color: var(--text-secondary);
   margin-top: var(--spacing-lg);
+}
+
+.event-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  z-index: 3000;
+}
+
+.event-modal[hidden] {
+  display: none;
+}
+
+.event-modal-content {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  max-width: 640px;
+  width: 100%;
+  padding: var(--spacing-lg);
+  position: relative;
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.event-modal-close {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.event-modal-body h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.event-modal-body p {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.event-modal-body .event-meta {
+  color: var(--text-secondary);
+}
+
+.event-modal-body img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  max-height: 240px;
+}
+
+.events-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-lg);
+}
+
+@media (max-width: 640px) {
+  .event-day {
+    min-height: 90px;
+  }
 }
 
 @media (min-width: 768px) {

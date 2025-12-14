@@ -145,16 +145,30 @@
             </div>
         </section>
         
-        <!-- Upcoming Events Section -->
+        <!-- Events Calendar Section -->
         <section id="upcoming-events" class="events-section section">
             <div class="container">
-                <h2 class="section-title fade-in">Upcoming</h2>
-                <div id="events-grid" class="events-grid fade-in" aria-live="polite">
-                    <p class="section-subtitle">Loading upcoming events…</p>
+                <h2 class="section-title fade-in">Events</h2>
+                <div class="events-toolbar fade-in">
+                    <div class="events-month">
+                        <button class="btn btn-secondary" id="events-prev" type="button" aria-label="Previous month">←</button>
+                        <span id="events-month-label" class="month-label">Loading…</span>
+                        <button class="btn btn-secondary" id="events-next" type="button" aria-label="Next month">→</button>
+                    </div>
                 </div>
-                <p class="section-subtitle events-empty" id="events-empty" hidden>
-                    No events scheduled—stay tuned! Follow @stillgotitcollective on IG.
-                </p>
+                <div class="events-calendar fade-in" aria-live="polite">
+                    <div class="events-weekdays" id="events-weekdays"></div>
+                    <div class="events-grid" id="events-grid"></div>
+                </div>
+                <p class="section-subtitle events-empty" id="events-empty" hidden>No events scheduled—stay tuned! Follow @stillgotitcollective on IG.</p>
+            </div>
+
+            <!-- Event modal -->
+            <div class="event-modal" id="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title" hidden>
+                <div class="event-modal-content">
+                    <button class="event-modal-close" id="event-modal-close" aria-label="Close">×</button>
+                    <div class="event-modal-body" id="event-modal-body"></div>
+                </div>
             </div>
         </section>
 
