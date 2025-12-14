@@ -503,12 +503,12 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    color: var(--color-neutral-900);
+    color: var(--text-primary);
     font-weight: var(--font-semibold);
 }
 
 .hero-proof strong {
-    color: var(--color-neutral-900);
+    color: var(--text-primary);
     font-weight: var(--font-black);
 }
 
