@@ -37,6 +37,7 @@
     
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/events.css">
     
     <title>The Still Got It Collective - Curating moments you'll never forget</title>
 </head>
@@ -144,6 +145,19 @@
             </div>
         </section>
         
+        <!-- Upcoming Events Section -->
+        <section id="upcoming-events" class="events-section section">
+            <div class="container">
+                <h2 class="section-title fade-in">Upcoming</h2>
+                <div id="events-grid" class="events-grid fade-in" aria-live="polite">
+                    <p class="section-subtitle">Loading upcoming events…</p>
+                </div>
+                <p class="section-subtitle events-empty" id="events-empty" hidden>
+                    No events scheduled—stay tuned! Follow @stillgotitcollective on IG.
+                </p>
+            </div>
+        </section>
+
         <!-- Event Calendar Section -->
         <section id="calendar" class="calendar section">
             <div class="container">
@@ -350,6 +364,7 @@
     </footer>
     
     <!-- JavaScript -->
+    <script src="/assets/js/events.js"></script>
     <script src="/assets/js/scripts.js"></script>
 </body>
 </html>
