@@ -209,18 +209,3 @@
   }
 }
 
-@media (min-width: 768px) {
-  .events-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .event-card {
-    grid-template-columns: 1fr 1.2fr;
-    min-height: 260px;
-  }
-
-  .event-media {
-    height: auto;
-  }
-}
-
