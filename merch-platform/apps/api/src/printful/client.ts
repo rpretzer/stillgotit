@@ -49,7 +49,7 @@ export class PrintfulClient {
     const res = await fetch(`${this.base}${path}`, {
       method,
       headers: {
-        authorization: `Bearer ${env.PRINTFUL_API_KEY}`,
+        authorization: `Bearer ${env.PRINTFUL_TOKEN}`,
         'content-type': 'application/json'
       },
       body: body ? JSON.stringify(body) : undefined

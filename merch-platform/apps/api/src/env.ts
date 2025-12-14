@@ -16,7 +16,7 @@ export const env = {
   STRIPE_SECRET_KEY: required('STRIPE_SECRET_KEY'),
   STRIPE_WEBHOOK_SECRET: required('STRIPE_WEBHOOK_SECRET'),
 
-  PRINTFUL_API_KEY: required('PRINTFUL_API_KEY'),
+  PRINTFUL_TOKEN: required('PRINTFUL_TOKEN'),
 
   ADMIN_USER: required('ADMIN_USER'),
   ADMIN_PASS: required('ADMIN_PASS'),
