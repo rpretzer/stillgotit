@@ -1,7 +1,23 @@
 'use strict';
 
 (function() {
-  const ENDPOINTS = ['/api/events.json', '/events.json'];
+  // Event JSON schema (Decap-managed at data/events.json):
+  // [
+  //   {
+  //     "id": "big-energy-80s",
+  //     "title": "Big Energy 80’s",
+  //     "date": "2026-01-28",
+  //     "time": "6PM",
+  //     "location": "B-Side Lounge",
+  //     "venue": "Cleveland",
+  //     "description": "Pure 80’s nostalgia—synths, neon, and no pretense.",
+  //     "ctaLabel": "Get Tickets",
+  //     "ticketUrl": "https://...",
+  //     "image": "/assets/images/uploads/gallery/full/....webp"
+  //   }
+  // ]
+
+  const ENDPOINTS = ['/api/events.json', '/events.json', '/data/events.json'];
   const grid = document.getElementById('events-grid');
   const empty = document.getElementById('events-empty');
   const monthLabel = document.getElementById('events-month-label');
@@ -11,6 +27,7 @@
   const modalBody = document.getElementById('event-modal-body');
   const modalClose = document.getElementById('event-modal-close');
   const weekdaysEl = document.getElementById('events-weekdays');
+  let lastFocus = null;
 
   if (!grid || !monthLabel) return;
 
@@ -31,15 +48,18 @@
 
   function normalize(data) {
     return (Array.isArray(data) ? data : Array.isArray(data?.events) ? data.events : [])
-      .filter((e) => e?.startDate)
+      .filter((e) => e?.date || e?.startDate)
       .map((e) => ({
+        id: e.id || crypto.randomUUID(),
         title: e.title || 'Event',
-        startDate: e.startDate,
-        startTime: e.startTime || '',
+        startDate: e.startDate || e.date,
+        startTime: e.startTime || e.time || '',
         location: e.location || '',
+        venue: e.venue || '',
         ticketUrl: e.ticketUrl || '',
-        imageUrl: e.imageUrl || '',
-        description: e.description || ''
+        imageUrl: e.imageUrl || e.image || '',
+        description: e.description || '',
+        ctaLabel: e.ctaLabel || 'Get Tickets'
       }));
   }
 
@@ -67,6 +87,7 @@
 
   function renderModal(ev) {
     if (!modal || !modalBody) return;
+    lastFocus = document.activeElement;
     modalBody.innerHTML = '';
 
     const h = document.createElement('h3');
@@ -76,7 +97,7 @@
 
     const meta = document.createElement('p');
     meta.className = 'event-meta';
-    meta.textContent = `${formatDate(ev.startDate)}${ev.startTime ? ' • ' + ev.startTime : ''}${ev.location ? ' • ' + ev.location : ''}`;
+    meta.textContent = `${formatDate(ev.startDate)}${ev.startTime ? ' • ' + ev.startTime : ''}${ev.location ? ' • ' + ev.location : ''}${ev.venue ? ' • ' + ev.venue : ''}`;
     modalBody.appendChild(meta);
 
     if (ev.imageUrl) {
@@ -100,20 +121,41 @@
     btn.href = ev.ticketUrl || '#tickets';
     btn.target = '_blank';
     btn.rel = 'noopener noreferrer';
-    btn.textContent = 'Get Tickets';
+    btn.textContent = ev.ctaLabel || 'Get Tickets';
     btn.setAttribute('aria-label', `Get tickets for ${ev.title}`);
     actions.appendChild(btn);
     modalBody.appendChild(actions);
 
     modal.hidden = false;
+    modal.setAttribute('aria-labelledby', 'event-modal-title');
+
+    const focusable = modal.querySelectorAll('a,button,[tabindex]:not([tabindex="-1"])');
+    const first = focusable[0];
+    if (first) first.focus();
+
+    const handleTrap = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+      }
+      if (e.key === 'Tab' && focusable.length > 0) {
+        const f = Array.from(focusable);
+        const i = f.indexOf(document.activeElement);
+        if (e.shiftKey && i === 0) { e.preventDefault(); f[f.length - 1].focus(); }
+        else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+      }
+    };
+    modal.addEventListener('keydown', handleTrap, { once: false });
   }
 
   function closeModal() {
-    if (modal) modal.hidden = true;
+    if (modal) {
+      modal.hidden = true;
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+    }
   }
 
   function renderCalendar(events, year, month) {
-    // month is 0-indexed
     const first = new Date(year, month, 1);
     const startDay = first.getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -126,7 +168,6 @@
     }, new Map());
 
     grid.innerHTML = '';
-    // blanks before first day
     for (let i = 0; i < startDay; i++) {
       const div = document.createElement('div');
       div.className = 'event-day disabled';

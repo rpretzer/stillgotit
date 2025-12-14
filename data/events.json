@@ -1,0 +1,39 @@
+[
+  {
+    "id": "big-energy-80s",
+    "title": "Big Energy 80’s",
+    "date": "2026-01-28",
+    "time": "6PM",
+    "location": "B-Side Lounge",
+    "venue": "Cleveland",
+    "description": "Pure 80’s nostalgia—synths, neon, and no pretense.",
+    "ctaLabel": "Get Tickets",
+    "ticketUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+    "image": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-19-7dffb5a5b6-full.webp"
+  },
+  {
+    "id": "90s-day-party-vol3",
+    "title": "90s Day Party: Still Got It Vol. 3",
+    "date": "2025-12-20",
+    "time": "2PM",
+    "location": "The Warehouse Loft",
+    "venue": "Cleveland",
+    "description": "Hip hop & house vibes with a retro twist. Dress code: bold colors.",
+    "ctaLabel": "Get Tickets",
+    "ticketUrl": "https://squareup.com/checkout/vol3",
+    "image": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-10-aaa307ef5e-full.webp"
+  },
+  {
+    "id": "house-classics",
+    "title": "Still Got It: House Classics",
+    "date": "2026-03-15",
+    "time": "9PM",
+    "location": "The Warehouse Loft",
+    "venue": "Cleveland",
+    "description": "Late-night house and disco cuts with special guest DJs.",
+    "ctaLabel": "Get Tickets",
+    "ticketUrl": "https://squareup.com/checkout/house-classics",
+    "image": "/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-11-ee2d5ab667-full.webp"
+  }
+]
+

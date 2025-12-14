@@ -175,3 +175,27 @@ collections:
                   - { label: "Primary", value: "primary" }
                   - { label: "Secondary", value: "secondary" }
                 default: "primary"
+
+  - name: "events"
+    label: "Events"
+    files:
+      - name: "events-file"
+        label: "Events JSON"
+        file: "data/events.json"
+        format: "json"
+        fields:
+          - label: "Events"
+            name: "events"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "ID", name: "id", widget: "string", required: true, hint: "Slug/id for the event" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: "Time", name: "time", widget: "string", required: false }
+              - { label: "Location", name: "location", widget: "string", required: false }
+              - { label: "Venue", name: "venue", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "CTA Label", name: "ctaLabel", widget: "string", required: false, default: "Get Tickets" }
+              - { label: "Ticket URL", name: "ticketUrl", widget: "string", required: false }
+              - { label: "Image URL", name: "image", widget: "string", required: false, hint: "Optional poster/hero image" }
