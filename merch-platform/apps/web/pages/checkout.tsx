@@ -4,6 +4,7 @@ import { apiGet, apiPost } from '../lib/api';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 type Product = { id: string; name: string; priceCents: number; currency: string };
 type ProductsResp = { products: Product[] };
@@ -29,6 +30,8 @@ export default function CheckoutPage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   const cart = loadCart();
   const byId = new Map((data?.products || []).map((p) => [p.id, p]));
@@ -42,8 +45,7 @@ export default function CheckoutPage() {
     if (cart.items.length === 0) router.replace('/cart');
   }, []);
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const createPaymentIntent = async () => {
     setError('');
     setSubmitting(true);
     try {
@@ -62,17 +64,49 @@ export default function CheckoutPage() {
         items: cart.items.map((i) => ({ productId: i.productId, qty: i.qty }))
       };
       const resp = await apiPost<{ orderId: string; clientSecret: string }>('/api/checkout', payload);
-      const stripe = await stripePromise;
-      if (!stripe) throw new Error('Stripe not loaded');
-      const result = await stripe.confirmCardPayment(resp.clientSecret);
-      if (result.error) throw new Error(result.error.message);
-      saveCart({ items: [] });
-      router.push(`/orders/${resp.orderId}`);
+      setOrderId(resp.orderId);
+      setClientSecret(resp.clientSecret);
     } catch (err: any) {
       setError(err?.message || 'Checkout failed');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const CheckoutForm = () => {
+    const stripe = useStripe();
+    const elements = useElements();
+
+    const onSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!stripe || !elements || !clientSecret || !orderId) return;
+      setSubmitting(true);
+      setError('');
+      const { error: stripeError } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/orders/${orderId}`
+        },
+        redirect: 'if_required'
+      });
+      if (stripeError) {
+        setError(stripeError.message || 'Payment failed');
+        setSubmitting(false);
+        return;
+      }
+      saveCart({ items: [] });
+      router.push(`/orders/${orderId}`);
+    };
+
+    return (
+      <form className="stack" onSubmit={onSubmit}>
+        <PaymentElement />
+        <button className="btn btn-primary" type="submit" disabled={submitting || !stripe || !elements}>
+          {submitting ? 'Processing…' : 'Pay with Stripe'}
+        </button>
+        {error && <p style={{ color: '#ef4444' }}>{error}</p>}
+      </form>
+    );
   };
 
   return (
@@ -82,7 +116,7 @@ export default function CheckoutPage() {
         <div>
           <strong>Subtotal:</strong> {formatMoney(subtotal, currency)}
         </div>
-        <form className="stack" onSubmit={onSubmit}>
+        <form className="stack" onSubmit={(e) => { e.preventDefault(); createPaymentIntent(); }}>
           <input required placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           <input required placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input required placeholder="Address 1" value={form.address1} onChange={(e) => setForm({ ...form, address1: e.target.value })} />
@@ -92,9 +126,13 @@ export default function CheckoutPage() {
             <input required placeholder="State" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
             <input required placeholder="Postal" value={form.postalCode} onChange={(e) => setForm({ ...form, postalCode: e.target.value })} />
           </div>
-          <button className="btn btn-primary" type="submit" disabled={submitting}>Pay with Stripe</button>
-          {error && <p style={{ color: '#ef4444' }}>{error}</p>}
         </form>
+
+        {clientSecret && (
+          <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <CheckoutForm />
+          </Elements>
+        )}
       </div>
     </div>
   );
