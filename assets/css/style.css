@@ -801,7 +801,7 @@ body {
     gap: var(--spacing-sm);
     align-items: center;
     flex-wrap: wrap;
-    margin-bottom: var(--spacing-md);
+    margin-top: var(--spacing-md);
 }
 
 .gallery-controls select {

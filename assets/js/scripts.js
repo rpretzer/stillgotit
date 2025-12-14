@@ -368,17 +368,14 @@
                 return bf - af;
             });
 
-            // Pagination + filter
-            const tags = Array.from(new Set(items.flatMap((it) => Array.isArray(it.tags) ? it.tags : []).filter(Boolean)));
+            // Pagination
             const state = {
                 items,
-                filtered: items,
-                tag: 'all',
                 page: 1,
                 pageSize: 12
             };
 
-            const filterEl = document.getElementById('gallery-filter');
+            const pageSizeEl = document.getElementById('gallery-page-size');
             const prevEl = document.getElementById('gallery-prev');
             const nextEl = document.getElementById('gallery-next');
             const pageInfo = document.getElementById('gallery-page-info');
@@ -387,11 +384,11 @@
             grid.innerHTML = '';
 
             function renderPage() {
-                const total = state.filtered.length;
+                const total = state.items.length;
                 const pages = Math.max(1, Math.ceil(total / state.pageSize));
                 state.page = Math.min(Math.max(1, state.page), pages);
                 const start = (state.page - 1) * state.pageSize;
-                const slice = state.filtered.slice(start, start + state.pageSize);
+                const slice = state.items.slice(start, start + state.pageSize);
 
                 grid.innerHTML = '';
                 slice.forEach((img, idx) => {
@@ -420,34 +417,15 @@
                 }
             }
 
-            function applyFilter(tag) {
-                state.tag = tag;
-                state.page = 1;
-                if (tag === 'all') {
-                    state.filtered = state.items;
-                } else {
-                    state.filtered = state.items.filter((it) => Array.isArray(it.tags) && it.tags.includes(tag));
-                }
-                renderPage();
-            }
-
-            if (filterEl) {
-                // populate tags
-                if (tags.length === 0) {
-                    filterEl.hidden = true;
-                } else {
-                    tags.forEach((t) => {
-                        const opt = document.createElement('option');
-                        opt.value = t;
-                        opt.textContent = t;
-                        filterEl.appendChild(opt);
-                    });
-                    filterEl.addEventListener('change', () => applyFilter(filterEl.value));
-                }
-            }
-
             if (prevEl) prevEl.addEventListener('click', () => { state.page -= 1; renderPage(); });
             if (nextEl) nextEl.addEventListener('click', () => { state.page += 1; renderPage(); });
+            if (pageSizeEl) {
+                pageSizeEl.addEventListener('change', () => {
+                    state.pageSize = Number(pageSizeEl.value) || 12;
+                    state.page = 1;
+                    renderPage();
+                });
+            }
 
             // Initial render
             renderPage();
