@@ -1,6 +1,7 @@
 {
   "hero": {
-    "tagline": "Dance like you did. Sleep like you should."
+    "tagline": "Dance like you did. Sleep like you should.",
+    "imageUrl": ""
   },
   "banner": {
     "emoji": "💿",

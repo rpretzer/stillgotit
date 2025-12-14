@@ -75,6 +75,7 @@ collections:
             widget: "object"
             fields:
               - { label: "Tagline", name: "tagline", widget: "string" }
+              - { label: "Hero Background Image URL", name: "imageUrl", widget: "string", required: false, hint: "Paste a full URL or a path like /assets/images/uploads/gallery/full/....webp. Leave blank to use the default." }
 
           - label: "Announcement Banner"
             name: "banner"

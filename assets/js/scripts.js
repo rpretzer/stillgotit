@@ -110,6 +110,15 @@
                 heroTagline.textContent = settings.hero.tagline;
             }
 
+            // Hero background image (CMS override)
+            const heroBg = document.querySelector('.hero-background.hero-background-img');
+            const heroImgUrl = settings?.hero?.imageUrl;
+            if (heroBg && heroImgUrl && typeof heroImgUrl === 'string' && heroImgUrl.trim().length > 0) {
+                heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url("${heroImgUrl.trim()}")`;
+                heroBg.style.backgroundSize = 'cover';
+                heroBg.style.backgroundPosition = 'center';
+            }
+
             // Banner
             const emojiEl = document.getElementById('banner-emoji');
             const strongEl = document.getElementById('banner-strong');
