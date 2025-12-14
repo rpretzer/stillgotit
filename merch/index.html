@@ -33,6 +33,10 @@
           <li><a href="#products" class="nav-link">Merch</a></li>
           <li><a href="#cart" class="nav-link">Cart</a></li>
         </ul>
+
+        <button class="btn btn-secondary nav-cart" id="nav-cart" type="button">
+          Cart <span class="merch-cart-count" id="cart-count">0</span>
+        </button>
       </div>
     </div>
   </nav>
@@ -54,9 +58,6 @@
             <span class="merch-pill-label">Catalog:</span>
             <code class="merch-pill-value" id="merch-source">content/merch.json</code>
           </div>
-          <button class="btn btn-secondary merch-cart-button" id="open-cart">
-            Cart <span class="merch-cart-count" id="cart-count">0</span>
-          </button>
         </div>
 
         <div class="merch-grid" id="merch-grid" data-merch-source="/content/merch.json">

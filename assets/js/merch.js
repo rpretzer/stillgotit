@@ -20,6 +20,7 @@
     clear: document.getElementById('clear-cart'),
     openCart: document.getElementById('open-cart'),
     closeCart: document.getElementById('close-cart'),
+    navCart: document.getElementById('nav-cart'),
     error: document.getElementById('merch-error')
   };
 
@@ -288,7 +289,9 @@
       saveCart({ items: [] });
       renderCart(loadCart(), catalog);
     });
-    if (els.openCart) els.openCart.addEventListener('click', () => { window.location.hash = '#cart'; });
+    const openCart = () => { window.location.hash = '#cart'; };
+    if (els.openCart) els.openCart.addEventListener('click', openCart);
+    if (els.navCart) els.navCart.addEventListener('click', openCart);
     if (els.closeCart) els.closeCart.addEventListener('click', () => { window.location.hash = '#products'; });
   }
 

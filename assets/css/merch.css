@@ -13,7 +13,7 @@
 .merch-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: var(--spacing-md);
   flex-wrap: wrap;
   margin-bottom: var(--spacing-lg);
@@ -81,7 +81,8 @@
   padding: 0.75rem 0.75rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-family: var(--font-body);
 }
 
@@ -101,6 +102,12 @@
   color: var(--text-primary);
   font-weight: var(--font-black);
   padding: 0 0.5rem;
+}
+
+.nav-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .merch-h2 {
@@ -173,6 +180,29 @@
 
 .merch-error {
   color: var(--status-error);
+}
+
+@media (max-width: 640px) {
+  .merch-main {
+    padding-top: 72px;
+  }
+  .merch-toolbar {
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  .merch-grid {
+    gap: var(--spacing-md);
+  }
+  .nav-cart {
+    padding: 0.5rem 0.9rem;
+  }
+  .merch-cart-item {
+    grid-template-columns: 1fr;
+  }
+  .merch-cart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 
