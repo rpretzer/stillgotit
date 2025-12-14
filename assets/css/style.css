@@ -474,8 +474,8 @@ body {
 }
 
 .announcement-banner {
-    /* Match the light blue used by the Event Calendar section */
-    background: rgba(255,255,255,0.9);
+    /* High-contrast container for hero info/CTAs */
+    background: #ffffff;
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
@@ -503,6 +503,7 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
+    color: var(--text-primary);
 }
 
 .hero-ctas {
@@ -511,6 +512,24 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: var(--spacing-sm);
+}
+
+/* Keep CTA buttons readable inside the banner */
+.announcement-banner .btn {
+    text-decoration: none;
+    color: var(--text-inverse);
+}
+
+.announcement-banner .btn-primary {
+    background: var(--interactive-primary);
+    border: none;
+    color: var(--text-inverse);
+}
+
+.announcement-banner .btn-secondary {
+    background: var(--color-secondary-500);
+    border: none;
+    color: var(--text-inverse);
 }
 
 @media (min-width: 768px) {
