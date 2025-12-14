@@ -427,6 +427,13 @@ body {
     pointer-events: none;
 }
 
+.hero-background.hero-background-img {
+    background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url("/assets/images/uploads/gallery/full/still-got-it-collective-11-25-25-10-aaa307ef5e-full.webp");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.6;
+}
+
 .hero-content {
     position: relative;
     z-index: 1;
@@ -468,7 +475,7 @@ body {
 
 .announcement-banner {
     /* Match the light blue used by the Event Calendar section */
-    background: var(--color-secondary-100);
+    background: rgba(255,255,255,0.9);
     padding: var(--spacing-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
@@ -488,6 +495,22 @@ body {
     color: var(--interactive-primary);
     text-decoration: underline;
     font-weight: var(--font-semibold);
+}
+
+.hero-proof {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-ctas {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: var(--spacing-sm);
 }
 
 @media (min-width: 768px) {

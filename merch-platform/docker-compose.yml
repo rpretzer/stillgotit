@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: sgic
+      POSTGRES_PASSWORD: sgic
+      POSTGRES_DB: sgic_merch
+    ports:
+      - "5433:5432"
+    volumes:
+      - sgic_merch_pg:/var/lib/postgresql/data
+
+volumes:
+  sgic_merch_pg:
+
+
