@@ -378,7 +378,6 @@
             const pageSizeEl = document.getElementById('gallery-page-size');
             const prevEl = document.getElementById('gallery-prev');
             const nextEl = document.getElementById('gallery-next');
-            const pageInfo = document.getElementById('gallery-page-info');
 
             // Clear fallback HTML once CMS content is ready
             grid.innerHTML = '';
@@ -408,7 +407,6 @@
                     grid.appendChild(cell);
                 });
 
-                if (pageInfo) pageInfo.textContent = `Page ${state.page} of ${Math.max(1, pages)}`;
                 if (prevEl) prevEl.disabled = state.page <= 1;
                 if (nextEl) nextEl.disabled = state.page >= pages;
 
