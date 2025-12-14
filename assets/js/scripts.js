@@ -368,30 +368,89 @@
                 return bf - af;
             });
 
+            // Pagination + filter
+            const tags = Array.from(new Set(items.flatMap((it) => Array.isArray(it.tags) ? it.tags : []).filter(Boolean)));
+            const state = {
+                items,
+                filtered: items,
+                tag: 'all',
+                page: 1,
+                pageSize: 12
+            };
+
+            const filterEl = document.getElementById('gallery-filter');
+            const prevEl = document.getElementById('gallery-prev');
+            const nextEl = document.getElementById('gallery-next');
+            const pageInfo = document.getElementById('gallery-page-info');
+
             // Clear fallback HTML once CMS content is ready
             grid.innerHTML = '';
 
-            items.forEach((img, idx) => {
-                const fullSrc = img?.src || img?.srcUpload;
-                if (!fullSrc) return;
-                const cell = document.createElement('div');
-                cell.className = 'gallery-item';
-                cell.dataset.galleryIndex = String(idx);
+            function renderPage() {
+                const total = state.filtered.length;
+                const pages = Math.max(1, Math.ceil(total / state.pageSize));
+                state.page = Math.min(Math.max(1, state.page), pages);
+                const start = (state.page - 1) * state.pageSize;
+                const slice = state.filtered.slice(start, start + state.pageSize);
 
-                const el = document.createElement('img');
-                el.loading = 'lazy';
-                const thumbSrc = img?.thumb || img?.thumbUpload || fullSrc;
-                el.src = thumbSrc;
-                el.alt = img.alt || `Gallery image ${idx + 1}`;
-                // store full-res for lightbox
-                el.dataset.fullSrc = fullSrc;
-                cell.appendChild(el);
-                grid.appendChild(cell);
-            });
+                grid.innerHTML = '';
+                slice.forEach((img, idx) => {
+                    const fullSrc = img?.src || img?.srcUpload;
+                    if (!fullSrc) return;
+                    const cell = document.createElement('div');
+                    cell.className = 'gallery-item';
+                    cell.dataset.galleryIndex = String(start + idx);
 
-            if (typeof window.__observeFadeIns === 'function') {
-                window.__observeFadeIns(grid);
+                    const el = document.createElement('img');
+                    el.loading = 'lazy';
+                    const thumbSrc = img?.thumb || img?.thumbUpload || fullSrc;
+                    el.src = thumbSrc;
+                    el.alt = img.alt || `Gallery image ${start + idx + 1}`;
+                    el.dataset.fullSrc = fullSrc;
+                    cell.appendChild(el);
+                    grid.appendChild(cell);
+                });
+
+                if (pageInfo) pageInfo.textContent = `Page ${state.page} of ${Math.max(1, pages)}`;
+                if (prevEl) prevEl.disabled = state.page <= 1;
+                if (nextEl) nextEl.disabled = state.page >= pages;
+
+                if (typeof window.__observeFadeIns === 'function') {
+                    window.__observeFadeIns(grid);
+                }
             }
+
+            function applyFilter(tag) {
+                state.tag = tag;
+                state.page = 1;
+                if (tag === 'all') {
+                    state.filtered = state.items;
+                } else {
+                    state.filtered = state.items.filter((it) => Array.isArray(it.tags) && it.tags.includes(tag));
+                }
+                renderPage();
+            }
+
+            if (filterEl) {
+                // populate tags
+                if (tags.length === 0) {
+                    filterEl.hidden = true;
+                } else {
+                    tags.forEach((t) => {
+                        const opt = document.createElement('option');
+                        opt.value = t;
+                        opt.textContent = t;
+                        filterEl.appendChild(opt);
+                    });
+                    filterEl.addEventListener('change', () => applyFilter(filterEl.value));
+                }
+            }
+
+            if (prevEl) prevEl.addEventListener('click', () => { state.page -= 1; renderPage(); });
+            if (nextEl) nextEl.addEventListener('click', () => { state.page += 1; renderPage(); });
+
+            // Initial render
+            renderPage();
         } catch (err) {
             console.warn('Gallery load failed:', err);
         }

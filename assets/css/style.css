@@ -796,6 +796,45 @@ body {
     }
 }
 
+.gallery-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-md);
+}
+
+.gallery-controls select {
+    padding: 0.65rem 0.9rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-default);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+}
+
+.gallery-pager {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.page-info {
+    font-family: var(--font-body);
+    color: var(--text-secondary);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
 /* ===== Lightbox Modal ===== */
 .lightbox {
     display: none;

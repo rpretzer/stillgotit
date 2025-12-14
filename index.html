@@ -195,6 +195,17 @@
         <section id="gallery" class="gallery section">
             <div class="container">
                 <h2 class="section-title fade-in">Event Gallery</h2>
+                <div class="gallery-controls fade-in">
+                    <label for="gallery-filter" class="sr-only">Filter gallery</label>
+                    <select id="gallery-filter" aria-label="Filter gallery by tag">
+                        <option value="all">All</option>
+                    </select>
+                    <div class="gallery-pager">
+                        <button class="btn btn-secondary" id="gallery-prev" type="button" aria-label="Previous page">Prev</button>
+                        <span id="gallery-page-info" class="page-info">Page 1</span>
+                        <button class="btn btn-secondary" id="gallery-next" type="button" aria-label="Next page">Next</button>
+                    </div>
+                </div>
                 <div class="gallery-grid fade-in" id="gallery-grid" data-gallery-source="content/gallery.json">
                     <!-- CMS (Decap): This section is auto-rendered from content/gallery.json by assets/js/scripts.js -->
                     <!-- Fallback content (shown if JS fails or while loading): -->
