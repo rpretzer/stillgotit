@@ -3,21 +3,21 @@
     "tagline": "Dance like you did. Sleep like you should."
   },
   "banner": {
-    "emoji": "",
+    "emoji": "💿",
     "strongText": "Next Event:",
-    "text": "Join us for an unforgettable night!",
-    "ctaLabel": "Get tickets",
-    "ctaUrl": "#tickets"
+    "text": "80's Dance Party — Jan 29, 2026 • B-Side Lounge, Cleveland",
+    "ctaLabel": "Get Tickets",
+    "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226"
   },
   "tickets": {
-    "ticketsUrl": "https://ticketscandy.com",
-    "ticketsBody": "Secure your spot at our upcoming events. Limited availability!",
+    "ticketsUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+    "ticketsBody": "Still Got It Collective - 80's Dance Party. Thu, Jan 29, 2026 • 6–10 PM • B-Side Lounge, Cleveland.",
     "ticketsLabel": "Get Tickets",
-    "squareNote": "REPLACE: Update the Square Store URL above with your actual store link",
+    "squareNote": "Shop our merch at the link above.",
     "ticketsTitle": "Buy Tickets",
     "squareUrl": "/merch/",
     "squareLabel": "Shop Merch",
-    "ticketsNote": "REPLACE: Update the ticketing URL above with your actual link",
+    "ticketsNote": "Hosted by TicketsCandy. Preferred admission available.",
     "squareTitle": "Shop Square Store",
     "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective."
   },
