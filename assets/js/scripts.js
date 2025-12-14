@@ -375,7 +375,6 @@
                 pageSize: 12
             };
 
-            const pageSizeEl = document.getElementById('gallery-page-size');
             const prevEl = document.getElementById('gallery-prev');
             const nextEl = document.getElementById('gallery-next');
 
@@ -417,13 +416,6 @@
 
             if (prevEl) prevEl.addEventListener('click', () => { state.page -= 1; renderPage(); });
             if (nextEl) nextEl.addEventListener('click', () => { state.page += 1; renderPage(); });
-            if (pageSizeEl) {
-                pageSizeEl.addEventListener('change', () => {
-                    state.pageSize = Number(pageSizeEl.value) || 12;
-                    state.page = 1;
-                    renderPage();
-                });
-            }
 
             // Initial render
             renderPage();

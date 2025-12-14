@@ -767,6 +767,7 @@ body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
 }
 
 .gallery-item {
@@ -802,15 +803,6 @@ body {
     align-items: center;
     flex-wrap: wrap;
     margin-top: var(--spacing-md);
-}
-
-.gallery-controls select {
-    padding: 0.65rem 0.9rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-default);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-family: var(--font-body);
 }
 
 .gallery-pager {
