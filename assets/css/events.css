@@ -42,6 +42,23 @@
   font-weight: var(--font-semibold);
 }
 
+/* Dark mode styles for calendar weekdays and event tags */
+:root[data-theme="dark"] .events-weekdays,
+:root[data-theme="dark"] .event-tag,
+:root[data-theme="dark"] .event-chip {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .events-weekdays,
+  :root:not([data-theme]) .event-tag,
+  :root:not([data-theme]) .event-chip {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+}
+
 .events-weekdays div {
   font-family: var(--font-body);
   font-size: var(--text-sm);
