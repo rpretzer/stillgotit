@@ -23,3 +23,6 @@ yarn.lock
 # Build outputs
 dist/
 build/
+
+# Cloudflare Workers local development
+.wrangler/
