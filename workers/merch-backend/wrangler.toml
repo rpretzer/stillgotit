@@ -8,7 +8,7 @@ compatibility_date = "2025-12-13"
 [[d1_databases]]
 binding = "DB"
 database_name = "sgic-merch"
-database_id = "YOUR_D1_DATABASE_ID"  # Replace with your actual D1 database ID from Cloudflare dashboard
+database_id = "d818d409-6eb3-4a31-80c9-7689808e8d71"
 
 [vars]
 # Public site base used for redirect after successful checkout
