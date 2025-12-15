@@ -105,18 +105,20 @@ async function createPaymentIntent(
   currency: string,
   metadata: Record<string, string>
 ): Promise<{ clientSecret: string; id: string }> {
+  const params = new URLSearchParams();
+  params.set('amount', String(amountCents));
+  params.set('currency', currency.toLowerCase());
+  if (metadata.orderId) params.set('metadata[orderId]', metadata.orderId);
+  // Use Stripe's expected form-encoded syntax for nested objects
+  params.set('automatic_payment_methods[enabled]', 'true');
+
   const res = await fetch('https://api.stripe.com/v1/payment_intents', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
+      Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    body: new URLSearchParams({
-      amount: String(amountCents),
-      currency: currency.toLowerCase(),
-      'metadata[orderId]': metadata.orderId,
-      automatic_payment_methods: JSON.stringify({ enabled: true })
-    })
+    body: params
   });
 
   const data = await res.json();
