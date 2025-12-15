@@ -136,17 +136,6 @@
             if (heroTitle && settings?.hero?.title) heroTitle.textContent = settings.hero.title;
             const heroTagline = document.getElementById('hero-tagline');
             if (heroTagline && settings?.hero?.tagline) heroTagline.textContent = settings.hero.tagline;
-            const heroProof = document.querySelector('.hero-proof');
-            if (heroProof && settings?.hero?.proofText) {
-                const parts = settings.hero.proofText.split(' • ');
-                heroProof.innerHTML = parts.map((part, i) => {
-                    const match = part.match(/^(\d+[km]?\+?)\s*(.+)$/);
-                    if (match) {
-                        return `<strong>${match[1]}</strong> ${match[2]}`;
-                    }
-                    return i === 0 ? `<strong>${part}</strong>` : part;
-                }).join(' • ');
-            }
             const heroCtaPrimary = document.getElementById('hero-cta-primary');
             if (heroCtaPrimary) {
                 if (settings?.hero?.ctaPrimaryLabel) heroCtaPrimary.textContent = settings.hero.ctaPrimaryLabel;
