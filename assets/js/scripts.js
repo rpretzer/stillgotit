@@ -939,11 +939,18 @@
             createToggle(theme);
         }
 
-        // Initialize on load
+        // Initialize theme immediately (before DOM is ready)
+        const theme = getStoredTheme();
+        setTheme(theme);
+
+        // Create toggle when DOM is ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initTheme);
+            document.addEventListener('DOMContentLoaded', () => {
+                createToggle(theme);
+            });
         } else {
-            initTheme();
+            // DOM already loaded, create toggle now
+            createToggle(theme);
         }
     })();
 
