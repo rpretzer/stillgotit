@@ -1,4 +1,12 @@
 {
+  "success": {
+    "pageTitle": "Order Confirmed | Merch",
+    "title": "Order confirmed",
+    "message": "Thanks! Your payment was completed successfully.",
+    "note": "A receipt will be emailed to you. If you have questions, reach out via Instagram.",
+    "backToMerchLabel": "Back to merch",
+    "backToSiteLabel": "Back to site"
+  },
   "meta": {
     "siteName": "The Still Got It Collective",
     "tagline": "Curating moments you'll never forget",
@@ -7,15 +15,29 @@
     "ogImage": "https://www.stillgotitcollective.com/assets/images/og-image.jpg",
     "ogUrl": "https://www.stillgotitcollective.com"
   },
-  "hero": {
-    "title": "We still throw nights you talk about.",
-    "tagline": "Dance like you did. Sleep like you should.",
-    "imageUrl": "",
-    "proofText": "2.4k+ attendees • 47 photos • Merch drop live",
-    "ctaPrimaryLabel": "Get Tickets",
-    "ctaPrimaryUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
-    "ctaSecondaryLabel": "See the vibe",
-    "ctaSecondaryUrl": "#gallery"
+  "checkout": {
+    "processingLabel": "Processing...",
+    "payNowLabel": "Pay Now",
+    "emptyCartRedirect": "Your cart is empty.",
+    "pageTitle": "Checkout | The Still Got It Collective",
+    "shippingTitle": "Shipping Information",
+    "pageDescription": "Secure checkout for Still Got It Collective merch.",
+    "backLabel": "Back",
+    "continueLabel": "Continue to Payment",
+    "paymentTitle": "Payment",
+    "title": "Checkout"
+  },
+  "tickets": {
+    "ticketsUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+    "ticketsBody": "Still Got It Collective - 80's Dance Party. Thu, Jan 29, 2026 • 6–10 PM • B-Side Lounge, Cleveland.",
+    "ticketsLabel": "Get Tickets",
+    "squareNote": "Shop our merch at the link above.",
+    "ticketsTitle": "Buy Tickets",
+    "squareUrl": "/merch/",
+    "squareLabel": "Shop Merch",
+    "ticketsNote": "Hosted by TicketsCandy. Preferred admission available.",
+    "squareTitle": "Buy our cool shit",
+    "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective."
   },
   "banner": {
     "emoji": "",
@@ -43,18 +65,6 @@
       "subtitle": "Stay connected! Follow {handle} for the latest updates and behind-the-scenes content."
     }
   },
-  "tickets": {
-    "ticketsUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
-    "ticketsBody": "Still Got It Collective - 80's Dance Party. Thu, Jan 29, 2026 • 6–10 PM • B-Side Lounge, Cleveland.",
-    "ticketsLabel": "Get Tickets",
-    "squareNote": "Shop our merch at the link above.",
-    "ticketsTitle": "Buy Tickets",
-    "squareUrl": "/merch/",
-    "squareLabel": "Shop Merch",
-    "ticketsNote": "Hosted by TicketsCandy. Preferred admission available.",
-    "squareTitle": "Buy our cool shit",
-    "squareBody": "Browse our exclusive merchandise and support The Still Got It Collective."
-  },
   "instagram": {
     "username": "stillgotitcollective",
     "profileUrl": "https://www.instagram.com/stillgotitcollective",
@@ -77,6 +87,16 @@
       }
     ]
   },
+  "hero": {
+    "title": "Dance like you did. Sleep like you should.",
+    "tagline": "Maximum fun. Reasonable bedtime.",
+    "imageUrl": "",
+    "proofText": "2.4k+ attendees • 47 photos • Merch drop live",
+    "ctaPrimaryLabel": "Get Tickets",
+    "ctaPrimaryUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+    "ctaSecondaryLabel": "See the vibe",
+    "ctaSecondaryUrl": "#gallery"
+  },
   "footer": {
     "organizationName": "The Still Got It Collective",
     "tagline": "Curating moments you'll never forget",
@@ -94,44 +114,24 @@
       }
     ]
   },
-  "merch": {
-    "pageTitle": "Merch",
-    "pageDescription": "Shop Still Got It Collective merch. Secure checkout powered by Stripe.",
-    "heroTitle": "Merch",
-    "heroSubtitle": "Secure checkout powered by Stripe. US shipping only (international by request).",
-    "catalogLabel": "Catalog:",
-    "cartTitle": "Your cart",
-    "cartCloseLabel": "Close",
-    "subtotalLabel": "Subtotal",
-    "shippingNote": "Shipping and taxes are collected at checkout.",
-    "checkoutLabel": "Checkout",
-    "clearCartLabel": "Clear cart",
-    "emptyCartMessage": "Your cart is empty.",
-    "loadingMessage": "Loading merch…",
-    "loadingSubtext": "If this takes too long, refresh the page.",
-    "errorMessage": "Could not load merch."
-  },
-  "checkout": {
-    "pageTitle": "Checkout | The Still Got It Collective",
-    "pageDescription": "Secure checkout for Still Got It Collective merch.",
-    "title": "Checkout",
-    "shippingTitle": "Shipping Information",
-    "paymentTitle": "Payment",
-    "continueLabel": "Continue to Payment",
-    "backLabel": "Back",
-    "payNowLabel": "Pay Now",
-    "processingLabel": "Processing...",
-    "emptyCartRedirect": "Your cart is empty."
-  },
-  "success": {
-    "pageTitle": "Order Confirmed | Merch",
-    "title": "Order confirmed",
-    "message": "Thanks! Your payment was completed successfully.",
-    "note": "A receipt will be emailed to you. If you have questions, reach out via Instagram.",
-    "backToMerchLabel": "Back to merch",
-    "backToSiteLabel": "Back to site"
-  },
   "calendar": {
     "embedUrl": ""
+  },
+  "merch": {
+    "shippingNote": "Shipping and taxes are collected at checkout.",
+    "clearCartLabel": "Clear cart",
+    "pageTitle": "Merch",
+    "loadingMessage": "Loading merch…",
+    "pageDescription": "Shop Still Got It Collective merch. Secure checkout powered by Stripe.",
+    "checkoutLabel": "Checkout",
+    "subtotalLabel": "Subtotal",
+    "loadingSubtext": "If this takes too long, refresh the page.",
+    "heroSubtitle": "Secure checkout powered by Stripe. US shipping only (international by request).",
+    "cartTitle": "Your cart",
+    "emptyCartMessage": "Your cart is empty.",
+    "catalogLabel": "Catalog:",
+    "cartCloseLabel": "Close",
+    "heroTitle": "Merch",
+    "errorMessage": "Could not load merch."
   }
 }
