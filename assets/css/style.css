@@ -1048,7 +1048,7 @@ body {
 .note {
     font-family: var(--font-body);
     font-size: var(--text-sm);
-    color: var(--text-tertiary);
+    color: var(--text-secondary);
     font-style: italic;
     margin-top: var(--spacing-md);
     text-align: center;
