@@ -10,11 +10,15 @@
 
   // Get Stripe publishable key (from injected file or fallback)
   const STRIPE_PK = window.STRIPE_PUBLISHABLE_KEY || '';
-  if (!STRIPE_PK) {
-    console.error('Stripe publishable key not found. Set window.STRIPE_PUBLISHABLE_KEY or ensure assets/js/stripe-publishable.js is loaded.');
+  
+  let stripe = null;
+  if (STRIPE_PK) {
+    stripe = Stripe(STRIPE_PK);
+  } else {
+    console.error('Stripe publishable key not found.');
+    console.error('In production, this is set by GitHub Actions from NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY secret.');
+    console.error('For local testing, set window.STRIPE_PUBLISHABLE_KEY in checkout.html or use a test key.');
   }
-
-  const stripe = STRIPE_PK ? Stripe(STRIPE_PK) : null;
   let elements = null;
   let paymentElement = null;
   let clientSecret = null;

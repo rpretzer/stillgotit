@@ -17,6 +17,16 @@
   <link rel="stylesheet" href="/assets/css/merch.css" />
 
   <script src="https://js.stripe.com/v3/"></script>
+  <!-- Stripe publishable key (injected by GitHub Actions, or set manually for local testing) -->
+  <script>
+    // Fallback for local development - set your test key here if needed
+    // In production, this is set by assets/js/stripe-publishable.js from GitHub Actions
+    if (typeof window.STRIPE_PUBLISHABLE_KEY === 'undefined') {
+      // Try to load from generated file (will be undefined if file doesn't exist)
+      // For local testing, you can uncomment and set your test key:
+      // window.STRIPE_PUBLISHABLE_KEY = 'pk_test_...';
+    }
+  </script>
   <script src="/assets/js/stripe-publishable.js"></script>
 </head>
 <body>
