@@ -691,7 +691,7 @@ body {
 }
 
 .btn-primary {
-    background: var(--interactive-primary);
+    background: var(--color-primary-700); /* darker for WCAG AA */
     color: var(--text-inverse);
     box-shadow: var(--shadow-sm);
 }
@@ -699,19 +699,19 @@ body {
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    background: var(--interactive-primary-hover);
+    background: var(--color-primary-800);
     color: var(--text-inverse);
 }
 
 .btn-secondary {
-    background: var(--color-secondary-500);
+    background: var(--color-secondary-700); /* darker for WCAG AA */
     color: var(--text-inverse);
-    border-color: var(--color-secondary-500);
+    border-color: var(--color-secondary-700);
 }
 
 .btn-secondary:hover {
-    background: var(--interactive-secondary-hover);
-    border-color: var(--interactive-secondary-hover);
+    background: var(--color-secondary-800);
+    border-color: var(--color-secondary-800);
     transform: translateY(-2px);
 }
 
