@@ -28,8 +28,13 @@ jobs:
       - name: Inject Stripe publishable key
         run: |
           mkdir -p assets/js
-          echo "window.STRIPE_PUBLISHABLE_KEY='${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}'"; \
-          echo "window.STRIPE_PUBLISHABLE_KEY='${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}'" > assets/js/stripe-publishable.js
+          if [ -z "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" ]; then
+            echo "⚠️ Warning: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY secret is not set"
+            echo "window.STRIPE_PUBLISHABLE_KEY='';" > assets/js/stripe-publishable.js
+          else
+            echo "✓ Stripe publishable key found, injecting..."
+            echo "window.STRIPE_PUBLISHABLE_KEY='$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY';" > assets/js/stripe-publishable.js
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
