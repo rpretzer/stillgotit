@@ -109,8 +109,8 @@ async function createPaymentIntent(
   params.set('amount', String(amountCents));
   params.set('currency', currency.toLowerCase());
   if (metadata.orderId) params.set('metadata[orderId]', metadata.orderId);
-  // Use Stripe's expected form-encoded syntax for nested objects
-  params.set('automatic_payment_methods[enabled]', 'true');
+  // Restrict to card payments only (no Cash App, Klarna, Amazon Pay, etc.)
+  params.append('payment_method_types[]', 'card');
 
   const res = await fetch('https://api.stripe.com/v1/payment_intents', {
     method: 'POST',
