@@ -769,6 +769,24 @@ body {
     transform: translateY(-2px);
 }
 
+/* Compact tertiary button for forms / inline actions */
+.btn-tertiary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-default);
+    padding: 0.5rem 0.9rem;
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-normal);
+    text-transform: none;
+    line-height: var(--leading-normal);
+}
+
+.btn-tertiary:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+}
+
 /* ===== Calendar Section ===== */
 .calendar {
     background: var(--color-secondary-100);

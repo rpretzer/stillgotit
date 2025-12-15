@@ -258,7 +258,7 @@
 
       const remove = document.createElement('button');
       remove.type = 'button';
-      remove.className = 'btn btn-secondary';
+      remove.className = 'btn btn-tertiary';
       remove.textContent = 'Remove';
       remove.addEventListener('click', () => {
         const cart2 = loadCart();
