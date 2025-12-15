@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Avoid indexing utility endpoints
+Disallow: /admin/
+
+Sitemap: https://www.stillgotitcollective.com/sitemap.xml
+
+

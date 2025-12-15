@@ -95,6 +95,24 @@
         }
     }
 
+    // ===== JSON-LD helper =====
+    function injectJsonLd(id, data) {
+        try {
+            if (!data) return;
+            const existing = document.getElementById(id);
+            if (existing && existing.parentNode) {
+                existing.parentNode.removeChild(existing);
+            }
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = id;
+            script.textContent = JSON.stringify(data);
+            document.head.appendChild(script);
+        } catch (e) {
+            console.warn('Failed to inject JSON-LD', e);
+        }
+    }
+
     // ===== Site Settings (Decap CMS) =====
     // Source: /content/site.json
     async function loadSiteSettings() {
@@ -124,6 +142,92 @@
                 if (twitterDesc && settings?.meta?.description) twitterDesc.setAttribute('content', settings.meta.description);
                 const twitterImage = document.querySelector('meta[name="twitter:image"]');
                 if (twitterImage && settings?.meta?.ogImage) twitterImage.setAttribute('content', settings.meta.ogImage);
+
+                // Structured data: Organization + WebSite
+                const siteUrl = settings?.meta?.ogUrl || window.location.origin;
+                const orgSameAs = [];
+                if (settings?.instagram?.profileUrl) {
+                    orgSameAs.push(settings.instagram.profileUrl);
+                }
+                if (Array.isArray(settings?.footer?.socialLinks)) {
+                    settings.footer.socialLinks.forEach((s) => {
+                        if (s?.url) orgSameAs.push(s.url);
+                    });
+                }
+
+                const orgLd = {
+                    '@type': 'Organization',
+                    name: settings?.meta?.siteName || 'The Still Got It Collective',
+                    url: siteUrl,
+                    logo: settings?.meta?.ogImage || undefined,
+                    description: settings?.meta?.description || undefined,
+                    sameAs: orgSameAs.length ? orgSameAs : undefined
+                };
+
+                const websiteLd = {
+                    '@type': 'WebSite',
+                    name: settings?.meta?.siteName || 'The Still Got It Collective',
+                    url: siteUrl
+                };
+
+                injectJsonLd('sgic-ld-site', {
+                    '@context': 'https://schema.org',
+                    '@graph': [orgLd, websiteLd]
+                });
+
+                // Structured data: Events (if calendar is present)
+                if (document.getElementById('events-grid')) {
+                    try {
+                        const eventsUrl = new URL('data/events.json', window.location.href);
+                        fetch(eventsUrl.toString(), { cache: 'no-store' })
+                            .then((r) => r.ok ? r.json() : null)
+                            .then((events) => {
+                                if (!Array.isArray(events) || !events.length) return;
+                                const graph = events.map((ev) => {
+                                    const imgUrl = ev.image ? new URL(ev.image, siteUrl).toString() : undefined;
+                                    return {
+                                        '@type': 'Event',
+                                        name: ev.title,
+                                        startDate: ev.date, // ISO date (YYYY-MM-DD)
+                                        eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+                                        eventStatus: 'https://schema.org/EventScheduled',
+                                        location: {
+                                            '@type': 'Place',
+                                            name: ev.location || ev.venue || 'Event venue',
+                                            address: {
+                                                '@type': 'PostalAddress',
+                                                addressLocality: ev.venue || 'Cleveland',
+                                                addressRegion: 'OH',
+                                                addressCountry: 'US'
+                                            }
+                                        },
+                                        image: imgUrl,
+                                        description: ev.description,
+                                        organizer: {
+                                            '@type': 'Organization',
+                                            name: settings?.meta?.siteName || 'The Still Got It Collective',
+                                            url: siteUrl
+                                        },
+                                        offers: ev.ticketUrl ? {
+                                            '@type': 'Offer',
+                                            url: ev.ticketUrl,
+                                            availability: 'https://schema.org/InStock'
+                                        } : undefined
+                                    };
+                                });
+
+                                injectJsonLd('sgic-ld-events', {
+                                    '@context': 'https://schema.org',
+                                    '@graph': graph
+                                });
+                            })
+                            .catch((err) => {
+                                console.warn('Failed to load events for JSON-LD', err);
+                            });
+                    } catch (err) {
+                        console.warn('Events JSON-LD setup failed', err);
+                    }
+                }
             }
 
             // Page title
