@@ -193,6 +193,17 @@
     hideError();
 
     try {
+      // Required for the Payment Element with certain wallets:
+      // validates form and completes any async work before confirmPayment.
+      if (elements.submit) {
+        const { error: submitError } = await elements.submit();
+        if (submitError) {
+          showError(submitError.message || 'Please check your payment details and try again.');
+          setLoading(false);
+          return;
+        }
+      }
+
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         clientSecret,
