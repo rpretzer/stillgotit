@@ -17,7 +17,8 @@
   //   }
   // ]
 
-  const ENDPOINTS = ['/api/events.json', '/events.json', '/data/events.json'];
+  // Prefer Decap-managed source first (`data/events.json`), then legacy fallbacks
+  const ENDPOINTS = ['/data/events.json', '/events.json', '/api/events.json'];
   const grid = document.getElementById('events-grid');
   const empty = document.getElementById('events-empty');
   const monthLabel = document.getElementById('events-month-label');
