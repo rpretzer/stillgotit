@@ -66,16 +66,33 @@ collections:
               - { label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
 
       - name: "settings"
-        label: "Site Settings (Hero / Banner / Links)"
+        label: "Site Settings (All Content)"
         file: "content/site.json"
         format: "json"
         fields:
-          - label: "Hero"
+          - label: "Meta Tags & SEO"
+            name: "meta"
+            widget: "object"
+            fields:
+              - { label: "Site Name", name: "siteName", widget: "string" }
+              - { label: "Tagline", name: "tagline", widget: "string" }
+              - { label: "Meta Description", name: "description", widget: "text" }
+              - { label: "Meta Keywords", name: "keywords", widget: "string" }
+              - { label: "OG Image URL", name: "ogImage", widget: "string", required: false }
+              - { label: "OG URL", name: "ogUrl", widget: "string" }
+
+          - label: "Hero Section"
             name: "hero"
             widget: "object"
             fields:
+              - { label: "Title", name: "title", widget: "string" }
               - { label: "Tagline", name: "tagline", widget: "string" }
-              - { label: "Hero Background Image URL", name: "imageUrl", widget: "string", required: false, hint: "Paste a full URL or a path like /assets/images/uploads/gallery/full/....webp. Leave blank to use the default." }
+              - { label: "Background Image URL", name: "imageUrl", widget: "string", required: false }
+              - { label: "Proof Text", name: "proofText", widget: "string", required: false, hint: "e.g., '2.4k+ attendees • 47 photos • Merch drop live'" }
+              - { label: "Primary CTA Label", name: "ctaPrimaryLabel", widget: "string" }
+              - { label: "Primary CTA URL", name: "ctaPrimaryUrl", widget: "string" }
+              - { label: "Secondary CTA Label", name: "ctaSecondaryLabel", widget: "string" }
+              - { label: "Secondary CTA URL", name: "ctaSecondaryUrl", widget: "string" }
 
           - label: "Announcement Banner"
             name: "banner"
@@ -86,6 +103,26 @@ collections:
               - { label: "Text", name: "text", widget: "string" }
               - { label: "CTA Label", name: "ctaLabel", widget: "string" }
               - { label: "CTA URL", name: "ctaUrl", widget: "string" }
+
+          - label: "Section Titles"
+            name: "sections"
+            widget: "object"
+            fields:
+              - { label: "Announcements Title", name: "announcements", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
+              - label: "Events Calendar"
+                name: "events"
+                widget: "object"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Empty Message", name: "emptyMessage", widget: "string" }
+              - { label: "Gallery Title", name: "gallery", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
+              - { label: "Tickets & Merch Title", name: "tickets", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
+              - label: "Instagram"
+                name: "instagram"
+                widget: "object"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Subtitle", name: "subtitle", widget: "text", hint: "Use {handle} placeholder for username" }
 
           - label: "Tickets / Merch Links"
             name: "tickets"
@@ -98,8 +135,8 @@ collections:
               - { label: "Tickets Note (small text)", name: "ticketsNote", widget: "string", required: false }
               - { label: "Merch Card Title", name: "squareTitle", widget: "string" }
               - { label: "Merch Card Body", name: "squareBody", widget: "text" }
-              - { label: "Square Store URL", name: "squareUrl", widget: "string" }
-              - { label: "Square Store Button Label", name: "squareLabel", widget: "string" }
+              - { label: "Merch Store URL", name: "squareUrl", widget: "string", hint: "Should be /merch/ for internal store" }
+              - { label: "Merch Button Label", name: "squareLabel", widget: "string" }
               - { label: "Merch Note (small text)", name: "squareNote", widget: "string", required: false }
 
           - label: "Instagram"
@@ -120,8 +157,12 @@ collections:
           - label: "Footer"
             name: "footer"
             widget: "object"
-            required: false
             fields:
+              - { label: "Organization Name", name: "organizationName", widget: "string" }
+              - { label: "Tagline", name: "tagline", widget: "string" }
+              - { label: "Copyright Text", name: "copyright", widget: "string" }
+              - { label: "Quick Links Title", name: "quickLinksTitle", widget: "string" }
+              - { label: "Connect Title", name: "connectTitle", widget: "string" }
               - label: "Social links"
                 name: "socialLinks"
                 widget: "list"
@@ -130,6 +171,52 @@ collections:
                 fields:
                   - { label: "Label", name: "label", widget: "string" }
                   - { label: "URL", name: "url", widget: "string" }
+
+          - label: "Merch Store"
+            name: "merch"
+            widget: "object"
+            fields:
+              - { label: "Page Title", name: "pageTitle", widget: "string" }
+              - { label: "Page Description", name: "pageDescription", widget: "text" }
+              - { label: "Hero Title", name: "heroTitle", widget: "string" }
+              - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text" }
+              - { label: "Catalog Label", name: "catalogLabel", widget: "string" }
+              - { label: "Cart Title", name: "cartTitle", widget: "string" }
+              - { label: "Cart Close Label", name: "cartCloseLabel", widget: "string" }
+              - { label: "Subtotal Label", name: "subtotalLabel", widget: "string" }
+              - { label: "Shipping Note", name: "shippingNote", widget: "text" }
+              - { label: "Checkout Label", name: "checkoutLabel", widget: "string" }
+              - { label: "Clear Cart Label", name: "clearCartLabel", widget: "string" }
+              - { label: "Empty Cart Message", name: "emptyCartMessage", widget: "string" }
+              - { label: "Loading Message", name: "loadingMessage", widget: "string" }
+              - { label: "Loading Subtext", name: "loadingSubtext", widget: "string" }
+              - { label: "Error Message", name: "errorMessage", widget: "string" }
+
+          - label: "Checkout Page"
+            name: "checkout"
+            widget: "object"
+            fields:
+              - { label: "Page Title", name: "pageTitle", widget: "string" }
+              - { label: "Page Description", name: "pageDescription", widget: "text" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Shipping Title", name: "shippingTitle", widget: "string" }
+              - { label: "Payment Title", name: "paymentTitle", widget: "string" }
+              - { label: "Continue Label", name: "continueLabel", widget: "string" }
+              - { label: "Back Label", name: "backLabel", widget: "string" }
+              - { label: "Pay Now Label", name: "payNowLabel", widget: "string" }
+              - { label: "Processing Label", name: "processingLabel", widget: "string" }
+              - { label: "Empty Cart Redirect Message", name: "emptyCartRedirect", widget: "string" }
+
+          - label: "Success Page"
+            name: "success"
+            widget: "object"
+            fields:
+              - { label: "Page Title", name: "pageTitle", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Message", name: "message", widget: "text" }
+              - { label: "Note", name: "note", widget: "text" }
+              - { label: "Back to Merch Label", name: "backToMerchLabel", widget: "string" }
+              - { label: "Back to Site Label", name: "backToSiteLabel", widget: "string" }
 
           - label: "Calendar"
             name: "calendar"

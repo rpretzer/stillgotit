@@ -104,10 +104,58 @@
             if (!res.ok) throw new Error(`Failed to load site.json (${res.status})`);
             const settings = await res.json();
 
-            // Hero tagline
+            // Meta tags (only on main index.html)
+            if (document.querySelector('meta[name="description"]')) {
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc && settings?.meta?.description) metaDesc.setAttribute('content', settings.meta.description);
+                const metaKeywords = document.querySelector('meta[name="keywords"]');
+                if (metaKeywords && settings?.meta?.keywords) metaKeywords.setAttribute('content', settings.meta.keywords);
+                const ogTitle = document.querySelector('meta[property="og:title"]');
+                if (ogTitle && settings?.meta?.siteName) ogTitle.setAttribute('content', `${settings.meta.siteName} - ${settings.meta.tagline || ''}`);
+                const ogDesc = document.querySelector('meta[property="og:description"]');
+                if (ogDesc && settings?.meta?.description) ogDesc.setAttribute('content', settings.meta.description);
+                const ogImage = document.querySelector('meta[property="og:image"]');
+                if (ogImage && settings?.meta?.ogImage) ogImage.setAttribute('content', settings.meta.ogImage);
+                const ogUrl = document.querySelector('meta[property="og:url"]');
+                if (ogUrl && settings?.meta?.ogUrl) ogUrl.setAttribute('content', settings.meta.ogUrl);
+                const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+                if (twitterTitle && settings?.meta?.siteName) twitterTitle.setAttribute('content', `${settings.meta.siteName} - ${settings.meta.tagline || ''}`);
+                const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+                if (twitterDesc && settings?.meta?.description) twitterDesc.setAttribute('content', settings.meta.description);
+                const twitterImage = document.querySelector('meta[name="twitter:image"]');
+                if (twitterImage && settings?.meta?.ogImage) twitterImage.setAttribute('content', settings.meta.ogImage);
+            }
+
+            // Page title
+            if (settings?.meta?.siteName && document.title && !document.title.includes('Merch') && !document.title.includes('Checkout') && !document.title.includes('Order')) {
+                document.title = `${settings.meta.siteName} - ${settings.meta.tagline || ''}`;
+            }
+
+            // Hero section
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle && settings?.hero?.title) heroTitle.textContent = settings.hero.title;
             const heroTagline = document.getElementById('hero-tagline');
-            if (heroTagline && settings?.hero?.tagline) {
-                heroTagline.textContent = settings.hero.tagline;
+            if (heroTagline && settings?.hero?.tagline) heroTagline.textContent = settings.hero.tagline;
+            const heroProof = document.querySelector('.hero-proof');
+            if (heroProof && settings?.hero?.proofText) {
+                const parts = settings.hero.proofText.split(' • ');
+                heroProof.innerHTML = parts.map((part, i) => {
+                    const match = part.match(/^(\d+[km]?\+?)\s*(.+)$/);
+                    if (match) {
+                        return `<strong>${match[1]}</strong> ${match[2]}`;
+                    }
+                    return i === 0 ? `<strong>${part}</strong>` : part;
+                }).join(' • ');
+            }
+            const heroCtaPrimary = document.getElementById('hero-cta-primary');
+            if (heroCtaPrimary) {
+                if (settings?.hero?.ctaPrimaryLabel) heroCtaPrimary.textContent = settings.hero.ctaPrimaryLabel;
+                if (settings?.hero?.ctaPrimaryUrl) heroCtaPrimary.href = settings.hero.ctaPrimaryUrl;
+            }
+            const heroCtaSecondary = document.getElementById('hero-cta-secondary');
+            if (heroCtaSecondary) {
+                if (settings?.hero?.ctaSecondaryLabel) heroCtaSecondary.textContent = settings.hero.ctaSecondaryLabel;
+                if (settings?.hero?.ctaSecondaryUrl) heroCtaSecondary.href = settings.hero.ctaSecondaryUrl;
             }
 
             // Hero background image (CMS override)
@@ -117,6 +165,24 @@
                 heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url("${heroImgUrl.trim()}")`;
                 heroBg.style.backgroundSize = 'cover';
                 heroBg.style.backgroundPosition = 'center';
+            }
+
+            // Section titles
+            const announcementsTitle = document.querySelector('#announcements .section-title');
+            if (announcementsTitle && settings?.sections?.announcements?.title) announcementsTitle.textContent = settings.sections.announcements.title;
+            const eventsTitle = document.querySelector('#upcoming-events .section-title, #calendar .section-title');
+            if (eventsTitle && settings?.sections?.events?.title) eventsTitle.textContent = settings.sections.events.title;
+            const eventsEmpty = document.getElementById('events-empty');
+            if (eventsEmpty && settings?.sections?.events?.emptyMessage) eventsEmpty.textContent = settings.sections.events.emptyMessage;
+            const galleryTitle = document.querySelector('#gallery .section-title');
+            if (galleryTitle && settings?.sections?.gallery?.title) galleryTitle.textContent = settings.sections.gallery.title;
+            const ticketsSectionTitle = document.querySelector('#tickets .section-title');
+            if (ticketsSectionTitle && settings?.sections?.tickets?.title) ticketsSectionTitle.textContent = settings.sections.tickets.title;
+            const instagramTitle = document.querySelector('#instagram .section-title');
+            if (instagramTitle && settings?.sections?.instagram?.title) instagramTitle.textContent = settings.sections.instagram.title;
+            const instagramSubtitle = document.querySelector('#instagram .section-subtitle');
+            if (instagramSubtitle && settings?.sections?.instagram?.subtitle && settings?.instagram?.username) {
+                instagramSubtitle.innerHTML = settings.sections.instagram.subtitle.replace('{handle}', `<a data-instagram-profile href="${settings.instagram.profileUrl || '#'}" target="_blank" rel="noopener noreferrer" class="instagram-link"><span id="instagram-handle">@${settings.instagram.username}</span></a>`);
             }
 
             // Banner
@@ -205,6 +271,21 @@
                 });
             }
 
+            // Footer
+            const footerOrgName = document.querySelector('.footer-section h4');
+            if (footerOrgName && settings?.footer?.organizationName) {
+                const firstH4 = document.querySelector('.footer-section:first-child h4');
+                if (firstH4) firstH4.textContent = settings.footer.organizationName;
+            }
+            const footerTagline = document.querySelector('.footer-section:first-child p');
+            if (footerTagline && settings?.footer?.tagline) footerTagline.textContent = settings.footer.tagline;
+            const footerCopyright = document.querySelector('.footer-bottom p');
+            if (footerCopyright && settings?.footer?.copyright) footerCopyright.textContent = settings.footer.copyright;
+            const quickLinksTitle = document.querySelector('.footer-section:nth-child(2) h4');
+            if (quickLinksTitle && settings?.footer?.quickLinksTitle) quickLinksTitle.textContent = settings.footer.quickLinksTitle;
+            const connectTitle = document.querySelector('.footer-section:nth-child(3) h4');
+            if (connectTitle && settings?.footer?.connectTitle) connectTitle.textContent = settings.footer.connectTitle;
+
             // Footer social links (optional)
             const footerLinks = document.getElementById('footer-social-links');
             if (footerLinks && Array.isArray(settings?.footer?.socialLinks) && settings.footer.socialLinks.length > 0) {
@@ -236,6 +317,77 @@
                 iframe.loading = 'lazy';
                 iframe.referrerPolicy = 'no-referrer-when-downgrade';
                 wrapper.replaceChild(iframe, placeholder);
+            }
+
+            // Merch page copy
+            if (document.querySelector('.merch-hero')) {
+                const merchHeroTitle = document.getElementById('merch-hero-title');
+                if (merchHeroTitle && settings?.merch?.heroTitle) merchHeroTitle.textContent = settings.merch.heroTitle;
+                const merchHeroSubtitle = document.getElementById('merch-hero-subtitle');
+                if (merchHeroSubtitle && settings?.merch?.heroSubtitle) merchHeroSubtitle.textContent = settings.merch.heroSubtitle;
+                const merchCatalogLabel = document.getElementById('merch-catalog-label');
+                if (merchCatalogLabel && settings?.merch?.catalogLabel) merchCatalogLabel.textContent = settings.merch.catalogLabel;
+                const merchCartTitle = document.getElementById('merch-cart-title');
+                if (merchCartTitle && settings?.merch?.cartTitle) merchCartTitle.textContent = settings.merch.cartTitle;
+                const merchCartClose = document.getElementById('close-cart');
+                if (merchCartClose && settings?.merch?.cartCloseLabel) merchCartClose.textContent = settings.merch.cartCloseLabel;
+                const merchSubtotalLabel = document.getElementById('merch-subtotal-label');
+                if (merchSubtotalLabel && settings?.merch?.subtotalLabel) merchSubtotalLabel.textContent = settings.merch.subtotalLabel;
+                const merchShippingNote = document.getElementById('merch-shipping-note');
+                if (merchShippingNote && settings?.merch?.shippingNote) merchShippingNote.textContent = settings.merch.shippingNote;
+                const merchCheckout = document.getElementById('checkout');
+                if (merchCheckout && settings?.merch?.checkoutLabel) merchCheckout.textContent = settings.merch.checkoutLabel;
+                const merchClearCart = document.getElementById('clear-cart');
+                if (merchClearCart && settings?.merch?.clearCartLabel) merchClearCart.textContent = settings.merch.clearCartLabel;
+                const merchLoadingTitle = document.getElementById('merch-loading-title');
+                if (merchLoadingTitle && settings?.merch?.loadingMessage) merchLoadingTitle.textContent = settings.merch.loadingMessage;
+                const merchLoadingSubtext = document.getElementById('merch-loading-subtext');
+                if (merchLoadingSubtext && settings?.merch?.loadingSubtext) merchLoadingSubtext.textContent = settings.merch.loadingSubtext;
+                
+                // Update page title and meta
+                if (settings?.merch?.pageTitle) document.title = settings.merch.pageTitle;
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc && settings?.merch?.pageDescription) metaDesc.setAttribute('content', settings.merch.pageDescription);
+            }
+
+            // Checkout page copy
+            if (document.querySelector('.checkout-page')) {
+                const checkoutTitle = document.getElementById('checkout-title');
+                if (checkoutTitle && settings?.checkout?.title) checkoutTitle.textContent = settings.checkout.title;
+                const shippingTitle = document.getElementById('shipping-title');
+                if (shippingTitle && settings?.checkout?.shippingTitle) shippingTitle.textContent = settings.checkout.shippingTitle;
+                const paymentTitle = document.getElementById('payment-title');
+                if (paymentTitle && settings?.checkout?.paymentTitle) paymentTitle.textContent = settings.checkout.paymentTitle;
+                const continueBtn = document.getElementById('continue-to-payment');
+                if (continueBtn && settings?.checkout?.continueLabel) continueBtn.textContent = settings.checkout.continueLabel;
+                const backBtn = document.getElementById('back-to-shipping');
+                if (backBtn && settings?.checkout?.backLabel) backBtn.textContent = settings.checkout.backLabel;
+                const payBtn = document.getElementById('submit-payment');
+                if (payBtn && settings?.checkout?.payNowLabel) payBtn.textContent = settings.checkout.payNowLabel;
+                const processingText = document.getElementById('processing-text');
+                if (processingText && settings?.checkout?.processingLabel) processingText.textContent = settings.checkout.processingLabel;
+                
+                // Update page title and meta
+                if (settings?.checkout?.pageTitle) document.title = settings.checkout.pageTitle;
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc && settings?.checkout?.pageDescription) metaDesc.setAttribute('content', settings.checkout.pageDescription);
+            }
+
+            // Success page copy
+            if (document.querySelector('.merch-main') && document.getElementById('order-details')) {
+                const successTitle = document.getElementById('success-title');
+                if (successTitle && settings?.success?.title) successTitle.textContent = settings.success.title;
+                const successMessage = document.getElementById('success-message');
+                if (successMessage && settings?.success?.message) successMessage.textContent = settings.success.message;
+                const successNote = document.getElementById('order-note');
+                if (successNote && settings?.success?.note) successNote.textContent = settings.success.note;
+                const backToMerch = document.getElementById('back-to-merch');
+                if (backToMerch && settings?.success?.backToMerchLabel) backToMerch.textContent = settings.success.backToMerchLabel;
+                const backToSite = document.getElementById('back-to-site');
+                if (backToSite && settings?.success?.backToSiteLabel) backToSite.textContent = settings.success.backToSiteLabel;
+                
+                // Update page title
+                if (settings?.success?.pageTitle) document.title = settings.success.pageTitle;
             }
         } catch (err) {
             console.warn('Site settings load failed:', err);
@@ -565,6 +717,131 @@
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
         document.body.appendChild(script);
     }
+
+    // ===== Toast Notifications =====
+    // Global toast notification system
+    (function() {
+        let toastStack = null;
+        
+        function ensureToastStack() {
+            if (!toastStack) {
+                toastStack = document.createElement('div');
+                toastStack.className = 'toast-stack';
+                toastStack.setAttribute('aria-live', 'polite');
+                toastStack.setAttribute('aria-atomic', 'true');
+                document.body.appendChild(toastStack);
+            }
+            return toastStack;
+        }
+        
+        window.showToast = function(options) {
+            const { title, message, variant = 'info', timeout = 5000 } = options || {};
+            if (!title && !message) return;
+            
+            const stack = ensureToastStack();
+            const toast = document.createElement('div');
+            toast.className = `toast toast--${variant}`;
+            toast.setAttribute('role', 'alert');
+            
+            const content = document.createElement('div');
+            content.className = 'toast-content';
+            if (title) {
+                const titleEl = document.createElement('strong');
+                titleEl.className = 'toast-title';
+                titleEl.textContent = title;
+                content.appendChild(titleEl);
+            }
+            if (message) {
+                const msgEl = document.createElement('span');
+                msgEl.className = 'toast-message';
+                msgEl.textContent = message;
+                content.appendChild(msgEl);
+            }
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'toast-close';
+            closeBtn.setAttribute('aria-label', 'Close');
+            closeBtn.innerHTML = '×';
+            closeBtn.addEventListener('click', () => {
+                toast.classList.add('toast--dismissing');
+                setTimeout(() => toast.remove(), 300);
+            });
+            
+            toast.appendChild(content);
+            toast.appendChild(closeBtn);
+            stack.appendChild(toast);
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                toast.classList.add('toast--visible');
+            });
+            
+            // Auto-dismiss
+            if (timeout > 0) {
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.classList.add('toast--dismissing');
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, timeout);
+            }
+        };
+    })();
+
+    // ===== Dark Mode Toggle =====
+    (function() {
+        const THEME_KEY = 'sgic_theme';
+        const THEME_DARK = 'dark';
+        const THEME_LIGHT = 'light';
+        
+        function getStoredTheme() {
+            return localStorage.getItem(THEME_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_DARK : THEME_LIGHT);
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(THEME_KEY, theme);
+        }
+        
+        function initTheme() {
+            const theme = getStoredTheme();
+            setTheme(theme);
+            
+            // Add toggle button to navbar if it doesn't exist
+            const navbar = document.getElementById('navbar');
+            if (navbar && !document.getElementById('theme-toggle')) {
+                const navWrapper = navbar.querySelector('.nav-wrapper');
+                if (navWrapper) {
+                    const toggle = document.createElement('button');
+                    toggle.id = 'theme-toggle';
+                    toggle.className = 'btn btn-secondary theme-toggle';
+                    toggle.setAttribute('aria-label', 'Toggle dark mode');
+                    toggle.innerHTML = theme === THEME_DARK ? '☀️' : '🌙';
+                    toggle.addEventListener('click', () => {
+                        const current = getStoredTheme();
+                        const newTheme = current === THEME_DARK ? THEME_LIGHT : THEME_DARK;
+                        setTheme(newTheme);
+                        toggle.innerHTML = newTheme === THEME_DARK ? '☀️' : '🌙';
+                    });
+                    navWrapper.appendChild(toggle);
+                }
+            }
+        }
+        
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTheme);
+        } else {
+            initTheme();
+        }
+        
+        // Watch for system theme changes (only if no manual preference)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem(THEME_KEY)) {
+                setTheme(e.matches ? THEME_DARK : THEME_LIGHT);
+            }
+        });
+    })();
 
     // ===== Initialize on DOM Load =====
     document.addEventListener('DOMContentLoaded', function() {

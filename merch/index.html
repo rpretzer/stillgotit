@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <title>Merch | The Still Got It Collective</title>
-  <meta name="description" content="Shop Still Got It Collective merch. Secure checkout powered by Square." />
+  <meta name="description" content="Shop Still Got It Collective merch. Secure checkout powered by Stripe." />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -17,12 +17,12 @@
   <link rel="stylesheet" href="/assets/css/merch.css" />
 
   <!-- Google Analytics 4 (GA4) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z75JKXY2EC"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M23KTK21ZD"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-Z75JKXY2EC');
+    gtag('config', 'G-M23KTK21ZD');
   </script>
 </head>
 <body>
@@ -53,8 +53,8 @@
   <main id="main-content" class="merch-main">
     <section class="section merch-hero">
       <div class="container">
-        <h1 class="section-title">Merch</h1>
-        <p class="section-subtitle">
+        <h1 class="section-title" id="merch-hero-title">Merch</h1>
+        <p class="section-subtitle" id="merch-hero-subtitle">
           Secure checkout powered by Stripe. US shipping only (international by request).
         </p>
       </div>
@@ -64,7 +64,7 @@
       <div class="container">
         <div class="merch-toolbar">
           <div class="merch-pill">
-            <span class="merch-pill-label">Catalog:</span>
+            <span class="merch-pill-label" id="merch-catalog-label">Catalog:</span>
             <code class="merch-pill-value" id="merch-source">content/merch.json</code>
           </div>
         </div>
@@ -72,8 +72,8 @@
         <div class="merch-grid" id="merch-grid" data-merch-source="/content/merch.json">
           <!-- Filled by assets/js/merch.js -->
           <div class="ticket-card">
-            <h3>Loading merch…</h3>
-            <p>If this takes too long, refresh the page.</p>
+            <h3 id="merch-loading-title">Loading merch…</h3>
+            <p id="merch-loading-subtext">If this takes too long, refresh the page.</p>
           </div>
         </div>
       </div>
@@ -83,25 +83,25 @@
       <div class="container">
         <div class="ticket-card">
           <div class="merch-cart-header">
-            <h2 class="merch-h2">Your cart</h2>
-            <button class="btn btn-secondary merch-cart-close" id="close-cart" type="button">Close</button>
+            <h2 class="merch-h2" id="merch-cart-title">Your cart</h2>
+            <button class="btn btn-secondary merch-cart-close" id="close-cart" type="button" data-cms-text="cartCloseLabel">Close</button>
           </div>
 
           <div id="cart-items" class="merch-cart-items"></div>
 
           <div class="merch-cart-summary">
             <div class="merch-summary-row">
-              <span>Subtotal</span>
+              <span id="merch-subtotal-label">Subtotal</span>
               <strong id="cart-subtotal">$0.00</strong>
             </div>
-            <p class="note">
+            <p class="note" id="merch-shipping-note">
               Shipping and taxes are collected at checkout.
             </p>
           </div>
 
           <div class="merch-cart-actions">
-            <button class="btn btn-primary" id="checkout" type="button">Checkout</button>
-            <button class="btn btn-secondary" id="clear-cart" type="button">Clear cart</button>
+            <button class="btn btn-primary" id="checkout" type="button" data-cms-text="checkoutLabel">Checkout</button>
+            <button class="btn btn-secondary" id="clear-cart" type="button" data-cms-text="clearCartLabel">Clear cart</button>
           </div>
 
           <p class="note merch-error" id="merch-error" hidden></p>

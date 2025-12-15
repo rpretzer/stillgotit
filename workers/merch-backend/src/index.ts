@@ -131,26 +131,28 @@ async function verifyStripeWebhook(
   body: string,
   signature: string
 ): Promise<any> {
-  const res = await fetch('https://api.stripe.com/v1/webhooks', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${env.STRIPE_SECRET_KEY}`,
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-      payload: body,
-      sig_header: signature
-    })
-  });
-
-  // Actually, we need to use Stripe's SDK or manual verification
-  // For now, use a simpler approach with crypto
+  // Verify Stripe webhook signature using HMAC-SHA256
   const secret = env.STRIPE_WEBHOOK_SECRET;
-  const timestamp = signature.split(',')[0]?.split('=')[1];
-  const sigs = signature.split(',').map(s => s.split('=')[1]);
   
-  // Simplified: in production, use @stripe/stripe-js or manual HMAC verification
-  // For Cloudflare Workers, we'll verify the signature properly
+  // Parse Stripe signature header (format: t=timestamp,v1=signature,v1=signature,...)
+  const parts = signature.split(',').map(s => s.trim());
+  let timestamp: string | null = null;
+  const signatures: string[] = [];
+  
+  for (const part of parts) {
+    const [key, value] = part.split('=');
+    if (key === 't') timestamp = value;
+    else if (key?.startsWith('v')) signatures.push(value);
+  }
+  
+  if (!timestamp || signatures.length === 0) {
+    throw new Error('Invalid signature format');
+  }
+  
+  // Create signed payload
+  const signedPayload = `${timestamp}.${body}`;
+  
+  // Verify each signature (Stripe may send multiple for different versions)
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(secret),
@@ -158,17 +160,38 @@ async function verifyStripeWebhook(
     false,
     ['verify']
   );
-
-  const signedPayload = `${timestamp}.${body}`;
-  const isValid = await crypto.subtle.verify(
-    'HMAC',
-    cryptoKey,
-    hexToArrayBuffer(sigs[0] || ''),
-    new TextEncoder().encode(signedPayload)
-  ).catch(() => false);
-
-  if (!isValid) throw new Error('Invalid webhook signature');
-
+  
+  let isValid = false;
+  for (const sig of signatures) {
+    try {
+      const sigBytes = hexToArrayBuffer(sig);
+      const valid = await crypto.subtle.verify(
+        'HMAC',
+        cryptoKey,
+        sigBytes,
+        new TextEncoder().encode(signedPayload)
+      );
+      if (valid) {
+        isValid = true;
+        break;
+      }
+    } catch {
+      // Continue to next signature
+    }
+  }
+  
+  if (!isValid) {
+    throw new Error('Invalid webhook signature');
+  }
+  
+  // Check timestamp (prevent replay attacks - allow 5 minute window)
+  const eventTime = parseInt(timestamp, 10) * 1000;
+  const now = Date.now();
+  const fiveMinutes = 5 * 60 * 1000;
+  if (Math.abs(now - eventTime) > fiveMinutes) {
+    throw new Error('Webhook timestamp too old or too far in future');
+  }
+  
   return JSON.parse(body);
 }
 
@@ -412,11 +435,11 @@ async function handleStripeWebhook(req: Request, env: Env): Promise<Response> {
 
   let event: any;
   try {
-    // Simplified webhook verification - in production, use proper Stripe SDK
-    // For now, we'll parse the event directly (not recommended for production without proper verification)
-    event = JSON.parse(body);
+    // Verify webhook signature
+    event = await verifyStripeWebhook(env, body, signature);
   } catch (err: any) {
-    return json({ error: 'Invalid webhook body' }, { status: 400 });
+    console.error('Webhook verification failed:', err);
+    return json({ error: 'Invalid webhook signature' }, { status: 400 });
   }
 
   if (event.type === 'payment_intent.succeeded') {
@@ -534,6 +557,35 @@ async function handleGetOrder(req: Request, env: Env, orderId: string): Promise<
 }
 
 async function saveAbandonedCart(env: Env, email: string | null, cartData: string, subtotalCents: number, currency: string): Promise<string> {
+  // Rate limiting: if email provided, check for recent saves (max 1 per hour)
+  if (email) {
+    const oneHourAgo = new Date();
+    oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+    const recent = await env.DB.prepare(`
+      SELECT id FROM abandoned_carts 
+      WHERE email = ? AND last_updated > ?
+      LIMIT 1
+    `).bind(email, oneHourAgo.toISOString()).first();
+    
+    if (recent) {
+      // Update existing cart instead of creating new one
+      const existing = await env.DB.prepare(`
+        SELECT recovery_token FROM abandoned_carts 
+        WHERE email = ? AND recovered_at IS NULL
+        ORDER BY last_updated DESC LIMIT 1
+      `).bind(email).first<{ recovery_token: string }>();
+      
+      if (existing?.recovery_token) {
+        await env.DB.prepare(`
+          UPDATE abandoned_carts 
+          SET cart_data = ?, subtotal_cents = ?, last_updated = datetime('now')
+          WHERE recovery_token = ?
+        `).bind(cartData, subtotalCents, existing.recovery_token).run();
+        return existing.recovery_token;
+      }
+    }
+  }
+  
   const id = crypto.randomUUID();
   const recoveryToken = crypto.randomUUID().replace(/-/g, '');
   
@@ -550,7 +602,17 @@ async function saveAbandonedCart(env: Env, email: string | null, cartData: strin
 }
 
 async function getAbandonedCartByToken(env: Env, token: string): Promise<any> {
-  const row = await env.DB.prepare('SELECT * FROM abandoned_carts WHERE recovery_token = ? AND recovered_at IS NULL').bind(token).first();
+  // Check expiration (30 days)
+  const expirationDate = new Date();
+  expirationDate.setDate(expirationDate.getDate() - 30);
+  const expirationStr = expirationDate.toISOString();
+  
+  const row = await env.DB.prepare(`
+    SELECT * FROM abandoned_carts 
+    WHERE recovery_token = ? 
+    AND recovered_at IS NULL 
+    AND created_at > ?
+  `).bind(token, expirationStr).first();
   return row || null;
 }
 
@@ -590,7 +652,7 @@ async function handleRecoverCart(req: Request, env: Env, token: string): Promise
   const cart = await getAbandonedCartByToken(env, token);
   
   if (!cart) {
-    return json({ error: 'Cart not found or already recovered' }, { status: 404, headers: cors });
+    return json({ error: 'Cart not found, expired, or already recovered' }, { status: 404, headers: cors });
   }
   
   if (req.method === 'POST') {

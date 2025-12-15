@@ -2,7 +2,7 @@
    Still Got It Collective - Merch Storefront
    Catalog from /content/merch.json
    Cart in localStorage
-   Checkout via Cloudflare Worker -> Square hosted checkout
+   Checkout via Cloudflare Worker -> Stripe Payment Elements
    ======================================== */
 
 (function () {
@@ -199,6 +199,11 @@
         renderCart(loadCart(), catalog);
         window.location.hash = '#cart';
         setError('');
+        if (typeof window.showToast === 'function') {
+          const variantLabel = getVariantLabel(p, variantId);
+          const itemName = variantLabel ? `${p.name} (${variantLabel})` : p.name;
+          window.showToast({ title: 'Added to cart', message: itemName, variant: 'success', timeout: 3000 });
+        }
       });
       content.appendChild(btn);
 
@@ -257,9 +262,13 @@
       remove.textContent = 'Remove';
       remove.addEventListener('click', () => {
         const cart2 = loadCart();
+        const productName = p.name || it.productId;
         removeFromCart(cart2, it.key);
         saveCart(cart2);
         renderCart(cart2, catalog);
+        if (typeof window.showToast === 'function') {
+          window.showToast({ title: 'Removed from cart', message: productName, variant: 'info', timeout: 2000 });
+        }
       });
 
       right.appendChild(qty);
@@ -278,6 +287,9 @@
     const cart = loadCart();
     if (!cart.items.length) {
       setError('Your cart is empty.');
+      if (typeof window.showToast === 'function') {
+        window.showToast({ title: 'Cart is empty', message: 'Add items to your cart first', variant: 'error', timeout: 3000 });
+      }
       return;
     }
     // Redirect to checkout page
@@ -297,6 +309,9 @@
     if (els.clear) els.clear.addEventListener('click', () => {
       saveCart({ items: [] });
       renderCart(loadCart(), catalog);
+      if (typeof window.showToast === 'function') {
+        window.showToast({ title: 'Cart cleared', message: 'All items removed', variant: 'info', timeout: 2000 });
+      }
     });
     const openCart = () => { window.location.hash = '#cart'; };
     if (els.openCart) els.openCart.addEventListener('click', openCart);

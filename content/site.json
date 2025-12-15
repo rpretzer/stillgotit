@@ -1,7 +1,21 @@
 {
+  "meta": {
+    "siteName": "The Still Got It Collective",
+    "tagline": "Curating moments you'll never forget",
+    "description": "The Still Got It Collective - Curating moments you'll never forget. Event planning and unforgettable experiences.",
+    "keywords": "event planning, event management, parties, celebrations, Still Got It Collective",
+    "ogImage": "https://www.stillgotitcollective.com/assets/images/og-image.jpg",
+    "ogUrl": "https://www.stillgotitcollective.com"
+  },
   "hero": {
+    "title": "We still throw nights you talk about.",
     "tagline": "Dance like you did. Sleep like you should.",
-    "imageUrl": ""
+    "imageUrl": "",
+    "proofText": "2.4k+ attendees • 47 photos • Merch drop live",
+    "ctaPrimaryLabel": "Get Tickets",
+    "ctaPrimaryUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+    "ctaSecondaryLabel": "See the vibe",
+    "ctaSecondaryUrl": "#gallery"
   },
   "banner": {
     "emoji": "",
@@ -9,6 +23,25 @@
     "text": "80's Dance Party — Jan 29, 2026 • B-Side Lounge, Cleveland",
     "ctaLabel": "Get Tickets",
     "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226"
+  },
+  "sections": {
+    "announcements": {
+      "title": "Latest Updates"
+    },
+    "events": {
+      "title": "Event Calendar",
+      "emptyMessage": "No events scheduled—stay tuned! Follow @stillgotitcollective on IG."
+    },
+    "gallery": {
+      "title": "Event Gallery"
+    },
+    "tickets": {
+      "title": "Tickets & Merch"
+    },
+    "instagram": {
+      "title": "Follow Us on Instagram",
+      "subtitle": "Stay connected! Follow {handle} for the latest updates and behind-the-scenes content."
+    }
   },
   "tickets": {
     "ticketsUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
@@ -45,6 +78,11 @@
     ]
   },
   "footer": {
+    "organizationName": "The Still Got It Collective",
+    "tagline": "Curating moments you'll never forget",
+    "copyright": "© 2025 RSP Management Solutions LLC. All rights reserved.",
+    "quickLinksTitle": "Quick Links",
+    "connectTitle": "Connect",
     "socialLinks": [
       {
         "label": "Instagram",
@@ -55,6 +93,43 @@
         "url": "https://www.facebook.com/profile.php?id=61582473967294"
       }
     ]
+  },
+  "merch": {
+    "pageTitle": "Merch",
+    "pageDescription": "Shop Still Got It Collective merch. Secure checkout powered by Stripe.",
+    "heroTitle": "Merch",
+    "heroSubtitle": "Secure checkout powered by Stripe. US shipping only (international by request).",
+    "catalogLabel": "Catalog:",
+    "cartTitle": "Your cart",
+    "cartCloseLabel": "Close",
+    "subtotalLabel": "Subtotal",
+    "shippingNote": "Shipping and taxes are collected at checkout.",
+    "checkoutLabel": "Checkout",
+    "clearCartLabel": "Clear cart",
+    "emptyCartMessage": "Your cart is empty.",
+    "loadingMessage": "Loading merch…",
+    "loadingSubtext": "If this takes too long, refresh the page.",
+    "errorMessage": "Could not load merch."
+  },
+  "checkout": {
+    "pageTitle": "Checkout | The Still Got It Collective",
+    "pageDescription": "Secure checkout for Still Got It Collective merch.",
+    "title": "Checkout",
+    "shippingTitle": "Shipping Information",
+    "paymentTitle": "Payment",
+    "continueLabel": "Continue to Payment",
+    "backLabel": "Back",
+    "payNowLabel": "Pay Now",
+    "processingLabel": "Processing...",
+    "emptyCartRedirect": "Your cart is empty."
+  },
+  "success": {
+    "pageTitle": "Order Confirmed | Merch",
+    "title": "Order confirmed",
+    "message": "Thanks! Your payment was completed successfully.",
+    "note": "A receipt will be emailed to you. If you have questions, reach out via Instagram.",
+    "backToMerchLabel": "Back to merch",
+    "backToSiteLabel": "Back to site"
   },
   "calendar": {
     "embedUrl": ""

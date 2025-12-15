@@ -52,6 +52,9 @@
     els.error.hidden = false;
     els.error.textContent = msg;
     els.error.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (typeof window.showToast === 'function') {
+      window.showToast({ title: 'Error', message: msg, variant: 'error', timeout: 5000 });
+    }
   }
 
   function hideError() {
@@ -165,6 +168,10 @@
 
     clientSecret = result.clientSecret;
     orderId = result.orderId;
+    
+    if (typeof window.showToast === 'function') {
+      window.showToast({ title: 'Order created', message: 'Please complete payment', variant: 'info', timeout: 3000 });
+    }
 
     // Initialize Stripe Elements
     if (!stripe) {
@@ -222,8 +229,13 @@
       if (paymentIntent && paymentIntent.status === 'succeeded') {
         // Clear cart
         localStorage.removeItem(CART_KEY);
+        if (typeof window.showToast === 'function') {
+          window.showToast({ title: 'Payment successful!', message: 'Redirecting to confirmation...', variant: 'success', timeout: 2000 });
+        }
         // Redirect to success page
-        window.location.href = `/merch/success/?orderId=${orderId}`;
+        setTimeout(() => {
+          window.location.href = `/merch/success/?orderId=${orderId}`;
+        }, 500);
       } else {
         showError('Payment status: ' + (paymentIntent?.status || 'unknown'));
         setLoading(false);
