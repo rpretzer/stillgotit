@@ -28,12 +28,24 @@ jobs:
       - name: Inject Stripe publishable key
         run: |
           mkdir -p assets/js
+          echo "🔍 Checking for NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY secret..."
           if [ -z "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" ]; then
-            echo "⚠️ Warning: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY secret is not set"
+            echo "❌ ERROR: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY secret is not set or is empty"
+            echo "Please verify the secret exists in: Settings → Secrets and variables → Actions"
+            echo "Secret name must be exactly: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
             echo "window.STRIPE_PUBLISHABLE_KEY='';" > assets/js/stripe-publishable.js
+            exit 1
           else
-            echo "✓ Stripe publishable key found, injecting..."
+            KEY_PREFIX=$(echo "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" | cut -c1-7)
+            KEY_LENGTH=${#NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+            echo "✓ Stripe publishable key found!"
+            echo "  - Key prefix: $KEY_PREFIX"
+            echo "  - Key length: $KEY_LENGTH characters"
+            if [[ ! "$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY" =~ ^pk_(test|live)_ ]]; then
+              echo "⚠️  WARNING: Key doesn't start with 'pk_test_' or 'pk_live_' - may be invalid"
+            fi
             echo "window.STRIPE_PUBLISHABLE_KEY='$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY';" > assets/js/stripe-publishable.js
+            echo "✓ Key injected into assets/js/stripe-publishable.js"
           fi
 
       - name: Upload artifact
