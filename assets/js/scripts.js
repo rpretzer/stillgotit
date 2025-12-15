@@ -886,54 +886,65 @@
         const THEME_KEY = 'sgic_theme';
         const THEME_DARK = 'dark';
         const THEME_LIGHT = 'light';
-        
+
         function getStoredTheme() {
-            return localStorage.getItem(THEME_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_DARK : THEME_LIGHT);
+            const stored = localStorage.getItem(THEME_KEY);
+            // Default to dark mode if no stored preference
+            return stored || THEME_DARK;
         }
-        
+
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem(THEME_KEY, theme);
         }
-        
+
+        function createToggle(theme) {
+            const navMenu = document.getElementById('nav-menu');
+            if (!navMenu || document.getElementById('theme-toggle')) return;
+
+            const li = document.createElement('li');
+
+            const label = document.createElement('label');
+            label.className = 'theme-toggle-switch';
+            label.id = 'theme-toggle';
+
+            const textSpan = document.createElement('span');
+            textSpan.className = 'theme-toggle-label';
+            textSpan.textContent = 'Dark mode';
+
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.className = 'theme-toggle-input';
+            input.checked = theme === THEME_DARK;
+            input.setAttribute('aria-label', 'Toggle dark mode');
+
+            const slider = document.createElement('span');
+            slider.className = 'theme-toggle-slider';
+
+            label.appendChild(textSpan);
+            label.appendChild(input);
+            label.appendChild(slider);
+            li.appendChild(label);
+            navMenu.appendChild(li);
+
+            input.addEventListener('change', () => {
+                const newTheme = input.checked ? THEME_DARK : THEME_LIGHT;
+                setTheme(newTheme);
+            });
+        }
+
         function initTheme() {
             const theme = getStoredTheme();
             setTheme(theme);
-            
-            // Add toggle button to navbar if it doesn't exist
-            const navbar = document.getElementById('navbar');
-            if (navbar && !document.getElementById('theme-toggle')) {
-                const navWrapper = navbar.querySelector('.nav-wrapper');
-                if (navWrapper) {
-                    const toggle = document.createElement('button');
-                    toggle.id = 'theme-toggle';
-                    toggle.className = 'btn btn-secondary theme-toggle';
-                    toggle.setAttribute('aria-label', 'Toggle dark mode');
-                    toggle.innerHTML = theme === THEME_DARK ? '☀️' : '🌙';
-                    toggle.addEventListener('click', () => {
-                        const current = getStoredTheme();
-                        const newTheme = current === THEME_DARK ? THEME_LIGHT : THEME_DARK;
-                        setTheme(newTheme);
-                        toggle.innerHTML = newTheme === THEME_DARK ? '☀️' : '🌙';
-                    });
-                    navWrapper.appendChild(toggle);
-                }
-            }
+            createToggle(theme);
         }
-        
+
         // Initialize on load
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initTheme);
         } else {
             initTheme();
         }
-        
-        // Watch for system theme changes (only if no manual preference)
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            if (!localStorage.getItem(THEME_KEY)) {
-                setTheme(e.matches ? THEME_DARK : THEME_LIGHT);
-            }
-        });
     })();
 
     // ===== Initialize on DOM Load =====
