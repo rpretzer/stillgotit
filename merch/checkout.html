@@ -58,68 +58,70 @@
     </div>
   </nav>
 
-  <main id="main-content" class="merch-main">
-    <section class="section">
+  <main id="main-content" class="merch-main checkout-page">
+    <section class="section checkout-section">
       <div class="container">
         <h1 class="section-title">Checkout</h1>
 
-        <div id="checkout-error" class="ticket-card" style="background: var(--status-error); color: white; margin-bottom: var(--spacing-md);" hidden></div>
+        <div id="checkout-error" class="ticket-card checkout-alert" hidden></div>
 
         <!-- Shipping Form -->
-        <div id="shipping-form" class="ticket-card">
+        <div id="shipping-form" class="ticket-card checkout-card">
           <h2 class="merch-h2">Shipping Information</h2>
           <form id="shipping-form-el">
-            <div style="display: grid; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
-              <div>
-                <label for="email" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Email *</label>
-                <input type="email" id="email" name="email" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+            <div class="checkout-form-grid">
+              <div class="form-field">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" autocomplete="email" required class="form-input">
               </div>
-              <div>
-                <label for="name" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Full Name *</label>
-                <input type="text" id="name" name="name" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              <div class="form-field">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" autocomplete="name" required class="form-input">
               </div>
-              <div>
-                <label for="address1" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Address Line 1 *</label>
-                <input type="text" id="address1" name="address1" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              <div class="form-field">
+                <label for="address1">Address Line 1 *</label>
+                <input type="text" id="address1" name="address1" autocomplete="address-line1" required class="form-input">
               </div>
-              <div>
-                <label for="address2" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Address Line 2</label>
-                <input type="text" id="address2" name="address2" style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              <div class="form-field">
+                <label for="address2">Address Line 2</label>
+                <input type="text" id="address2" name="address2" autocomplete="address-line2" class="form-input">
               </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
-                <div>
-                  <label for="city" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">City *</label>
-                  <input type="text" id="city" name="city" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              <div class="form-row form-row--2">
+                <div class="form-field">
+                  <label for="city">City *</label>
+                  <input type="text" id="city" name="city" autocomplete="address-level2" required class="form-input">
                 </div>
-                <div>
-                  <label for="state" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">State *</label>
-                  <input type="text" id="state" name="state" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                <div class="form-field">
+                  <label for="state">State *</label>
+                  <input type="text" id="state" name="state" autocomplete="address-level1" required class="form-input">
                 </div>
               </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
-                <div>
-                  <label for="postalCode" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">ZIP Code *</label>
-                  <input type="text" id="postalCode" name="postalCode" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              <div class="form-row form-row--2">
+                <div class="form-field">
+                  <label for="postalCode">ZIP Code *</label>
+                  <input type="text" id="postalCode" name="postalCode" autocomplete="postal-code" required class="form-input">
                 </div>
-                <div>
-                  <label for="country" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Country *</label>
-                  <input type="text" id="country" name="country" value="US" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                <div class="form-field">
+                  <label for="country">Country *</label>
+                  <input type="text" id="country" name="country" value="US" autocomplete="country" required class="form-input">
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary" id="continue-to-payment">Continue to Payment</button>
+            <div class="checkout-actions">
+              <button type="submit" class="btn btn-primary btn-full-width" id="continue-to-payment">Continue to Payment</button>
+            </div>
           </form>
         </div>
 
         <!-- Payment Form -->
-        <div id="payment-form" class="ticket-card" hidden>
+        <div id="payment-form" class="ticket-card checkout-card" hidden>
           <h2 class="merch-h2">Payment</h2>
           <div id="payment-element">
             <!-- Stripe Payment Element will mount here -->
           </div>
-          <div style="margin-top: var(--spacing-md);">
+          <div class="checkout-actions">
             <button type="button" class="btn btn-primary" id="submit-payment" disabled>Pay Now</button>
-            <button type="button" class="btn btn-secondary" id="back-to-shipping" style="margin-left: var(--spacing-sm);">Back</button>
+            <button type="button" class="btn btn-secondary" id="back-to-shipping">Back</button>
           </div>
         </div>
 
@@ -143,4 +145,6 @@
   <script src="/assets/js/scripts.js"></script>
 </body>
 </html>
+
+
 

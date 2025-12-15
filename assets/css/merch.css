@@ -182,6 +182,96 @@
   color: var(--status-error);
 }
 
+/* ===== Checkout layout ===== */
+
+.checkout-page .section-title {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.checkout-section .container {
+  max-width: var(--merch-max);
+}
+
+.checkout-card {
+  margin-top: var(--spacing-md);
+}
+
+.checkout-alert {
+  background: var(--status-error);
+  color: var(--text-inverse);
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-medium);
+}
+
+.checkout-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.form-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--interactive-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--interactive-primary) 40%, transparent);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.checkout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.btn-full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .form-row--2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .btn-full-width {
+    width: auto;
+  }
+}
+
 @media (max-width: 640px) {
   .merch-main {
     padding-top: 72px;
