@@ -6,6 +6,9 @@
  * - POST /api/stripe/webhook - Handle Stripe webhooks
  * - GET /api/products - Serve product catalog
  * - GET /api/orders/:id - Get order status
+ * - POST /api/carts/abandoned - Save abandoned cart
+ * - GET /api/carts/recover/:token - Get cart by recovery token
+ * - POST /api/carts/recover/:token - Mark cart as recovered
  */
 
 type Env = {
@@ -528,6 +531,82 @@ async function handleGetOrder(req: Request, env: Env, orderId: string): Promise<
   }, { status: 200, headers: cors });
 }
 
+async function saveAbandonedCart(env: Env, email: string | null, cartData: string, subtotalCents: number, currency: string): Promise<string> {
+  const id = crypto.randomUUID();
+  const recoveryToken = crypto.randomUUID().replace(/-/g, '');
+  
+  await env.DB.prepare(`
+    INSERT INTO abandoned_carts (id, email, cart_data, subtotal_cents, currency, recovery_token, last_updated)
+    VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(id) DO UPDATE SET
+      cart_data = excluded.cart_data,
+      subtotal_cents = excluded.subtotal_cents,
+      last_updated = datetime('now')
+  `).bind(id, email, cartData, subtotalCents, currency, recoveryToken).run();
+  
+  return recoveryToken;
+}
+
+async function getAbandonedCartByToken(env: Env, token: string): Promise<any> {
+  const row = await env.DB.prepare('SELECT * FROM abandoned_carts WHERE recovery_token = ? AND recovered_at IS NULL').bind(token).first();
+  return row || null;
+}
+
+async function markCartRecovered(env: Env, token: string): Promise<void> {
+  await env.DB.prepare('UPDATE abandoned_carts SET recovered_at = datetime(\'now\') WHERE recovery_token = ?').bind(token).run();
+}
+
+async function handleSaveAbandonedCart(req: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(req);
+  const body = await req.json().catch(() => null) as any;
+  
+  const email = body?.email || null;
+  const items = Array.isArray(body?.items) ? body.items : [];
+  const currency = String(body?.currency || 'USD');
+  
+  if (!items.length) {
+    return json({ error: 'Cart is empty' }, { status: 400, headers: cors });
+  }
+  
+  // Calculate subtotal
+  const catalog = await fetchCatalog(env);
+  const byId = new Map((catalog.products || []).map((p) => [p.id, p]));
+  let subtotalCents = 0;
+  for (const it of items) {
+    const p = byId.get(it.productId);
+    if (p) subtotalCents += (Number(p.priceCents) || 0) * (Number(it.qty) || 0);
+  }
+  
+  const cartData = JSON.stringify(items);
+  const recoveryToken = await saveAbandonedCart(env, email, cartData, subtotalCents, currency);
+  
+  return json({ recoveryToken, id: recoveryToken }, { status: 200, headers: cors });
+}
+
+async function handleRecoverCart(req: Request, env: Env, token: string): Promise<Response> {
+  const cors = corsHeaders(req);
+  const cart = await getAbandonedCartByToken(env, token);
+  
+  if (!cart) {
+    return json({ error: 'Cart not found or already recovered' }, { status: 404, headers: cors });
+  }
+  
+  if (req.method === 'POST') {
+    // Mark as recovered
+    await markCartRecovered(env, token);
+    return json({ recovered: true }, { status: 200, headers: cors });
+  }
+  
+  // GET: return cart data
+  const items = JSON.parse(cart.cart_data || '[]');
+  return json({
+    items,
+    subtotalCents: cart.subtotal_cents,
+    currency: cart.currency,
+    email: cart.email
+  }, { status: 200, headers: cors });
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const url = new URL(req.url);
@@ -561,6 +640,19 @@ export default {
     if (req.method === 'GET' && path.startsWith('/api/orders/')) {
       const orderId = path.split('/').pop();
       if (orderId) return await handleGetOrder(req, env, orderId);
+    }
+
+    if (req.method === 'POST' && path === '/api/carts/abandoned') {
+      try {
+        return await handleSaveAbandonedCart(req, env);
+      } catch (err: any) {
+        return json({ error: err?.message || 'Failed to save cart' }, { status: 500, headers: corsHeaders(req) });
+      }
+    }
+
+    if ((req.method === 'GET' || req.method === 'POST') && path.startsWith('/api/carts/recover/')) {
+      const token = path.split('/').pop();
+      if (token) return await handleRecoverCart(req, env, token);
     }
 
     return json({ error: 'Not found' }, { status: 404 });

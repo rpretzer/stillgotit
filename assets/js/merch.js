@@ -9,6 +9,8 @@
   'use strict';
 
   const CART_KEY = 'sgic_merch_cart_v1';
+  const ABANDONED_CART_API = 'https://sgic-merch-api.rpretzer.workers.dev/api/carts/abandoned';
+  let abandonedCartToken = null;
 
   const els = {
     grid: document.getElementById('merch-grid'),
@@ -42,6 +44,37 @@
 
   function saveCart(cart) {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    // Track abandoned cart (debounced)
+    if (cart.items && cart.items.length > 0) {
+      trackAbandonedCart(cart);
+    }
+  }
+
+  // Debounced abandoned cart tracking
+  let abandonCartTimeout = null;
+  async function trackAbandonedCart(cart) {
+    clearTimeout(abandonCartTimeout);
+    abandonCartTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(ABANDONED_CART_API, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            items: cart.items,
+            currency: 'USD',
+            email: null // Can be collected later
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.recoveryToken) {
+          abandonedCartToken = data.recoveryToken;
+          localStorage.setItem('sgic_abandoned_cart_token', data.recoveryToken);
+        }
+      } catch (err) {
+        // Silently fail - abandoned cart tracking is non-critical
+        console.debug('Abandoned cart tracking failed:', err);
+      }
+    }, 2000); // Wait 2 seconds after last cart change
   }
 
   function cartCount(cart) {

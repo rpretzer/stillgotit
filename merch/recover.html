@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Recover Your Cart | The Still Got It Collective</title>
+  <meta name="description" content="Recover your abandoned cart and complete your purchase." />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/merch.css" />
+  <script src="/assets/js/recover-cart.js"></script>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="/" class="logo">
+          <span class="logo-text">Still Got It Collective</span>
+        </a>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/merch" class="nav-link">Merch</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" class="merch-main">
+    <section class="section">
+      <div class="container">
+        <div class="ticket-card">
+          <h1 class="merch-h2">Recover Your Cart</h1>
+          <div id="recover-loading">
+            <p>Loading your cart...</p>
+          </div>
+          <div id="recover-error" class="merch-error" hidden>
+            <p>Unable to recover your cart. It may have expired or already been completed.</p>
+            <a href="/merch/" class="btn btn-primary" style="margin-top: var(--spacing-md);">Start Shopping</a>
+          </div>
+          <div id="recover-success" hidden>
+            <p>Your cart has been restored! You can now continue to checkout.</p>
+            <div class="merch-cart-actions">
+              <a href="/merch/checkout.html" class="btn btn-primary">Continue to Checkout</a>
+              <a href="/merch/" class="btn btn-secondary">Keep Shopping</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 RSP Management Solutions LLC. All rights reserved.</p>
+        <a href="/" class="back-to-top">← Back to site</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/scripts.js"></script>
+</body>
+</html>
+
