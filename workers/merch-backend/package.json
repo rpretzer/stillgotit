@@ -6,7 +6,10 @@
   },
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute sgic-merch --remote --file=schema.sql",
+    "db:init:local": "wrangler d1 execute sgic-merch --file=schema.sql",
+    "deploy:full": "./deploy.sh"
   }
 }
 

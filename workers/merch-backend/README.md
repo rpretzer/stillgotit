@@ -16,14 +16,27 @@ In Cloudflare Dashboard:
 
 Replace `YOUR_D1_DATABASE_ID` in `wrangler.toml` with your actual D1 database ID.
 
-### 3. Initialize Database Schema
+### 3. Authenticate with Cloudflare
 
 ```bash
 cd workers/merch-backend
-wrangler d1 execute sgic-merch --file=schema.sql
+npx wrangler login
+# This will open a browser to authenticate
 ```
 
-### 4. Set Secrets
+### 4. Initialize Database Schema
+
+**Option A: Use the deployment script (recommended)**
+```bash
+./deploy.sh
+```
+
+**Option B: Manual commands**
+```bash
+npm run db:init
+```
+
+### 5. Set Secrets
 
 Via Cloudflare Dashboard (recommended):
 - Go to your Worker → **Settings** → **Variables**
@@ -34,16 +47,21 @@ Via Cloudflare Dashboard (recommended):
 
 Or via CLI:
 ```bash
-wrangler secret put STRIPE_SECRET_KEY
-wrangler secret put STRIPE_WEBHOOK_SECRET
-wrangler secret put PRINTFUL_TOKEN
+npx wrangler secret put STRIPE_SECRET_KEY
+npx wrangler secret put STRIPE_WEBHOOK_SECRET
+npx wrangler secret put PRINTFUL_TOKEN
 ```
 
-### 5. Deploy
+### 6. Deploy
 
+**Option A: Use the deployment script (does both DB init + deploy)**
 ```bash
-npm install
-wrangler deploy
+./deploy.sh
+```
+
+**Option B: Manual deploy**
+```bash
+npm run deploy
 ```
 
 ## API Routes
