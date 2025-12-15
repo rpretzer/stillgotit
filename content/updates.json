@@ -7,7 +7,7 @@
       "alt": "Merchandise on display",
       "date": "2025-05-01",
       "title": "New Merch Drop",
-      "pinned": false,
+      "pinned": true,
       "image": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=600&fit=crop",
       "ctaUrl": "#tickets"
     },
@@ -34,7 +34,7 @@
       "ctaUrl": "#instagram"
     },
     {
-      "pinned": false,
+      "pinned": true,
       "ctaStyle": "primary",
       "title": "Big Energy 80's",
       "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_54_21-pm.png",
