@@ -900,7 +900,14 @@
 
         function createToggle(theme) {
             const navMenu = document.getElementById('nav-menu');
-            if (!navMenu || document.getElementById('theme-toggle')) return;
+            if (!navMenu) {
+                // Retry if nav-menu doesn't exist yet
+                setTimeout(() => createToggle(theme), 100);
+                return;
+            }
+            
+            // Don't create duplicate
+            if (document.getElementById('theme-toggle')) return;
 
             const li = document.createElement('li');
 
@@ -933,25 +940,29 @@
             });
         }
 
-        function initTheme() {
-            const theme = getStoredTheme();
-            setTheme(theme);
-            createToggle(theme);
-        }
-
         // Initialize theme immediately (before DOM is ready)
         const theme = getStoredTheme();
         setTheme(theme);
 
-        // Create toggle when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
+        // Create toggle - try multiple times to ensure it's added
+        function ensureToggleCreated() {
+            if (!document.getElementById('theme-toggle')) {
                 createToggle(theme);
-            });
-        } else {
-            // DOM already loaded, create toggle now
-            createToggle(theme);
+            }
         }
+
+        // Try immediately if DOM is ready
+        if (document.readyState !== 'loading') {
+            ensureToggleCreated();
+        }
+
+        // Also try on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            ensureToggleCreated();
+        });
+
+        // Final attempt after a short delay to catch any edge cases
+        setTimeout(ensureToggleCreated, 500);
     })();
 
     // ===== Initialize on DOM Load =====
