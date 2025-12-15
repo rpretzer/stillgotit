@@ -34,6 +34,8 @@ npx wrangler login
 **Option B: Manual commands**
 ```bash
 npm run db:init
+# Then initialize abandoned carts table:
+npx wrangler d1 execute sgic-merch --remote --file=schema-abandoned-carts.sql
 ```
 
 ### 5. Set Secrets
@@ -70,6 +72,9 @@ npm run deploy
 - `POST /api/stripe/webhook` - Handle Stripe webhooks (payment_intent.succeeded)
 - `GET /api/products` - Serve product catalog
 - `GET /api/orders/:id` - Get order status and timeline
+- `POST /api/carts/abandoned` - Save abandoned cart (returns recovery token)
+- `GET /api/carts/recover/:token` - Get cart by recovery token
+- `POST /api/carts/recover/:token` - Mark cart as recovered
 
 ## Stripe Webhook Setup
 
@@ -95,6 +100,20 @@ Products should include:
 3. Frontend confirms payment with Stripe Elements
 4. Stripe webhook fires → Worker marks order PAID → creates Printful order
 5. Customer can check status via `GET /api/orders/:id`
+
+## Abandoned Cart Tracking
+
+The system automatically tracks abandoned carts when users add items but don't complete checkout:
+
+1. **Automatic Tracking**: When items are added to cart, the frontend saves the cart to the backend after a 2-second delay
+2. **Recovery Token**: Each abandoned cart gets a unique recovery token
+3. **Recovery URL**: Users can recover their cart via `/merch/recover.html?token=...`
+4. **Email Integration** (optional): You can send recovery emails with the token link
+
+To use abandoned carts:
+1. Initialize the schema: `npx wrangler d1 execute sgic-merch --remote --file=schema-abandoned-carts.sql`
+2. Carts are automatically tracked when users add items
+3. Recovery links: `https://your-site.com/merch/recover.html?token=RECOVERY_TOKEN`
 
 ## Local Development
 
