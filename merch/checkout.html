@@ -25,6 +25,11 @@
       // Try to load from generated file (will be undefined if file doesn't exist)
       // For local testing, you can uncomment and set your test key:
       // window.STRIPE_PUBLISHABLE_KEY = 'pk_test_...';
+      
+      // Check if we're on the deployed site and key is missing
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        console.error('Stripe publishable key not found. The GitHub Actions workflow may not have run yet, or the NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY secret may not be set correctly.');
+      }
     }
   </script>
   <script src="/assets/js/stripe-publishable.js"></script>
