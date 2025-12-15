@@ -1,15 +1,15 @@
 [
   {
-    "title": "90s Day Party: Still Got It Vol. 3",
-    "startDate": "2025-12-20",
-    "startTime": "2PM",
-    "location": "The Warehouse Loft",
+    "title": "90s Dance Party: Still Got It Vol. 1",
+    "startDate": "2025-11-24",
+    "startTime": "6PM",
+    "location": "B-Side Lounge, Cleveland",
     "ticketUrl": "https://squareup.com/checkout/vol3",
     "imageUrl": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-10-aaa307ef5e-thumb.webp",
     "description": "Hip hop & house vibes with a retro twist. Dress code: bold colors."
   },
   {
-    "title": "Big Energy 80’s",
+    "title": "80’s Dance Party: Still Got It Vol. 2",
     "startDate": "2026-01-29",
     "startTime": "6PM",
     "location": "B-Side Lounge, Cleveland",
@@ -18,13 +18,13 @@
     "description": "Pure 80’s nostalgia—synths, neon, and no pretense."
   },
   {
-    "title": "Still Got It: House Classics",
-    "startDate": "2026-03-15",
-    "startTime": "9PM",
-    "location": "The Warehouse Loft",
-    "ticketUrl": "https://squareup.com/checkout/house-classics",
+    "title": "Cabin Fever: Still Got It Vol. 3",
+    "startDate": "2026-02-26",
+    "startTime": "6PM",
+    "location": "B-Side Lounge, Cleveland",
+    "ticketUrl": "",
     "imageUrl": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-11-ee2d5ab667-thumb.webp",
-    "description": "Late-night house and disco cuts with special guest DJs."
+    "description": "The perfect antidote to February in Cleveland. Seasonal beer flights curated for the event."
   }
 ]
 
