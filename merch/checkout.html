@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Checkout | The Still Got It Collective</title>
+  <meta name="description" content="Secure checkout for Still Got It Collective merch." />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/merch.css" />
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="/assets/js/stripe-publishable.js"></script>
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="/" class="logo">
+          <span class="logo-text">Still Got It Collective</span>
+        </a>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/merch" class="nav-link">Merch</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" class="merch-main">
+    <section class="section">
+      <div class="container">
+        <h1 class="section-title">Checkout</h1>
+
+        <div id="checkout-error" class="ticket-card" style="background: var(--status-error); color: white; margin-bottom: var(--spacing-md);" hidden></div>
+
+        <!-- Shipping Form -->
+        <div id="shipping-form" class="ticket-card">
+          <h2 class="merch-h2">Shipping Information</h2>
+          <form id="shipping-form-el">
+            <div style="display: grid; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+              <div>
+                <label for="email" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Email *</label>
+                <input type="email" id="email" name="email" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              </div>
+              <div>
+                <label for="name" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Full Name *</label>
+                <input type="text" id="name" name="name" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              </div>
+              <div>
+                <label for="address1" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Address Line 1 *</label>
+                <input type="text" id="address1" name="address1" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              </div>
+              <div>
+                <label for="address2" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Address Line 2</label>
+                <input type="text" id="address2" name="address2" style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                <div>
+                  <label for="city" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">City *</label>
+                  <input type="text" id="city" name="city" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                </div>
+                <div>
+                  <label for="state" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">State *</label>
+                  <input type="text" id="state" name="state" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                <div>
+                  <label for="postalCode" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">ZIP Code *</label>
+                  <input type="text" id="postalCode" name="postalCode" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                </div>
+                <div>
+                  <label for="country" style="display: block; margin-bottom: var(--spacing-xs); font-weight: var(--font-semibold);">Country *</label>
+                  <input type="text" id="country" name="country" value="US" required style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="continue-to-payment">Continue to Payment</button>
+          </form>
+        </div>
+
+        <!-- Payment Form -->
+        <div id="payment-form" class="ticket-card" hidden>
+          <h2 class="merch-h2">Payment</h2>
+          <div id="payment-element">
+            <!-- Stripe Payment Element will mount here -->
+          </div>
+          <div style="margin-top: var(--spacing-md);">
+            <button type="button" class="btn btn-primary" id="submit-payment" disabled>Pay Now</button>
+            <button type="button" class="btn btn-secondary" id="back-to-shipping" style="margin-left: var(--spacing-sm);">Back</button>
+          </div>
+        </div>
+
+        <div id="loading" class="ticket-card" hidden>
+          <p>Processing...</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 RSP Management Solutions LLC. All rights reserved.</p>
+        <a href="/" class="back-to-top">← Back to site</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/checkout.js"></script>
+  <script src="/assets/js/scripts.js"></script>
+</body>
+</html>
+

@@ -241,38 +241,14 @@
     if (els.subtotal) els.subtotal.textContent = formatMoney(subtotalCents, currency);
   }
 
-  async function createCheckout(catalog) {
+  function createCheckout(catalog) {
     const cart = loadCart();
     if (!cart.items.length) {
       setError('Your cart is empty.');
       return;
     }
-
-    const apiBase = (catalog.apiBase || '/api').replace(/\/+$/, '');
-    const url = `${apiBase}/checkout`;
-
-    els.checkout.disabled = true;
-    setError('');
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          currency: catalog.currency || 'USD',
-          items: cart.items.map((it) => ({ productId: it.productId, variantId: it.variantId, qty: it.qty }))
-        })
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || `Checkout failed (${res.status})`);
-      if (!data?.url) throw new Error('Checkout failed (missing redirect URL).');
-
-      window.location.href = data.url;
-    } catch (err) {
-      setError(err?.message || 'Checkout failed.');
-    } finally {
-      els.checkout.disabled = false;
-    }
+    // Redirect to checkout page
+    window.location.href = '/merch/checkout.html';
   }
 
   async function loadCatalog() {
