@@ -675,6 +675,57 @@ body {
     margin-top: 0;
 }
 
+/* ===== Link Styles (Email, Tel, General) ===== */
+/* Email and phone links */
+a[href^="mailto:"],
+a[href^="tel:"] {
+    color: var(--interactive-primary);
+    text-decoration: none;
+    transition: var(--transition);
+    border-bottom: 1px solid transparent;
+}
+
+a[href^="mailto:"]:hover,
+a[href^="tel:"]:hover {
+    color: var(--interactive-primary-hover);
+    border-bottom-color: var(--interactive-primary-hover);
+    text-decoration: none;
+}
+
+a[href^="mailto:"]:active,
+a[href^="tel:"]:active {
+    color: var(--interactive-primary-active);
+    border-bottom-color: var(--interactive-primary-active);
+}
+
+a[href^="mailto:"]:visited,
+a[href^="tel:"]:visited {
+    color: var(--interactive-primary);
+}
+
+/* General links in content blocks */
+.content-block a:not([href^="mailto:"]):not([href^="tel:"]) {
+    color: var(--interactive-primary);
+    text-decoration: none;
+    transition: var(--transition);
+    border-bottom: 1px solid transparent;
+}
+
+.content-block a:not([href^="mailto:"]):not([href^="tel:"]):hover {
+    color: var(--interactive-primary-hover);
+    border-bottom-color: var(--interactive-primary-hover);
+    text-decoration: none;
+}
+
+.content-block a:not([href^="mailto:"]):not([href^="tel:"]):active {
+    color: var(--interactive-primary-active);
+    border-bottom-color: var(--interactive-primary-active);
+}
+
+.content-block a:not([href^="mailto:"]):not([href^="tel:"]):visited {
+    color: var(--interactive-primary);
+}
+
 @media (min-width: 768px) {
     .content-grid {
         gap: var(--spacing-xxl);
