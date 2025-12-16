@@ -642,6 +642,7 @@ body {
 .content-block {
     max-width: 800px;
     margin: 0 auto;
+    text-align: left; /* Ensure consistent left alignment */
 }
 
 .content-block h2 {
@@ -652,6 +653,7 @@ body {
     color: var(--text-primary);
     margin-bottom: var(--spacing-md);
     margin-top: 0;
+    text-align: left; /* Ensure headings are left-aligned */
 }
 
 .content-block p {
@@ -661,6 +663,7 @@ body {
     color: var(--text-primary);
     margin-bottom: var(--spacing-lg);
     margin-top: 0;
+    text-align: left; /* Ensure paragraphs are left-aligned */
 }
 
 .content-block p:last-child {
