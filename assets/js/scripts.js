@@ -1100,9 +1100,12 @@
                 setTimeout(ensureToggleCreated, 100);
                 return;
             }
-            if (!document.getElementById('theme-toggle')) {
-                createToggle(theme);
+            // Check if toggle already exists
+            if (document.getElementById('theme-toggle')) {
+                return;
             }
+            // Create the toggle
+            createToggle(theme);
         }
 
         // Try immediately if DOM is ready
@@ -1120,6 +1123,17 @@
         setTimeout(ensureToggleCreated, 300);
         setTimeout(ensureToggleCreated, 500);
         setTimeout(ensureToggleCreated, 1000);
+        
+        // Also try when nav menu becomes visible (in case it's dynamically shown)
+        const navMenu = document.getElementById('nav-menu');
+        if (navMenu) {
+            const observer = new MutationObserver(() => {
+                if (navMenu.classList.contains('active') && !document.getElementById('theme-toggle')) {
+                    ensureToggleCreated();
+                }
+            });
+            observer.observe(navMenu, { attributes: true, attributeFilter: ['class'] });
+        }
     })();
 
     // ===== Initialize on DOM Load =====

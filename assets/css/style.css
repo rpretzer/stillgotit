@@ -374,10 +374,11 @@ body {
 }
 
 .nav-menu.active {
-    max-height: 500px;
+    max-height: 800px;
     padding: var(--spacing-md);
     opacity: 1;
     visibility: visible;
+    overflow-y: auto;
 }
 
 .nav-menu li {
@@ -401,40 +402,6 @@ body {
     background: var(--color-secondary-100);
     color: var(--interactive-primary);
     transform: translateX(4px);
-}
-
-/* Desktop Navigation */
-@media (min-width: 768px) {
-    .hamburger {
-        display: none;
-    }
-    
-    .nav-menu {
-        position: static;
-        flex-direction: row;
-        align-items: center;
-        gap: var(--spacing-sm);
-        background: transparent;
-        box-shadow: none;
-        max-height: none;
-        opacity: 1;
-        visibility: visible;
-        padding: 0;
-        overflow: visible;
-    }
-    
-    .nav-menu li {
-        margin: 0;
-    }
-    
-    .nav-link {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        border-radius: var(--radius-sm);
-    }
-    
-    .nav-link:hover {
-        transform: translateY(-2px);
-    }
 }
 
 /* Theme toggle switch inside nav menu */
