@@ -8,30 +8,21 @@
   <style>
     body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     
-    /* Admin Links Panel */
+    /* Admin Links Panel - Sidebar Integration */
     #admin-links-panel {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: white;
-      border: 1px solid #e0e0e0;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       padding: 16px;
-      max-width: 280px;
-      max-height: 80vh;
-      overflow-y: auto;
-      z-index: 10000;
+      border-top: 1px solid #e0e0e0;
+      margin-top: 16px;
       font-size: 14px;
     }
     
     #admin-links-panel h3 {
       margin: 0 0 12px 0;
-      font-size: 16px;
+      font-size: 13px;
       font-weight: 600;
       color: #333;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     
     #admin-links-panel .link-group {
@@ -53,12 +44,13 @@
     
     #admin-links-panel .link-item {
       display: block;
-      padding: 8px 12px;
-      margin-bottom: 4px;
+      padding: 6px 8px;
+      margin-bottom: 2px;
       color: #0066cc;
       text-decoration: none;
       border-radius: 4px;
       transition: background-color 0.2s;
+      font-size: 13px;
     }
     
     #admin-links-panel .link-item:hover {
@@ -68,17 +60,6 @@
     
     #admin-links-panel .link-item:active {
       background-color: #e8e8e8;
-    }
-    
-    @media (max-width: 768px) {
-      #admin-links-panel {
-        position: relative;
-        top: 0;
-        right: 0;
-        max-width: 100%;
-        margin: 10px;
-        max-height: 300px;
-      }
     }
   </style>
 </head>
@@ -127,24 +108,77 @@
   </div>
   
   <script>
-    // Show admin links panel after CMS loads
+    // Inject admin links panel into CMS sidebar below Collections
     (function() {
-      function showAdminLinks() {
+      function injectAdminLinks() {
         const panel = document.getElementById('admin-links-panel');
-        if (panel) {
+        if (!panel) return;
+        
+        // Find the CMS sidebar - Decap CMS uses various selectors
+        const sidebarSelectors = [
+          '[class*="Sidebar"]',
+          '[class*="sidebar"]',
+          '.nc-sidebar',
+          'nav[class*="sidebar"]',
+          'aside',
+          '[data-testid="sidebar"]'
+        ];
+        
+        let sidebar = null;
+        for (const selector of sidebarSelectors) {
+          sidebar = document.querySelector(selector);
+          if (sidebar) break;
+        }
+        
+        // If we can't find a specific sidebar, look for the main navigation container
+        if (!sidebar) {
+          // Decap CMS typically has a structure like: body > div > nav or aside
+          const navs = document.querySelectorAll('nav, aside, [role="navigation"]');
+          for (const nav of navs) {
+            // Check if it contains collection links (typical CMS sidebar content)
+            if (nav.querySelector('a[href*="#/collections"], [class*="collection"], [class*="Collection"]')) {
+              sidebar = nav;
+              break;
+            }
+          }
+        }
+        
+        if (sidebar) {
+          // Check if already injected
+          if (sidebar.querySelector('#admin-links-panel')) return;
+          
+          // Insert the panel at the end of the sidebar
+          sidebar.appendChild(panel);
           panel.style.display = 'block';
+        } else {
+          // Fallback: try after a delay
+          setTimeout(injectAdminLinks, 500);
         }
       }
       
-      // Try to show immediately
+      // Try multiple times to catch CMS rendering
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', showAdminLinks);
+        document.addEventListener('DOMContentLoaded', injectAdminLinks);
       } else {
-        showAdminLinks();
+        injectAdminLinks();
       }
       
-      // Also try after a short delay to ensure CMS has rendered
-      setTimeout(showAdminLinks, 500);
+      // Retry after delays to catch late-rendering CMS
+      setTimeout(injectAdminLinks, 500);
+      setTimeout(injectAdminLinks, 1000);
+      setTimeout(injectAdminLinks, 2000);
+      
+      // Also watch for DOM changes (CMS might load dynamically)
+      const observer = new MutationObserver(() => {
+        if (!document.getElementById('admin-links-panel')?.parentElement) {
+          injectAdminLinks();
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
     })();
   </script>
 </body>
