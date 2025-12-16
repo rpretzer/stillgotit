@@ -1094,6 +1094,12 @@
 
         // Create toggle - try multiple times to ensure it's added
         function ensureToggleCreated() {
+            const navMenu = document.getElementById('nav-menu');
+            if (!navMenu) {
+                // Retry if nav-menu doesn't exist yet
+                setTimeout(ensureToggleCreated, 100);
+                return;
+            }
             if (!document.getElementById('theme-toggle')) {
                 createToggle(theme);
             }
@@ -1109,8 +1115,11 @@
             ensureToggleCreated();
         });
 
-        // Final attempt after a short delay to catch any edge cases
+        // Multiple retry attempts to catch edge cases
+        setTimeout(ensureToggleCreated, 100);
+        setTimeout(ensureToggleCreated, 300);
         setTimeout(ensureToggleCreated, 500);
+        setTimeout(ensureToggleCreated, 1000);
     })();
 
     // ===== Initialize on DOM Load =====
