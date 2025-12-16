@@ -7,10 +7,145 @@
   <title>Still Got It Collective — Admin</title>
   <style>
     body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    
+    /* Admin Links Panel */
+    #admin-links-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 16px;
+      max-width: 280px;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 10000;
+      font-size: 14px;
+    }
+    
+    #admin-links-panel h3 {
+      margin: 0 0 12px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 8px;
+    }
+    
+    #admin-links-panel .link-group {
+      margin-bottom: 16px;
+    }
+    
+    #admin-links-panel .link-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    #admin-links-panel .link-group-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+    
+    #admin-links-panel .link-item {
+      display: block;
+      padding: 8px 12px;
+      margin-bottom: 4px;
+      color: #0066cc;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    
+    #admin-links-panel .link-item:hover {
+      background-color: #f5f5f5;
+      text-decoration: underline;
+    }
+    
+    #admin-links-panel .link-item:active {
+      background-color: #e8e8e8;
+    }
+    
+    @media (max-width: 768px) {
+      #admin-links-panel {
+        position: relative;
+        top: 0;
+        right: 0;
+        max-width: 100%;
+        margin: 10px;
+        max-height: 300px;
+      }
+    }
   </style>
 </head>
 <body>
   <!-- Decap CMS Admin UI -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <!-- Admin Links Panel -->
+  <div id="admin-links-panel" style="display: none;">
+    <h3>Quick Access Links</h3>
+    <div id="admin-links-content">
+      <div class="link-group">
+        <div class="link-group-title">Payment & Commerce</div>
+        <a href="https://squareup.com/dashboard" target="_blank" rel="noopener" class="link-item">Square Dashboard</a>
+        <a href="https://dashboard.stripe.com" target="_blank" rel="noopener" class="link-item">Stripe Dashboard</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Ticketing</div>
+        <a href="https://ticketscandy.com/admin" target="_blank" rel="noopener" class="link-item">TicketsCandy Admin</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Fulfillment</div>
+        <a href="https://www.printful.com/dashboard" target="_blank" rel="noopener" class="link-item">Printly Catalog</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Development</div>
+        <a href="https://github.com/rpretzer/stillgotit" target="_blank" rel="noopener" class="link-item">GitHub Repo - StillGotIt</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Infrastructure</div>
+        <a href="https://dash.cloudflare.com" target="_blank" rel="noopener" class="link-item">Cloudflare Dashboard</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Analytics</div>
+        <a href="https://analytics.google.com" target="_blank" rel="noopener" class="link-item">GA4 Dashboard</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Social Media</div>
+        <a href="https://business.facebook.com" target="_blank" rel="noopener" class="link-item">Meta Business Suite</a>
+      </div>
+      <div class="link-group">
+        <div class="link-group-title">Website</div>
+        <a href="https://account.squarespace.com" target="_blank" rel="noopener" class="link-item">SquareSpace Dashboard</a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Show admin links panel after CMS loads
+    (function() {
+      function showAdminLinks() {
+        const panel = document.getElementById('admin-links-panel');
+        if (panel) {
+          panel.style.display = 'block';
+        }
+      }
+      
+      // Try to show immediately
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', showAdminLinks);
+      } else {
+        showAdminLinks();
+      }
+      
+      // Also try after a short delay to ensure CMS has rendered
+      setTimeout(showAdminLinks, 500);
+    })();
+  </script>
 </body>
 </html>

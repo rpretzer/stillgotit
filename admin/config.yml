@@ -23,6 +23,36 @@ public_folder: "/assets/images/uploads"
 # publish_mode: editorial_workflow
 
 collections:
+  - name: "admin"
+    label: "Admin Links"
+    files:
+      - name: "admin-links"
+        label: "Quick Access Links"
+        file: "content/admin-links.json"
+        format: "json"
+        editor:
+          preview: false
+        fields:
+          - label: "Admin Dashboard Links"
+            name: "links"
+            widget: "list"
+            summary: "{{fields.label}}"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+              - label: "Category"
+                name: "category"
+                widget: "select"
+                options:
+                  - { label: "Payment & Commerce", value: "Payment & Commerce" }
+                  - { label: "Ticketing", value: "Ticketing" }
+                  - { label: "Fulfillment", value: "Fulfillment" }
+                  - { label: "Development", value: "Development" }
+                  - { label: "Infrastructure", value: "Infrastructure" }
+                  - { label: "Analytics", value: "Analytics" }
+                  - { label: "Social Media", value: "Social Media" }
+                  - { label: "Website", value: "Website" }
+
   - name: "site"
     label: "Site Content"
     files:
@@ -262,6 +292,124 @@ collections:
                   - { label: "Primary", value: "primary" }
                   - { label: "Secondary", value: "secondary" }
                 default: "primary"
+
+  - name: "pages"
+    label: "Pages"
+    files:
+      - name: "about-page"
+        label: "About"
+        file: "content/pages/about.json"
+        format: "json"
+        fields:
+          - { label: "Meta Title", name: "metaTitle", widget: "string" }
+          - { label: "Meta Description", name: "metaDescription", widget: "text" }
+          - { label: "Canonical URL", name: "canonicalUrl", widget: "string", required: false }
+          - { label: "Hero Title", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text", required: false }
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Body Paragraphs"
+                name: "body"
+                widget: "list"
+                field: { label: "Paragraph", name: "paragraph", widget: "text" }
+                hint: "Each item will be rendered as a separate paragraph. HTML is supported."
+              - label: "Contacts"
+                name: "contacts"
+                widget: "list"
+                required: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "Value", name: "value", widget: "string" }
+                  - { label: "URL (mailto:, tel:, or https)", name: "url", widget: "string", required: false }
+
+      - name: "contact-page"
+        label: "Contact"
+        file: "content/pages/contact.json"
+        format: "json"
+        fields:
+          - { label: "Meta Title", name: "metaTitle", widget: "string" }
+          - { label: "Meta Description", name: "metaDescription", widget: "text" }
+          - { label: "Canonical URL", name: "canonicalUrl", widget: "string", required: false }
+          - { label: "Hero Title", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text", required: false }
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Body Paragraphs"
+                name: "body"
+                widget: "list"
+                field: { label: "Paragraph", name: "paragraph", widget: "text" }
+                hint: "Each item will be rendered as a separate paragraph. HTML is supported."
+              - label: "Contacts"
+                name: "contacts"
+                widget: "list"
+                required: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "Value", name: "value", widget: "string" }
+                  - { label: "URL (mailto:, tel:, or https)", name: "url", widget: "string", required: false }
+
+      - name: "legal-page"
+        label: "Legal"
+        file: "content/pages/legal.json"
+        format: "json"
+        fields:
+          - { label: "Meta Title", name: "metaTitle", widget: "string" }
+          - { label: "Meta Description", name: "metaDescription", widget: "text" }
+          - { label: "Canonical URL", name: "canonicalUrl", widget: "string", required: false }
+          - { label: "Hero Title", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text", required: false }
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Body Paragraphs"
+                name: "body"
+                widget: "list"
+                field: { label: "Paragraph", name: "paragraph", widget: "text" }
+                hint: "Each item will be rendered as a separate paragraph. HTML is supported."
+              - label: "Contacts"
+                name: "contacts"
+                widget: "list"
+                required: false
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "Value", name: "value", widget: "string" }
+                  - { label: "URL (mailto:, tel:, or https)", name: "url", widget: "string", required: false }
+
+      - name: "merch-page"
+        label: "Merch"
+        file: "content/pages/merch.json"
+        format: "json"
+        fields:
+          - { label: "Meta Title", name: "metaTitle", widget: "string" }
+          - { label: "Meta Description", name: "metaDescription", widget: "text" }
+          - { label: "Canonical URL", name: "canonicalUrl", widget: "string", required: false }
+          - { label: "Hero Title", name: "heroTitle", widget: "string" }
+          - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text", required: false }
+          - { label: "Catalog Label", name: "catalogLabel", widget: "string" }
+          - { label: "Loading Message", name: "loadingMessage", widget: "string" }
+          - { label: "Loading Subtext", name: "loadingSubtext", widget: "string" }
+          - { label: "Cart Title", name: "cartTitle", widget: "string" }
+          - { label: "Cart Close Label", name: "cartCloseLabel", widget: "string" }
+          - { label: "Subtotal Label", name: "subtotalLabel", widget: "string" }
+          - { label: "Shipping Note", name: "shippingNote", widget: "text" }
+          - { label: "Checkout Label", name: "checkoutLabel", widget: "string" }
+          - { label: "Clear Cart Label", name: "clearCartLabel", widget: "string" }
+          - { label: "Empty Cart Message", name: "emptyCartMessage", widget: "string" }
+          - { label: "Error Message", name: "errorMessage", widget: "string" }
 
   - name: "events"
     label: "Events"

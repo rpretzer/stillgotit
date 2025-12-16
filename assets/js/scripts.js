@@ -95,6 +95,148 @@
         }
     }
 
+    // ===== Static Page Content (Decap CMS) =====
+    // Dynamically hydrates About / Contact / Legal pages from JSON so editors can update copy via Decap.
+    async function loadPageContent() {
+        const pageSlug = document.body?.dataset?.page;
+        if (!pageSlug) return;
+
+        const source = document.body.dataset.pageSource || `content/pages/${pageSlug}.json`;
+        const url = new URL(source, window.location.href);
+
+        const grid = document.getElementById('page-content-grid');
+        const heroTitle = document.querySelector('main .section-title');
+        const heroSubtitle = document.querySelector('main .section-subtitle');
+
+        try {
+            const res = await fetch(url.toString(), { cache: 'no-store' });
+            if (!res.ok) throw new Error(`Failed to load page content (${res.status})`);
+            const data = await res.json();
+
+            // Meta + canonicals (override site defaults)
+            if (data?.metaTitle) {
+                document.title = data.metaTitle;
+            }
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc && data?.metaDescription) {
+                metaDesc.setAttribute('content', data.metaDescription);
+            }
+            const canonical = document.querySelector('link[rel="canonical"]');
+            if (canonical && data?.canonicalUrl) {
+                canonical.setAttribute('href', data.canonicalUrl);
+            }
+
+            // Hero copy
+            if (heroTitle && data?.heroTitle) {
+                heroTitle.textContent = data.heroTitle;
+            }
+            if (heroSubtitle && typeof data?.heroSubtitle === 'string') {
+                heroSubtitle.textContent = data.heroSubtitle;
+            }
+
+            // Merch page specific content (if this is the merch page)
+            // NOTE: CMS only manages static UI labels. It does NOT touch:
+            // - Product catalog data (loaded from /content/merch.json by merch.js)
+            // - Cart totals (calculated dynamically by merch.js)
+            // - Product prices, names, or descriptions (from catalog JSON)
+            // - Stripe payment elements (rendered by Stripe SDK)
+            if (pageSlug === 'merch') {
+                const merchHeroTitle = document.getElementById('merch-hero-title');
+                if (merchHeroTitle && data?.heroTitle) merchHeroTitle.textContent = data.heroTitle;
+                const merchHeroSubtitle = document.getElementById('merch-hero-subtitle');
+                if (merchHeroSubtitle && data?.heroSubtitle) merchHeroSubtitle.textContent = data.heroSubtitle;
+                const merchCatalogLabel = document.getElementById('merch-catalog-label');
+                if (merchCatalogLabel && data?.catalogLabel) merchCatalogLabel.textContent = data.catalogLabel;
+                const merchLoadingTitle = document.getElementById('merch-loading-title');
+                if (merchLoadingTitle && data?.loadingMessage) merchLoadingTitle.textContent = data.loadingMessage;
+                const merchLoadingSubtext = document.getElementById('merch-loading-subtext');
+                if (merchLoadingSubtext && data?.loadingSubtext) merchLoadingSubtext.textContent = data.loadingSubtext;
+                const merchCartTitle = document.getElementById('merch-cart-title');
+                if (merchCartTitle && data?.cartTitle) merchCartTitle.textContent = data.cartTitle;
+                const merchCartClose = document.getElementById('close-cart');
+                if (merchCartClose && data?.cartCloseLabel) merchCartClose.textContent = data.cartCloseLabel;
+                // Only update the label, NOT the cart-subtotal value (which is calculated dynamically)
+                const merchSubtotalLabel = document.getElementById('merch-subtotal-label');
+                if (merchSubtotalLabel && data?.subtotalLabel) merchSubtotalLabel.textContent = data.subtotalLabel;
+                const merchShippingNote = document.getElementById('merch-shipping-note');
+                if (merchShippingNote && data?.shippingNote) merchShippingNote.textContent = data.shippingNote;
+                const merchCheckout = document.getElementById('checkout');
+                if (merchCheckout && data?.checkoutLabel) merchCheckout.textContent = data.checkoutLabel;
+                const merchClearCart = document.getElementById('clear-cart');
+                if (merchClearCart && data?.clearCartLabel) merchClearCart.textContent = data.clearCartLabel;
+                // Error message is only set here as fallback; merch.js will override if there's an actual error
+                const merchError = document.getElementById('merch-error');
+                if (merchError && data?.errorMessage && merchError.hidden) {
+                    // Only set if error is hidden (not currently showing a dynamic error)
+                    merchError.textContent = data.errorMessage;
+                }
+            }
+
+            // Section content
+            if (grid && Array.isArray(data?.sections)) {
+                grid.innerHTML = '';
+                data.sections.forEach((section) => {
+                    if (!section?.title) return;
+
+                    const block = document.createElement('div');
+                    block.className = 'content-block';
+
+                    const h2 = document.createElement('h2');
+                    h2.textContent = section.title;
+                    block.appendChild(h2);
+
+                    if (Array.isArray(section.body)) {
+                        section.body.forEach((paragraph) => {
+                            // Handle both string format (legacy) and object format (CMS)
+                            const text = typeof paragraph === 'string' 
+                                ? paragraph 
+                                : (paragraph?.paragraph || paragraph?.text || '');
+                            if (!text) return;
+                            const p = document.createElement('p');
+                            p.innerHTML = text;
+                            block.appendChild(p);
+                        });
+                    }
+
+                    if (Array.isArray(section.contacts)) {
+                        section.contacts.forEach((contact) => {
+                            if (!contact?.label && !contact?.value) return;
+                            const p = document.createElement('p');
+                            if (contact?.label) {
+                                const strong = document.createElement('strong');
+                                strong.textContent = `${contact.label}:`;
+                                p.appendChild(strong);
+                                p.appendChild(document.createTextNode(' '));
+                            }
+                            if (contact?.url) {
+                                const a = document.createElement('a');
+                                a.href = contact.url;
+                                a.textContent = contact.value || contact.url;
+                                if (/^https?:\/\//i.test(contact.url)) {
+                                    a.target = '_blank';
+                                    a.rel = 'noopener noreferrer';
+                                }
+                                p.appendChild(a);
+                            } else if (contact?.value) {
+                                p.appendChild(document.createTextNode(contact.value));
+                            }
+                            block.appendChild(p);
+                        });
+                    }
+
+                    grid.appendChild(block);
+                });
+
+                if (typeof window.__observeFadeIns === 'function') {
+                    window.__observeFadeIns(grid);
+                }
+            }
+        } catch (err) {
+            // Keep fallback HTML if loading fails
+            console.warn('Page content load failed:', err);
+        }
+    }
+
     // ===== JSON-LD helper =====
     function injectJsonLd(id, data) {
         try {
@@ -121,9 +263,10 @@
             const res = await fetch(url.toString(), { cache: 'no-store' });
             if (!res.ok) throw new Error(`Failed to load site.json (${res.status})`);
             const settings = await res.json();
+            const hasPageSlug = !!document.body?.dataset?.page;
 
             // Meta tags (only on main index.html)
-            if (document.querySelector('meta[name="description"]')) {
+            if (!hasPageSlug && document.querySelector('meta[name="description"]')) {
                 const metaDesc = document.querySelector('meta[name="description"]');
                 if (metaDesc && settings?.meta?.description) metaDesc.setAttribute('content', settings.meta.description);
                 const metaKeywords = document.querySelector('meta[name="keywords"]');
@@ -231,7 +374,7 @@
             }
 
             // Page title
-            if (settings?.meta?.siteName && document.title && !document.title.includes('Merch') && !document.title.includes('Checkout') && !document.title.includes('Order')) {
+            if (!hasPageSlug && settings?.meta?.siteName && document.title && !document.title.includes('Merch') && !document.title.includes('Checkout') && !document.title.includes('Order')) {
                 document.title = `${settings.meta.siteName} - ${settings.meta.tagline || ''}`;
             }
 
@@ -412,8 +555,8 @@
                 wrapper.replaceChild(iframe, placeholder);
             }
 
-            // Merch page copy
-            if (document.querySelector('.merch-hero')) {
+            // Merch page copy (skip if page is CMS-managed via loadPageContent)
+            if (document.querySelector('.merch-hero') && !document.body?.dataset?.page) {
                 const merchHeroTitle = document.getElementById('merch-hero-title');
                 if (merchHeroTitle && settings?.merch?.heroTitle) merchHeroTitle.textContent = settings.merch.heroTitle;
                 const merchHeroSubtitle = document.getElementById('merch-hero-subtitle');
@@ -444,6 +587,11 @@
             }
 
             // Checkout page copy
+            // NOTE: CMS only manages static UI labels. It does NOT touch:
+            // - Stripe Payment Element (#payment-element - rendered by Stripe SDK)
+            // - Payment amounts or totals (calculated from cart by checkout.js)
+            // - Form field values (user input or Stripe-managed)
+            // - Order processing state (managed by checkout.js and Stripe)
             if (document.querySelector('.checkout-page')) {
                 const checkoutTitle = document.getElementById('checkout-title');
                 if (checkoutTitle && settings?.checkout?.title) checkoutTitle.textContent = settings.checkout.title;
@@ -970,6 +1118,7 @@
         // Any initialization code that needs to run after DOM is ready
         console.log('The Still Got It Collective website loaded successfully!');
         loadSiteSettings();
+        loadPageContent();
         loadLatestUpdates();
         loadGallery();
     });

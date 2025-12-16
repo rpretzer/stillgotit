@@ -1,0 +1,49 @@
+{
+  "metaTitle": "Contact | The Still Got It Collective",
+  "metaDescription": "Get in touch with The Still Got It Collective for event inquiries, partnerships, and bookings.",
+  "canonicalUrl": "https://www.stillgotitcollective.com/contact/",
+  "heroTitle": "Contact",
+  "heroSubtitle": "Reach out for event inquiries, collaborations, or to bring Still Got It vibes to your venue.",
+  "sections": [
+    {
+      "title": "General inquiries",
+      "body": [
+        "For questions about upcoming events, tickets, or accessibility, send us an email and we will get back to you as soon as we can."
+      ],
+      "contacts": [
+        {
+          "label": "Email",
+          "value": "info@stillgotitcollective.com",
+          "url": "mailto:info@stillgotitcollective.com"
+        }
+      ]
+    },
+    {
+      "title": "Partnerships & bookings",
+      "body": [
+        "Interested in sponsoring an event, booking us for a special night, or hosting a Still Got It experience at your space?"
+      ],
+      "contacts": [
+        {
+          "label": "Email",
+          "value": "bookings@stillgotitcollective.com",
+          "url": "mailto:bookings@stillgotitcollective.com"
+        }
+      ]
+    },
+    {
+      "title": "Follow along",
+      "body": [
+        "The fastest way to see what is next is to follow us on Instagram."
+      ],
+      "contacts": [
+        {
+          "label": "Instagram",
+          "value": "@stillgotitcollective",
+          "url": "https://www.instagram.com/stillgotitcollective"
+        }
+      ]
+    }
+  ]
+}
+

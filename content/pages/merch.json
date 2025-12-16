@@ -1,0 +1,19 @@
+{
+  "metaTitle": "Merch | The Still Got It Collective",
+  "metaDescription": "Shop Still Got It Collective merch. Secure checkout powered by Stripe.",
+  "canonicalUrl": "https://www.stillgotitcollective.com/merch/",
+  "heroTitle": "Merch",
+  "heroSubtitle": "Secure checkout powered by Stripe. US shipping only (international by request).",
+  "catalogLabel": "Catalog:",
+  "loadingMessage": "Loading merch…",
+  "loadingSubtext": "If this takes too long, refresh the page.",
+  "cartTitle": "Your cart",
+  "cartCloseLabel": "Close",
+  "subtotalLabel": "Subtotal",
+  "shippingNote": "Shipping and taxes are collected at checkout.",
+  "checkoutLabel": "Checkout",
+  "clearCartLabel": "Clear cart",
+  "emptyCartMessage": "Your cart is empty.",
+  "errorMessage": "Could not load merch."
+}
+

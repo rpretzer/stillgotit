@@ -160,16 +160,16 @@ async function verifyStripeWebhook(
     false,
     ['verify']
   );
-  
+
   let isValid = false;
   for (const sig of signatures) {
     try {
       const sigBytes = hexToArrayBuffer(sig);
       const valid = await crypto.subtle.verify(
-        'HMAC',
-        cryptoKey,
+    'HMAC',
+    cryptoKey,
         sigBytes,
-        new TextEncoder().encode(signedPayload)
+    new TextEncoder().encode(signedPayload)
       );
       if (valid) {
         isValid = true;
@@ -179,7 +179,7 @@ async function verifyStripeWebhook(
       // Continue to next signature
     }
   }
-  
+
   if (!isValid) {
     throw new Error('Invalid webhook signature');
   }
@@ -191,7 +191,7 @@ async function verifyStripeWebhook(
   if (Math.abs(now - eventTime) > fiveMinutes) {
     throw new Error('Webhook timestamp too old or too far in future');
   }
-  
+
   return JSON.parse(body);
 }
 

@@ -234,7 +234,7 @@
         }
         // Redirect to success page
         setTimeout(() => {
-          window.location.href = `/merch/success/?orderId=${orderId}`;
+        window.location.href = `/merch/success/?orderId=${orderId}`;
         }, 500);
       } else {
         showError('Payment status: ' + (paymentIntent?.status || 'unknown'));

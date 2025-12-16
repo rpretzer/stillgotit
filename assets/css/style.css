@@ -416,8 +416,8 @@ body {
     font-family: var(--font-heading);
     font-size: var(--text-sm);
     color: var(--text-primary);
-}
-
+    }
+    
 .theme-toggle-input {
     position: absolute;
     opacity: 0;
@@ -434,8 +434,8 @@ body {
     border-radius: 999px;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
     box-shadow: inset 0 0 0 1px var(--border-default);
-}
-
+    }
+    
 .theme-toggle-slider::before {
     content: "";
     position: absolute;
@@ -451,8 +451,8 @@ body {
 .theme-toggle-input:checked + .theme-toggle-slider {
     background-color: var(--interactive-primary);
     box-shadow: inset 0 0 0 1px var(--interactive-primary-hover);
-}
-
+    }
+    
 .theme-toggle-input:checked + .theme-toggle-slider::before {
     transform: translateX(18px);
     background-color: #fff;

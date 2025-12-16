@@ -1,0 +1,28 @@
+{
+  "metaTitle": "About | The Still Got It Collective",
+  "metaDescription": "Learn more about The Still Got It Collective and how we curate unforgettable nights in Cleveland.",
+  "canonicalUrl": "https://www.stillgotitcollective.com/about/",
+  "heroTitle": "About The Still Got It Collective",
+  "heroSubtitle": "Curating nights you talk about the next morning, with just the right mix of nostalgia, energy, and community.",
+  "sections": [
+    {
+      "title": "What we do",
+      "body": [
+        "The Still Got It Collective designs party experiences for people who still love the dance floor—but also love a reasonable bedtime. From 80's synth nights to 90's day parties, every event is built around great music, thoughtful details, and a crowd that actually shows up to dance."
+      ]
+    },
+    {
+      "title": "Where we are",
+      "body": [
+        "We are based in Cleveland, Ohio and work with venues, DJs, and partners across the city to keep things feeling fresh while respecting the neighborhoods we are in."
+      ]
+    },
+    {
+      "title": "How to work with us",
+      "body": [
+        "Interested in collaborating, sponsoring an event, or bringing the Still Got It energy to your venue? Head over to our <a href=\"/contact/\">contact page</a> and reach out—we would love to talk."
+      ]
+    }
+  ]
+}
+

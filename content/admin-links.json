@@ -1,0 +1,49 @@
+{
+  "links": [
+    {
+      "label": "Square Dashboard",
+      "url": "https://squareup.com/dashboard",
+      "category": "Payment & Commerce"
+    },
+    {
+      "label": "Stripe Dashboard",
+      "url": "https://dashboard.stripe.com",
+      "category": "Payment & Commerce"
+    },
+    {
+      "label": "TicketsCandy Admin",
+      "url": "https://ticketscandy.com/admin",
+      "category": "Ticketing"
+    },
+    {
+      "label": "Printly Catalog",
+      "url": "https://www.printful.com/dashboard",
+      "category": "Fulfillment"
+    },
+    {
+      "label": "GitHub Repo - StillGotIt",
+      "url": "https://github.com/rpretzer/stillgotit",
+      "category": "Development"
+    },
+    {
+      "label": "Cloudflare Dashboard",
+      "url": "https://dash.cloudflare.com",
+      "category": "Infrastructure"
+    },
+    {
+      "label": "GA4 Dashboard",
+      "url": "https://analytics.google.com",
+      "category": "Analytics"
+    },
+    {
+      "label": "Meta Business Suite",
+      "url": "https://business.facebook.com",
+      "category": "Social Media"
+    },
+    {
+      "label": "SquareSpace Dashboard",
+      "url": "https://account.squarespace.com",
+      "category": "Website"
+    }
+  ]
+}
