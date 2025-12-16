@@ -147,8 +147,17 @@
           // Check if already injected
           if (sidebar.querySelector('#admin-links-panel')) return;
           
-          // Insert the panel at the end of the sidebar
-          sidebar.appendChild(panel);
+          // Try to place directly under the Collections header/search
+          const searchInput = sidebar.querySelector('input[type="search"]');
+          const searchContainer = searchInput ? searchInput.closest('div') : null;
+          
+          if (searchContainer && searchContainer.parentNode) {
+            searchContainer.parentNode.insertBefore(panel, searchContainer.nextSibling);
+          } else {
+            // Fallback: append at end of sidebar
+            sidebar.appendChild(panel);
+          }
+          
           panel.style.display = 'block';
         } else {
           // Fallback: try after a delay
