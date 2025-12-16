@@ -1034,6 +1034,7 @@
         const THEME_KEY = 'sgic_theme';
         const THEME_DARK = 'dark';
         const THEME_LIGHT = 'light';
+        const NORMALIZE = (p) => (p || '').replace(/\/+$/, '') || '/';
 
         function getStoredTheme() {
             const stored = localStorage.getItem(THEME_KEY);
@@ -1134,6 +1135,39 @@
             });
             observer.observe(navMenu, { attributes: true, attributeFilter: ['class'] });
         }
+
+        // Remove the current page link from the hamburger menu to save space
+        function pruneCurrentPageLink() {
+            const menu = document.getElementById('nav-menu');
+            if (!menu) return;
+            const currentPath = NORMALIZE(window.location.pathname);
+            menu.querySelectorAll('a[href]').forEach((a) => {
+                const href = a.getAttribute('href') || '';
+                // Skip in-page anchors like #hero
+                if (href.startsWith('#')) return;
+                try {
+                    const url = new URL(href, window.location.origin);
+                    const hrefPath = NORMALIZE(url.pathname);
+                    if (hrefPath === currentPath) {
+                        const li = a.closest('li');
+                        if (li && li.parentNode) {
+                            li.parentNode.removeChild(li);
+                        }
+                    }
+                } catch {
+                    // ignore malformed hrefs
+                }
+            });
+        }
+
+        if (document.readyState !== 'loading') {
+            pruneCurrentPageLink();
+        } else {
+            document.addEventListener('DOMContentLoaded', pruneCurrentPageLink);
+        }
+        // Also retry shortly after load in case the menu is hydrated late
+        setTimeout(pruneCurrentPageLink, 300);
+        setTimeout(pruneCurrentPageLink, 600);
     })();
 
     // ===== Initialize on DOM Load =====

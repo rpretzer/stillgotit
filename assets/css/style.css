@@ -374,11 +374,12 @@ body {
 }
 
 .nav-menu.active {
-    max-height: 800px;
+    max-height: none;
+    height: auto;
     padding: var(--spacing-md);
     opacity: 1;
     visibility: visible;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .nav-menu li {
