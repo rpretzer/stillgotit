@@ -299,7 +299,15 @@
   async function loadCatalog() {
     const src = els.grid?.dataset?.merchSource || '/content/merch.json';
     const url = new URL(src, window.location.href);
-    const res = await fetch(url.toString(), { cache: 'no-store' });
+    // Add cache-busting to ensure fresh catalog
+    const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
+    const res = await fetch(fetchUrl, { 
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
     if (!res.ok) throw new Error(`Failed to load merch catalog (${res.status})`);
     return await res.json();
   }

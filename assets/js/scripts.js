@@ -17,7 +17,15 @@
         const url = new URL(source, window.location.href);
 
         try {
-            const res = await fetch(url.toString(), { cache: 'no-store' });
+            // Add cache-busting to ensure fresh content
+            const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
+            const res = await fetch(fetchUrl, { 
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            });
             if (!res.ok) throw new Error(`Failed to load updates.json (${res.status})`);
             const data = await res.json();
             if (!data || !Array.isArray(data.updates)) throw new Error('Invalid updates.json format');
@@ -91,7 +99,8 @@
             }
         } catch (err) {
             // Keep fallback HTML in place if loading fails
-            console.warn('Latest updates load failed:', err);
+            console.error('Latest updates load failed:', err);
+            console.error('Failed URL:', url.toString());
         }
     }
 
@@ -109,7 +118,16 @@
         const heroSubtitle = document.querySelector('main .section-subtitle');
 
         try {
-            const res = await fetch(url.toString(), { cache: 'no-store' });
+            // Add cache-busting query parameter to ensure fresh content
+            const cacheBuster = `?t=${Date.now()}`;
+            const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
+            const res = await fetch(fetchUrl, { 
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            });
             if (!res.ok) throw new Error(`Failed to load page content (${res.status})`);
             const data = await res.json();
 
@@ -233,7 +251,9 @@
             }
         } catch (err) {
             // Keep fallback HTML if loading fails
-            console.warn('Page content load failed:', err);
+            console.error('Page content load failed:', err);
+            console.error('Failed URL:', url.toString());
+            // Log error but don't throw - fallback HTML will remain visible
         }
     }
 
@@ -260,7 +280,15 @@
     async function loadSiteSettings() {
         const url = new URL('content/site.json', window.location.href);
         try {
-            const res = await fetch(url.toString(), { cache: 'no-store' });
+            // Add cache-busting to ensure fresh content
+            const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
+            const res = await fetch(fetchUrl, { 
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            });
             if (!res.ok) throw new Error(`Failed to load site.json (${res.status})`);
             const settings = await res.json();
             const hasPageSlug = !!document.body?.dataset?.page;
@@ -631,7 +659,8 @@
                 if (settings?.success?.pageTitle) document.title = settings.success.pageTitle;
             }
         } catch (err) {
-            console.warn('Site settings load failed:', err);
+            console.error('Site settings load failed:', err);
+            console.error('Failed URL:', url.toString());
         }
     }
 
@@ -750,7 +779,15 @@
         const url = new URL(source, window.location.href);
 
         try {
-            const res = await fetch(url.toString(), { cache: 'no-store' });
+            // Add cache-busting to ensure fresh content
+            const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
+            const res = await fetch(fetchUrl, { 
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            });
             if (!res.ok) throw new Error(`Failed to load gallery.json (${res.status})`);
             const data = await res.json();
             if (!data || !Array.isArray(data.images)) throw new Error('Invalid gallery.json format');
@@ -813,7 +850,8 @@
             // Initial render
             renderPage();
         } catch (err) {
-            console.warn('Gallery load failed:', err);
+            console.error('Gallery load failed:', err);
+            console.error('Failed URL:', url.toString());
         }
     }
 
