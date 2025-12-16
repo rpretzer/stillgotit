@@ -147,14 +147,20 @@
           // Check if already injected
           if (sidebar.querySelector('#admin-links-panel')) return;
           
-          // Try to place directly under the Collections header/search
-          const searchInput = sidebar.querySelector('input[type="search"]');
-          const searchContainer = searchInput ? searchInput.closest('div') : null;
+          // Try to locate the last collection item and insert after it
+          const collectionLinks = sidebar.querySelectorAll('a[href*="#/collections"]');
+          let inserted = false;
+          if (collectionLinks.length > 0) {
+            const lastLink = collectionLinks[collectionLinks.length - 1];
+            const lastItem = lastLink.closest('li');
+            if (lastItem && lastItem.parentNode) {
+              lastItem.parentNode.insertBefore(panel, lastItem.nextSibling);
+              inserted = true;
+            }
+          }
           
-          if (searchContainer && searchContainer.parentNode) {
-            searchContainer.parentNode.insertBefore(panel, searchContainer.nextSibling);
-          } else {
-            // Fallback: append at end of sidebar
+          // Fallback: append at end of sidebar
+          if (!inserted) {
             sidebar.appendChild(panel);
           }
           
