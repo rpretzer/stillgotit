@@ -1,6 +1,16 @@
 {
   "updates": [
     {
+      "pinned": true,
+      "ctaStyle": "primary",
+      "title": "Big Energy 80's",
+      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_54_21-pm.png",
+      "ctaLabel": "GET TICKETS",
+      "date": "2025-12-12",
+      "body": "Join the Still Got It Collective January 29 for a high-energy 80's themed dance party.",
+      "ctaUrl": "https://www.stillgotitcollective.com/tickets"
+    },
+    {
       "ctaStyle": "secondary",
       "body": "Check out our latest collection! Limited edition items designed with our signature style.",
       "ctaLabel": "Shop Now",
@@ -32,15 +42,6 @@
       "pinned": false,
       "image": "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
       "ctaUrl": "#instagram"
-    },
-    {
-      "pinned": true,
-      "ctaStyle": "primary",
-      "title": "Big Energy 80's",
-      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_54_21-pm.png",
-      "ctaLabel": "#TICKETS",
-      "date": "2025-12-12",
-      "body": "Come Dance you fools"
     }
   ]
 }
