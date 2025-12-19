@@ -161,12 +161,41 @@
     const startDay = first.getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    const eventMap = events.reduce((acc, ev) => {
+    // Filter events for this specific month
+    const monthStart = new Date(year, month, 1);
+    const monthEnd = new Date(year, month + 1, 0);
+    const monthEvents = events.filter(ev => {
+      const evDate = new Date(ev.startDate);
+      return evDate >= monthStart && evDate <= monthEnd;
+    });
+
+    const eventMap = monthEvents.reduce((acc, ev) => {
       const key = iso(ev.startDate);
       if (!acc.has(key)) acc.set(key, []);
       acc.get(key).push(ev);
       return acc;
     }, new Map());
+
+    // Show/hide empty message for this month
+    let emptyMessage = document.getElementById('events-calendar-empty-message');
+    if (!emptyMessage) {
+      emptyMessage = document.createElement('div');
+      emptyMessage.id = 'events-calendar-empty-message';
+      emptyMessage.className = 'events-calendar-empty-message';
+      const calendar = document.querySelector('.events-calendar');
+      if (calendar) {
+        calendar.insertBefore(emptyMessage, calendar.firstChild);
+      }
+    }
+
+    if (monthEvents.length === 0) {
+      const fmt = new Intl.DateTimeFormat(undefined, { month: 'long' });
+      const monthName = fmt.format(new Date(year, month, 1));
+      emptyMessage.textContent = `No events scheduled for ${monthName}`;
+      emptyMessage.hidden = false;
+    } else {
+      emptyMessage.hidden = true;
+    }
 
     grid.innerHTML = '';
     for (let i = 0; i < startDay; i++) {

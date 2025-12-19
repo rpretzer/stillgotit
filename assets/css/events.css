@@ -40,10 +40,24 @@
   position: relative;
 }
 
+.events-calendar-empty-message {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: center;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+}
+
+.events-calendar-empty-message[hidden] {
+  display: none;
+}
+
 .events-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  background: linear-gradient(180deg, var(--color-secondary-100) 0%, var(--color-secondary-200) 100%);
+  background: var(--color-secondary-100);
   color: var(--text-primary);
   text-align: center;
   padding: 1rem 0.5rem;
@@ -57,7 +71,7 @@
 :root[data-theme="dark"] .events-weekdays,
 :root[data-theme="dark"] .event-tag,
 :root[data-theme="dark"] .event-chip {
-  background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+  background: var(--bg-tertiary);
   color: var(--text-primary);
 }
 
@@ -65,7 +79,7 @@
   :root:not([data-theme]) .events-weekdays,
   :root:not([data-theme]) .event-tag,
   :root:not([data-theme]) .event-chip {
-    background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    background: var(--bg-tertiary);
     color: var(--text-primary);
   }
 }
@@ -147,14 +161,14 @@
 }
 
 .event-chip {
-  background: linear-gradient(135deg, var(--color-secondary-200) 0%, var(--color-secondary-300) 100%);
+  background: var(--color-secondary-200);
   color: var(--text-primary);
   border-radius: 8px;
   padding: 0.35rem 0.65rem;
   font-size: var(--text-xs);
   font-weight: var(--font-semibold);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-default);
   display: inline-block;
 }
 
