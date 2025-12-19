@@ -6,6 +6,40 @@
 (function() {
     'use strict';
 
+    // ===== Helper: Add cache-busting to image URLs =====
+    // Only adds cache-busting to local images (not external CDN URLs like Cloudflare Images)
+    function addImageCacheBust(url) {
+        if (!url || typeof url !== 'string') return url;
+        
+        // Relative paths (starting with /) - always cache-bust
+        if (url.startsWith('/')) {
+            const separator = url.includes('?') ? '&' : '?';
+            return url + separator + `t=${Date.now()}`;
+        }
+        
+        // Absolute URLs (http:// or https://)
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            try {
+                const urlObj = new URL(url);
+                // Only cache-bust if it's the same origin (local GitHub Pages)
+                if (urlObj.origin === window.location.origin) {
+                    const separator = url.includes('?') ? '&' : '?';
+                    return url + separator + `t=${Date.now()}`;
+                }
+                // External CDN (Cloudflare Images, etc.) - don't cache-bust
+                // They handle their own caching and versioning
+                return url;
+            } catch {
+                // Invalid URL, return as-is
+                return url;
+            }
+        }
+        
+        // Relative paths without leading slash - add cache-busting
+        const separator = url.includes('?') ? '&' : '?';
+        return url + separator + `t=${Date.now()}`;
+    }
+
     // ===== Latest Updates (Decap CMS) =====
     // Source: /content/updates.json
     // Editors: use /admin to update cards (no HTML edits needed)
@@ -48,7 +82,7 @@
                     media.className = 'card-image';
                     const img = document.createElement('img');
                     img.loading = 'lazy';
-                    img.src = updateImgSrc;
+                    img.src = addImageCacheBust(updateImgSrc);
                     img.alt = u.alt || u.title || 'Update image';
                     media.appendChild(img);
                     card.appendChild(media);
@@ -420,7 +454,8 @@
             const heroBg = document.querySelector('.hero-background.hero-background-img');
             const heroImgUrl = settings?.hero?.imageUrl;
             if (heroBg && heroImgUrl && typeof heroImgUrl === 'string' && heroImgUrl.trim().length > 0) {
-                heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url("${heroImgUrl.trim()}")`;
+                const cachedHeroUrl = addImageCacheBust(heroImgUrl.trim());
+                heroBg.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url("${cachedHeroUrl}")`;
                 heroBg.style.backgroundSize = 'cover';
                 heroBg.style.backgroundPosition = 'center';
             }
@@ -522,7 +557,7 @@
 
                     const img = document.createElement('img');
                     img.loading = 'lazy';
-                    img.src = p.image;
+                    img.src = addImageCacheBust(p.image);
                     img.alt = p.alt || `Instagram preview ${idx + 1}`;
                     a.appendChild(img);
                     igGrid.appendChild(a);
@@ -823,9 +858,9 @@
                     const el = document.createElement('img');
                     el.loading = 'lazy';
                     const thumbSrc = img?.thumb || img?.thumbUpload || fullSrc;
-                    el.src = thumbSrc;
+                    el.src = addImageCacheBust(thumbSrc);
                     el.alt = img.alt || `Gallery image ${start + idx + 1}`;
-                    el.dataset.fullSrc = fullSrc;
+                    el.dataset.fullSrc = addImageCacheBust(fullSrc);
                     cell.appendChild(el);
                     grid.appendChild(cell);
                 });

@@ -1,0 +1,130 @@
+name: Cleanup Orphaned Images
+
+on:
+  push:
+    paths:
+      - "content/**/*.json"
+      - "assets/images/uploads/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Find all image references in JSON files
+        id: find-references
+        run: |
+          echo "Scanning JSON files for image references..."
+          
+          # Find all image URLs referenced in JSON files
+          # This includes: image, imageUpload, imageUrl, ogImage, src, srcUpload, thumb, thumbUpload
+          IMAGE_REFS=$(find content -name "*.json" -type f -exec grep -ohE '(image|imageUpload|imageUrl|ogImage|src|srcUpload|thumb|thumbUpload)"\s*:\s*"[^"]*"' {} \; | \
+            grep -oE '"[^"]*"' | \
+            sed 's/"//g' | \
+            grep -E '^/assets/images/uploads/' | \
+            sort -u)
+          
+          # Save to file for next step
+          echo "$IMAGE_REFS" > /tmp/referenced-images.txt
+          
+          # Count references
+          REF_COUNT=$(echo "$IMAGE_REFS" | grep -c . || echo "0")
+          echo "Found $REF_COUNT referenced image paths"
+          
+          # Output for summary
+          echo "referenced_count=$REF_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Find orphaned images
+        id: find-orphans
+        run: |
+          echo "Finding orphaned images in assets/images/uploads/..."
+          
+          # Read referenced images
+          if [ ! -f /tmp/referenced-images.txt ]; then
+            echo "No referenced images file found"
+            touch /tmp/referenced-images.txt
+          fi
+          
+          # Find all images in uploads folder (excluding gallery processed images)
+          # Gallery images are handled separately and shouldn't be deleted
+          find assets/images/uploads -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.webp" -o -name "*.gif" -o -name "*.svg" \) \
+            ! -path "assets/images/uploads/gallery/*" | \
+            while read -r img_path; do
+              # Convert to the path format used in JSON (relative from root)
+              rel_path="/${img_path}"
+              
+              # Check if this image is referenced
+              if ! grep -Fxq "$rel_path" /tmp/referenced-images.txt; then
+                echo "$img_path"
+              fi
+            done > /tmp/orphaned-images.txt || true
+          
+          # Count orphans
+          ORPHAN_COUNT=$(wc -l < /tmp/orphaned-images.txt | tr -d ' ' || echo "0")
+          echo "Found $ORPHAN_COUNT orphaned images"
+          
+          # Output for summary
+          echo "orphaned_count=$ORPHAN_COUNT" >> $GITHUB_OUTPUT
+          
+          # Show first 10 orphans for debugging
+          if [ "$ORPHAN_COUNT" -gt 0 ]; then
+            echo "Sample orphaned images:"
+            head -10 /tmp/orphaned-images.txt
+          fi
+
+      - name: Remove orphaned images
+        if: steps.find-orphans.outputs.orphaned_count != '0'
+        run: |
+          echo "Removing orphaned images..."
+          
+          if [ ! -f /tmp/orphaned-images.txt ]; then
+            echo "No orphaned images file found"
+            exit 0
+          fi
+          
+          # Remove each orphaned image
+          while IFS= read -r img_path; do
+            if [ -f "$img_path" ]; then
+              echo "Removing: $img_path"
+              rm "$img_path"
+            fi
+          done < /tmp/orphaned-images.txt
+          
+          echo "Cleanup complete"
+
+      - name: Commit cleanup (if changes)
+        if: steps.find-orphans.outputs.orphaned_count != '0'
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/images/uploads/
+          git commit -m "chore(images): remove orphaned images not referenced in CMS
+
+          Removed ${{ steps.find-orphans.outputs.orphaned_count }} orphaned image(s) that are no longer referenced in any JSON content files."
+          git push
+
+      - name: Summary
+        run: |
+          echo "## Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Referenced images found:** ${{ steps.find-references.outputs.referenced_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Orphaned images removed:** ${{ steps.find-orphans.outputs.orphaned_count }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.find-orphans.outputs.orphaned_count }}" = "0" ]; then
+            echo "- ✅ No orphaned images found. All images are referenced in CMS content." >> $GITHUB_STEP_SUMMARY
+          fi
+
