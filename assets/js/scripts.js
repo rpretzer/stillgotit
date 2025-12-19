@@ -30,14 +30,8 @@
             const data = await res.json();
             if (!data || !Array.isArray(data.updates)) throw new Error('Invalid updates.json format');
 
-            const updates = [...data.updates].sort((a, b) => {
-                const ap = a?.pinned ? 1 : 0;
-                const bp = b?.pinned ? 1 : 0;
-                if (ap !== bp) return bp - ap;
-                const ad = Date.parse(a?.date || '') || 0;
-                const bd = Date.parse(b?.date || '') || 0;
-                return bd - ad;
-            });
+            // Use updates in CMS order (no sorting - respect editor's arrangement)
+            const updates = data.updates;
 
             // Clear fallback HTML once CMS content is ready
             grid.innerHTML = '';
