@@ -291,5 +291,31 @@
   .event-day {
     min-height: 90px;
   }
+
+  .events-toolbar {
+    padding: 0;
+    gap: var(--spacing-sm);
+  }
+
+  .events-month {
+    width: 100%;
+    justify-content: space-between;
+    gap: var(--spacing-xs);
+  }
+
+  .month-label {
+    min-width: auto;
+    font-size: var(--text-base);
+    flex: 1;
+    text-align: center;
+    padding: 0 var(--spacing-xs);
+  }
+
+  .events-month .btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 }
 
