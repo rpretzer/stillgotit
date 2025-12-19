@@ -70,11 +70,48 @@ npm run deploy
 
 - `POST /api/checkout` - Create Stripe PaymentIntent and order
 - `POST /api/stripe/webhook` - Handle Stripe webhooks (payment_intent.succeeded)
-- `GET /api/products` - Serve product catalog
+- `GET /api/products` - Serve product catalog (from D1 or static JSON fallback)
 - `GET /api/orders/:id` - Get order status and timeline
 - `POST /api/carts/abandoned` - Save abandoned cart (returns recovery token)
 - `GET /api/carts/recover/:token` - Get cart by recovery token
 - `POST /api/carts/recover/:token` - Mark cart as recovered
+- `POST /api/sync/products` - Manually trigger Printful product sync (optional: requires `SYNC_SECRET_TOKEN` if set)
+
+## Automated Product Syncing
+
+The Worker automatically syncs products from Printful:
+
+1. **Nightly Sync**: Runs daily at 2 AM UTC via Cloudflare Cron Trigger
+2. **Manual Sync**: Trigger via `POST /api/sync/products`
+3. **Fallback**: If D1 products table is empty, falls back to static `content/merch.json`
+
+### Setup Automated Syncing
+
+1. **Initialize Products Table**:
+   ```bash
+   npx wrangler d1 execute sgic-merch --remote --file=schema-products.sql
+   ```
+
+2. **Trigger Initial Sync** (optional):
+   ```bash
+   curl -X POST https://sgic-merch-api.rpretzer.workers.dev/api/sync/products \
+     -H "Authorization: Bearer YOUR_SYNC_TOKEN"  # Only if SYNC_SECRET_TOKEN is set
+   ```
+
+3. **Verify Sync**:
+   - Check Worker logs in Cloudflare Dashboard
+   - Products should appear in D1 database
+   - `GET /api/products` should return synced products
+
+### Product Catalog Priority
+
+1. **D1 Database** (synced from Printful) - Primary source
+2. **Static JSON** (`content/merch.json`) - Fallback if D1 is empty
+
+This ensures:
+- New Printful products automatically appear after nightly sync
+- Manual sync available for immediate updates
+- Graceful fallback if sync fails
 
 ## Stripe Webhook Setup
 

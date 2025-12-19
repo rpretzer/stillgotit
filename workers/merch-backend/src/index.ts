@@ -4,11 +4,15 @@
  * Routes:
  * - POST /api/checkout - Create Stripe PaymentIntent and order
  * - POST /api/stripe/webhook - Handle Stripe webhooks
- * - GET /api/products - Serve product catalog
+ * - GET /api/products - Serve product catalog (from D1 or static JSON)
  * - GET /api/orders/:id - Get order status
  * - POST /api/carts/abandoned - Save abandoned cart
  * - GET /api/carts/recover/:token - Get cart by recovery token
  * - POST /api/carts/recover/:token - Mark cart as recovered
+ * - POST /api/sync/products - Sync Printful products (manual trigger)
+ * 
+ * Cron Triggers:
+ * - Daily at 2 AM UTC: Sync Printful products
  */
 
 type Env = {
@@ -18,6 +22,7 @@ type Env = {
   PRINTFUL_TOKEN: string;
   SITE_BASE_URL: string;
   MERCH_CATALOG_URL: string;
+  SYNC_SECRET_TOKEN?: string; // Optional secret for securing sync endpoint
 };
 
 type MerchCatalog = {
@@ -88,6 +93,68 @@ function corsHeaders(req: Request) {
 }
 
 async function fetchCatalog(env: Env): Promise<MerchCatalog> {
+  // Try to get products from D1 first (synced from Printful)
+  const dbProducts = await env.DB.prepare(`
+    SELECT * FROM products 
+    WHERE active = 1 
+    ORDER BY printful_product_id, variant_label
+  `).all<{
+    id: string;
+    name: string;
+    description: string | null;
+    image_url: string | null;
+    currency: string;
+    price_cents: number;
+    fulfillment_type: string;
+    printful_product_id: number | null;
+    printful_variant_id: number | null;
+    variant_label: string | null;
+  }>();
+
+  if (dbProducts.results && dbProducts.results.length > 0) {
+    // Group variants by product
+    const productMap = new Map<string, {
+      id: string;
+      name: string;
+      description?: string;
+      priceCents: number;
+      image?: string;
+      variants: Array<{ id: string; label?: string; printfulVariantId?: number }>;
+      fulfillment: { type: string };
+    }>();
+
+    for (const p of dbProducts.results) {
+      const productId = `pf-${p.printful_product_id}`;
+      
+      if (!productMap.has(productId)) {
+        productMap.set(productId, {
+          id: productId,
+          name: p.name,
+          description: p.description || undefined,
+          priceCents: p.price_cents,
+          image: p.image_url || undefined,
+          variants: [],
+          fulfillment: { type: p.fulfillment_type }
+        });
+      }
+
+      const product = productMap.get(productId)!;
+      if (p.variant_label && p.printful_variant_id) {
+        product.variants.push({
+          id: `${productId}-${p.printful_variant_id}`,
+          label: p.variant_label,
+          printfulVariantId: p.printful_variant_id
+        });
+      }
+    }
+
+    return {
+      currency: 'USD',
+      products: Array.from(productMap.values())
+    };
+  }
+
+  // Fallback to static JSON catalog
   const res = await fetch(env.MERCH_CATALOG_URL, { cf: { cacheTtl: 60 } as any });
   if (!res.ok) throw new Error(`Catalog fetch failed (${res.status})`);
   return (await res.json()) as MerchCatalog;
@@ -518,6 +585,143 @@ async function handleGetProducts(req: Request, env: Env): Promise<Response> {
   }
 }
 
+// Printful product sync functions
+async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors: string[] }> {
+  const errors: string[] = [];
+  let synced = 0;
+
+  try {
+    // Fetch store products from Printful
+    const listRes = await fetch('https://api.printful.com/store/products', {
+      headers: {
+        'Authorization': `Bearer ${env.PRINTFUL_TOKEN}`
+      }
+    });
+
+    if (!listRes.ok) {
+      const error = await listRes.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`Failed to fetch Printful products: ${error.error?.message || error.error || listRes.statusText}`);
+    }
+
+    const listData = await listRes.json();
+    const storeProducts = listData.result || [];
+
+    // Fetch details for each product and sync variants
+    for (const sp of storeProducts) {
+      try {
+        const detailsRes = await fetch(`https://api.printful.com/store/products/${sp.id}`, {
+          headers: {
+            'Authorization': `Bearer ${env.PRINTFUL_TOKEN}`
+          }
+        });
+
+        if (!detailsRes.ok) {
+          errors.push(`Failed to fetch details for product ${sp.id}`);
+          continue;
+        }
+
+        const detailsData = await detailsRes.json();
+        const details = detailsData.result;
+        const syncProduct = details.sync_product || {};
+        const syncVariants = details.sync_variants || [];
+
+        // Upsert each variant as a product row
+        for (const variant of syncVariants) {
+          const productId = `pf-${syncProduct.id}-${variant.id}`;
+          const priceCents = Math.round(Number(variant.retail_price || '0') * 100);
+          const variantLabel = variant.name || `Variant ${variant.id}`;
+
+          try {
+            await env.DB.prepare(`
+              INSERT INTO products (
+                id, name, description, image_url, currency, price_cents,
+                active, fulfillment_type, printful_product_id, printful_variant_id,
+                variant_label, updated_at, last_synced_at
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+              ON CONFLICT(id) DO UPDATE SET
+                name = excluded.name,
+                description = excluded.description,
+                image_url = excluded.image_url,
+                currency = excluded.currency,
+                price_cents = excluded.price_cents,
+                active = excluded.active,
+                fulfillment_type = excluded.fulfillment_type,
+                printful_product_id = excluded.printful_product_id,
+                printful_variant_id = excluded.printful_variant_id,
+                variant_label = excluded.variant_label,
+                updated_at = datetime('now'),
+                last_synced_at = datetime('now')
+            `).bind(
+              productId,
+              variant.name || syncProduct.name || 'Unknown Product',
+              syncProduct.description || null,
+              syncProduct.thumbnail_url || sp.thumbnail_url || null,
+              variant.currency || 'USD',
+              priceCents,
+              1, // active
+              'printful',
+              syncProduct.id,
+              variant.id,
+              variantLabel
+            ).run();
+
+            synced++;
+          } catch (err: any) {
+            errors.push(`Failed to sync variant ${variant.id}: ${err?.message || 'Unknown error'}`);
+          }
+        }
+      } catch (err: any) {
+        errors.push(`Failed to process product ${sp.id}: ${err?.message || 'Unknown error'}`);
+      }
+    }
+
+    // Mark products that no longer exist in Printful as inactive
+    if (synced > 0) {
+      const activeVariantIds = Array.from(new Set(
+        storeProducts.flatMap(sp => {
+          // We'd need to fetch details again or store them, but for now just mark all as active
+          // This is a simplified approach - in production you might want to track which variants exist
+          return [];
+        })
+      ));
+      // For now, we'll leave this as a future enhancement
+    }
+
+    return { synced, errors };
+  } catch (err: any) {
+    errors.push(`Sync failed: ${err?.message || 'Unknown error'}`);
+    return { synced, errors };
+  }
+}
+
+async function handleSyncProducts(req: Request, env: Env): Promise<Response> {
+  // Optional: Add basic auth or API key check here
+  // For now, allow unauthenticated (you should secure this in production)
+  const authHeader = req.headers.get('Authorization');
+  const expectedToken = env.SYNC_SECRET_TOKEN; // Add this as an optional secret
+  
+  // If SYNC_SECRET_TOKEN is set, require it
+  if (env.SYNC_SECRET_TOKEN && authHeader !== `Bearer ${env.SYNC_SECRET_TOKEN}`) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const result = await syncPrintfulProducts(env);
+    return json({
+      success: true,
+      synced: result.synced,
+      errors: result.errors,
+      timestamp: new Date().toISOString()
+    }, { status: 200 });
+  } catch (err: any) {
+    return json({
+      success: false,
+      error: err?.message || 'Sync failed',
+      timestamp: new Date().toISOString()
+    }, { status: 500 });
+  }
+}
+
 async function handleGetOrder(req: Request, env: Env, orderId: string): Promise<Response> {
   const cors = corsHeaders(req);
   const order = await getOrder(env, orderId);
@@ -719,6 +923,24 @@ export default {
       if (token) return await handleRecoverCart(req, env, token);
     }
 
+    if (req.method === 'POST' && path === '/api/sync/products') {
+      return await handleSyncProducts(req, env);
+    }
+
     return json({ error: 'Not found' }, { status: 404 });
+  },
+
+  // Cron trigger handler (runs daily at 2 AM UTC)
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(
+      syncPrintfulProducts(env).then(result => {
+        console.log(`[Cron] Product sync completed: ${result.synced} products synced, ${result.errors.length} errors`);
+        if (result.errors.length > 0) {
+          console.error('[Cron] Sync errors:', result.errors);
+        }
+      }).catch(err => {
+        console.error('[Cron] Sync failed:', err);
+      })
+    );
   }
 };

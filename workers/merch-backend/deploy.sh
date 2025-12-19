@@ -20,10 +20,25 @@ echo "📦 Step 1: Initializing D1 database schema..."
 $WRANGLER_CMD d1 execute sgic-merch --remote --file=schema.sql
 
 if [ $? -eq 0 ]; then
-    echo "✅ Database schema initialized successfully"
+    echo "✅ Orders schema initialized successfully"
 else
-    echo "❌ Failed to initialize database schema"
+    echo "❌ Failed to initialize orders schema"
     exit 1
+fi
+
+# Step 1b: Initialize products table (for Printful sync)
+echo ""
+echo "📦 Step 1b: Initializing products table..."
+if [ -f "schema-products.sql" ]; then
+    $WRANGLER_CMD d1 execute sgic-merch --remote --file=schema-products.sql
+    
+    if [ $? -eq 0 ]; then
+        echo "✅ Products schema initialized successfully"
+    else
+        echo "⚠️  Warning: Failed to initialize products schema (may already exist)"
+    fi
+else
+    echo "⚠️  Warning: schema-products.sql not found, skipping products table init"
 fi
 
 # Step 2: Deploy Worker
@@ -40,10 +55,17 @@ if [ $? -eq 0 ]; then
     echo "      - STRIPE_SECRET_KEY"
     echo "      - STRIPE_WEBHOOK_SECRET"
     echo "      - PRINTFUL_TOKEN"
-    echo "   2. Test the API endpoints:"
+    echo "      - SYNC_SECRET_TOKEN (optional, for securing sync endpoint)"
+    echo "   2. Initialize products table and trigger initial sync:"
+    echo "      - npx wrangler d1 execute sgic-merch --remote --file=schema-products.sql"
+    echo "      - curl -X POST https://sgic-merch-api.rpretzer.workers.dev/api/sync/products"
+    echo "   3. Test the API endpoints:"
     echo "      - GET https://sgic-merch-api.rpretzer.workers.dev/api/products"
-    echo "   3. Verify Stripe webhook is configured:"
+    echo "   4. Verify Stripe webhook is configured:"
     echo "      - URL: https://sgic-merch-api.rpretzer.workers.dev/api/stripe/webhook"
+    echo "   5. Verify cron trigger is active:"
+    echo "      - Check Cloudflare Dashboard → Workers → Triggers → Cron Triggers"
+    echo "      - Should show: 0 2 * * * (daily at 2 AM UTC)"
 else
     echo "❌ Deployment failed"
     exit 1

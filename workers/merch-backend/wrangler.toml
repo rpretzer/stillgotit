@@ -21,3 +21,8 @@ MERCH_CATALOG_URL = "https://www.stillgotitcollective.com/content/merch.json"
 # STRIPE_SECRET_KEY
 # STRIPE_WEBHOOK_SECRET
 # PRINTFUL_TOKEN
+# SYNC_SECRET_TOKEN (optional - for securing /api/sync/products endpoint)
+
+# Cron trigger: sync Printful products daily at 2 AM UTC
+[triggers]
+crons = ["0 2 * * *"]
