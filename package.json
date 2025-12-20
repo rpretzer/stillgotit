@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "images:build": "node tools/process-images.mjs",
-    "watch:images": "node scripts/watch-incoming-images.js"
+    "watch:images": "node scripts/watch-incoming-images.js",
+    "media:index": "node scripts/generate-media-index.js"
   },
   "dependencies": {
     "sharp": "^0.34.4"

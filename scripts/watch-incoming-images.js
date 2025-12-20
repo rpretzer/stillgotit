@@ -8,9 +8,13 @@
  * automatically commits and pushes them to trigger the image processing workflow.
  */
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const WATCH_DIR = path.join(__dirname, '..', 'assets', 'images', '_incoming_raw');
 const DEBOUNCE_MS = 5000; // Wait 5 seconds after last change before committing

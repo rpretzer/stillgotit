@@ -23,6 +23,29 @@ public_folder: "/assets/images/uploads"
 # publish_mode: editorial_workflow
 
 collections:
+  # Media Library - Browse all uploaded images
+  - name: "media"
+    label: "Media Library"
+    description: "Browse all uploaded images with previews and URLs"
+    files:
+      - name: "media-index"
+        label: "All Images"
+        file: "content/media-index.json"
+        format: "json"
+        editor:
+          preview: false
+        fields:
+          - label: "Uploaded Images"
+            name: "files"
+            widget: "list"
+            required: false
+            summary: "{{fields.name}} ({{fields.path}})"
+            fields:
+              - { label: "File Name", name: "name", widget: "string", required: false }
+              - { label: "Path", name: "path", widget: "string", required: false, hint: "Path: assets/images/uploads/[path]" }
+              - { label: "Full URL", name: "url", widget: "string", required: false, hint: "Copy this URL to use in content" }
+              - { label: "Preview Image", name: "preview", widget: "image", required: false, hint: "Click to see preview" }
+  
   - name: "admin"
     label: "Admin Links"
     files:

@@ -27,14 +27,17 @@ jobs:
       - name: Build gallery thumbs/full
         run: npm run images:build
 
+      - name: Generate media index
+        run: node scripts/generate-media-index.js
+
       - name: Commit generated images (if changed)
         run: |
           if git diff --quiet; then
             echo "No changes to commit."
             exit 0
           fi
-          git add assets/images/uploads/gallery
+          git add assets/images/uploads/gallery content/media-index.json
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore(images): generate gallery thumbs/full"
+          git commit -m "chore(images): generate gallery thumbs/full and update media index"
           git push
