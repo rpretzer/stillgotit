@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "images:build": "node tools/process-images.mjs"
+    "images:build": "node tools/process-images.mjs",
+    "watch:images": "node scripts/watch-incoming-images.js"
   },
   "dependencies": {
     "sharp": "^0.34.4"
