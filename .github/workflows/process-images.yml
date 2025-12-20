@@ -28,9 +28,9 @@ jobs:
         run: npm run images:build
 
       - name: Generate media index
-        run: node scripts/generate-media-index.js
+        run: npm run media:index
 
-      - name: Commit generated images (if changed)
+      - name: Commit generated images and media index (if changed)
         run: |
           if git diff --quiet; then
             echo "No changes to commit."
