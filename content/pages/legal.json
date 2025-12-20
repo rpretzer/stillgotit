@@ -36,6 +36,23 @@
       ]
     },
     {
+      "title": "Accessibility",
+      "body": [
+        "The Still Got It Collective is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards to achieve these goals.",
+        "We aim to conform to the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standards. These guidelines explain how to make web content more accessible for people with disabilities and user-friendly for everyone.",
+        "We welcome your feedback on the accessibility of our website. If you encounter any accessibility barriers, please contact us through the <a href=\"/contact/\">contact page</a> and we will work to address the issue.",
+        "Our accessibility efforts include:",
+        "• Keyboard navigation support for all interactive elements",
+        "• Screen reader compatibility and semantic HTML structure",
+        "• Alternative text for images and visual content",
+        "• Sufficient color contrast ratios for readability",
+        "• Clear and consistent navigation",
+        "• Descriptive headings and form labels",
+        "• Skip links for bypassing repetitive content",
+        "We are committed to making our website accessible and continue to work to improve the accessibility of our web presence."
+      ]
+    },
+    {
       "title": "Website ownership & intellectual property",
       "body": [
         "This website and all associated technology, design, content management systems, and backend infrastructure are owned and operated by <strong>RSP Management Solutions LLC</strong>.",

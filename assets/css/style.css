@@ -405,6 +405,12 @@ body {
     transform: translateX(4px);
 }
 
+.nav-link:focus-visible {
+    outline: 3px solid var(--interactive-primary);
+    outline-offset: 2px;
+    background: var(--color-secondary-100);
+}
+
 /* Theme toggle switch inside nav menu */
 .theme-toggle-switch {
     display: flex;
@@ -861,6 +867,18 @@ a[href^="tel:"]:visited {
     border: 2px solid transparent;
     cursor: pointer;
     text-align: center;
+}
+
+/* Enhanced focus indicators for WCAG AA compliance */
+.btn:focus-visible,
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--interactive-primary);
+    outline-offset: 2px;
+}
+
+.btn:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .btn-primary {
