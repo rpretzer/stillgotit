@@ -34,6 +34,12 @@
 
   const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  /**
+   * Fetches events data from CMS.
+   * Source: /data/events.json (editable via /admin)
+   * @returns {Promise<Object|Array>} Events data (normalized format)
+   * @throws {Error} If all endpoints fail
+   */
   async function fetchEvents() {
     for (const url of ENDPOINTS) {
       try {

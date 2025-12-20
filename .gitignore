@@ -26,3 +26,6 @@ build/
 
 # Cloudflare Workers local development
 .wrangler/
+
+# Editor workspace files
+*.code-workspace

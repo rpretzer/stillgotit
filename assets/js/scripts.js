@@ -6,8 +6,12 @@
 (function() {
     'use strict';
 
-    // ===== Helper: Add cache-busting to image URLs =====
-    // Only adds cache-busting to local images (not external CDN URLs like Cloudflare Images)
+    /**
+     * Adds cache-busting query parameter to local image URLs.
+     * Skips external CDN URLs (they handle their own caching).
+     * @param {string} url - Image URL to process
+     * @returns {string} URL with timestamp query parameter (if local) or original URL (if external)
+     */
     function addImageCacheBust(url) {
         if (!url || typeof url !== 'string') return url;
         
@@ -40,9 +44,12 @@
         return url + separator + `t=${Date.now()}`;
     }
 
-    // ===== Latest Updates (Decap CMS) =====
-    // Source: /content/updates.json
-    // Editors: use /admin to update cards (no HTML edits needed)
+    /**
+     * Loads and renders latest updates from CMS.
+     * Source: /content/updates.json (editable via /admin)
+     * Respects CMS order (no sorting applied).
+     * @returns {Promise<void>}
+     */
     async function loadLatestUpdates() {
         const grid = document.getElementById('announcements-grid');
         if (!grid) return;
@@ -132,8 +139,11 @@
         }
     }
 
-    // ===== Static Page Content (Decap CMS) =====
-    // Dynamically hydrates About / Contact / Legal pages from JSON so editors can update copy via Decap.
+    /**
+     * Loads and hydrates static page content from CMS (About, Contact, Legal, Merch pages).
+     * Dynamically injects content from JSON files so editors can update via Decap CMS.
+     * @returns {Promise<void>}
+     */
     async function loadPageContent() {
         const pageSlug = document.body?.dataset?.page;
         if (!pageSlug) return;
@@ -303,8 +313,12 @@
         }
     }
 
-    // ===== Site Settings (Decap CMS) =====
-    // Source: /content/site.json
+    /**
+     * Loads site-wide settings from CMS and applies them to the page.
+     * Source: /content/site.json
+     * Handles hero content, Instagram previews, tickets/merch cards, checkout/success page labels.
+     * @returns {Promise<void>}
+     */
     async function loadSiteSettings() {
         const url = new URL('content/site.json', window.location.href);
         try {
@@ -797,9 +811,12 @@
         lastScroll = currentScroll;
     });
 
-    // ===== Gallery (Hybrid DAM) + Lightbox Modal =====
-    // Source: /content/gallery.json (editable via /admin)
-    // Each image can be a repo upload (Decap) OR an external CDN/DAM URL.
+    /**
+     * Loads and renders gallery images from CMS with pagination.
+     * Source: /content/gallery.json (editable via /admin)
+     * Supports both repo uploads (Decap) and external CDN/DAM URLs.
+     * @returns {Promise<void>}
+     */
     async function loadGallery() {
         const grid = document.getElementById('gallery-grid');
         if (!grid) return;

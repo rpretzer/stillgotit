@@ -296,6 +296,11 @@
     window.location.href = '/merch/checkout.html';
   }
 
+  /**
+   * Loads product catalog from CMS and renders it.
+   * Source: /content/merch.json (editable via /admin)
+   * @returns {Promise<void>}
+   */
   async function loadCatalog() {
     const src = els.grid?.dataset?.merchSource || '/content/merch.json';
     const url = new URL(src, window.location.href);

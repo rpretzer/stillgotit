@@ -67,6 +67,12 @@
     if (els.submitPayment) els.submitPayment.disabled = loading;
   }
 
+  /**
+   * Creates a Stripe Payment Intent via the backend API.
+   * @param {Object} shippingDetails - Shipping address information
+   * @param {Object} contactDetails - Contact information (email, phone)
+   * @returns {Promise<string|null>} Client secret for Stripe Payment Element, or null if failed
+   */
   async function createPaymentIntent(shippingDetails, contactDetails) {
     const cart = loadCart();
     if (!cart.items.length) {
