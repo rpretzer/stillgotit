@@ -193,35 +193,35 @@ collections:
         file: "content/updates.json"
         format: "json"
         fields:
-      - label: "Updates"
-        name: "updates"
-        widget: "list"
-        summary: "{{fields.title}}"
-        fields:
-          - { label: "Title", name: "title", widget: "string" }
-          - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-          - { label: "Pinned", name: "pinned", widget: "boolean", default: false, required: false }
-          - label: "Image URL (recommended: Cloudflare Images)"
-            name: "image"
-            widget: "string"
-            required: false
-            hint: "CDN URL or use Image upload below"
-          - label: "Image upload (fallback)"
-            name: "imageUpload"
-            widget: "image"
-            required: false
-            hint: "Uploads to assets/images/uploads/"
-          - { label: "Image alt text", name: "alt", widget: "string", required: false }
-          - { label: "Body", name: "body", widget: "text" }
-          - { label: "CTA label", name: "ctaLabel", widget: "string", required: false }
-          - { label: "CTA URL", name: "ctaUrl", widget: "string", required: false }
-          - label: "CTA style"
-            name: "ctaStyle"
-            widget: "select"
-            options:
-              - { label: "Primary", value: "primary" }
-              - { label: "Secondary", value: "secondary" }
-            default: "primary"
+          - label: "Updates"
+            name: "updates"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: "Pinned", name: "pinned", widget: "boolean", default: false, required: false }
+              - label: "Image URL (recommended: Cloudflare Images)"
+                name: "image"
+                widget: "string"
+                required: false
+                hint: "CDN URL or use Image upload below"
+              - label: "Image upload (fallback)"
+                name: "imageUpload"
+                widget: "image"
+                required: false
+                hint: "Uploads to assets/images/uploads/"
+              - { label: "Image alt text", name: "alt", widget: "string", required: false }
+              - { label: "Body", name: "body", widget: "text" }
+              - { label: "CTA label", name: "ctaLabel", widget: "string", required: false }
+              - { label: "CTA URL", name: "ctaUrl", widget: "string", required: false }
+              - label: "CTA style"
+                name: "ctaStyle"
+                widget: "select"
+                options:
+                  - { label: "Primary", value: "primary" }
+                  - { label: "Secondary", value: "secondary" }
+                default: "primary"
 
   - name: "gallery"
     label: "Event Gallery"
@@ -232,61 +232,64 @@ collections:
         file: "content/gallery.json"
         format: "json"
         fields:
-      - label: "Images"
-        name: "images"
-        widget: "list"
-        summary: "{{fields.alt}}"
-        fields:
-          - label: "Full image URL (recommended: Cloudflare Images)"
-            name: "src"
-            widget: "string"
-            required: false
-            hint: "CDN URL or use Full image upload below"
-          - label: "Full image upload (fallback)"
-            name: "srcUpload"
-            widget: "image"
-            required: false
-            hint: "Uploads to assets/images/uploads/"
-          - label: "Thumbnail URL (optional)"
-            name: "thumb"
-            widget: "string"
-            required: false
-            hint: "CDN URL or use Thumbnail upload below"
-          - label: "Thumbnail upload (fallback)"
-            name: "thumbUpload"
-            widget: "image"
-            required: false
-          - { label: "Alt text", name: "alt", widget: "string" }
-          - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
-          - label: "Tags"
-            name: "tags"
+          - label: "Images"
+            name: "images"
             widget: "list"
-            required: false
-            hint: "e.g., 'birthday', 'corporate', 'DJ', 'outdoor'"
-          - { label: "Location", name: "location", widget: "string", required: false }
-          - { label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+            summary: "{{fields.alt}}"
+            fields:
+              - label: "Full image URL (recommended: Cloudflare Images)"
+                name: "src"
+                widget: "string"
+                required: false
+                hint: "CDN URL or use Full image upload below"
+              - label: "Full image upload (fallback)"
+                name: "srcUpload"
+                widget: "image"
+                required: false
+                hint: "Uploads to assets/images/uploads/"
+              - label: "Thumbnail URL (optional)"
+                name: "thumb"
+                widget: "string"
+                required: false
+                hint: "CDN URL or use Thumbnail upload below"
+              - label: "Thumbnail upload (fallback)"
+                name: "thumbUpload"
+                widget: "image"
+                required: false
+              - { label: "Alt text", name: "alt", widget: "string" }
+              - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
+              - label: "Tags"
+                name: "tags"
+                widget: "list"
+                required: false
+                hint: "e.g., 'birthday', 'corporate', 'DJ', 'outdoor'"
+              - { label: "Location", name: "location", widget: "string", required: false }
+              - { label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
 
   - name: "events"
     label: "Events"
     description: "Event calendar entries"
-    file: "data/events.json"
-    format: "json"
-    fields:
-      - label: "Events"
-        name: "events"
-        widget: "list"
-        summary: "{{fields.title}} - {{fields.date}}"
+    files:
+      - name: "events-file"
+        label: "Events"
+        file: "data/events.json"
+        format: "json"
         fields:
-          - { label: "ID", name: "id", widget: "string", required: true, hint: "Unique slug (e.g., 'big-energy-80s')" }
-          - { label: "Title", name: "title", widget: "string" }
-          - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-          - { label: "Time", name: "time", widget: "string", required: false }
-          - { label: "Location", name: "location", widget: "string", required: false }
-          - { label: "Venue", name: "venue", widget: "string", required: false }
-          - { label: "Description", name: "description", widget: "text", required: false }
-          - { label: "CTA Label", name: "ctaLabel", widget: "string", required: false, default: "Get Tickets" }
-          - { label: "Ticket URL", name: "ticketUrl", widget: "string", required: false }
-          - { label: "Image URL", name: "image", widget: "string", required: false, hint: "Optional poster/hero image" }
+          - label: "Events"
+            name: "events"
+            widget: "list"
+            summary: "{{fields.title}} - {{fields.date}}"
+            fields:
+              - { label: "ID", name: "id", widget: "string", required: true, hint: "Unique slug (e.g., 'big-energy-80s')" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: "Time", name: "time", widget: "string", required: false }
+              - { label: "Location", name: "location", widget: "string", required: false }
+              - { label: "Venue", name: "venue", widget: "string", required: false }
+              - { label: "Description", name: "description", widget: "text", required: false }
+              - { label: "CTA Label", name: "ctaLabel", widget: "string", required: false, default: "Get Tickets" }
+              - { label: "Ticket URL", name: "ticketUrl", widget: "string", required: false }
+              - { label: "Image URL", name: "image", widget: "string", required: false, hint: "Optional poster/hero image" }
 
   - name: "pages"
     label: "Pages"
