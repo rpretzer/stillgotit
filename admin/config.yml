@@ -1,129 +1,35 @@
-# Decap CMS configuration
-#
-# IMPORTANT (GitHub Pages auth):
-# - GitHub Pages is static, so Decap needs an OAuth service.
-# - We use a free Cloudflare Worker OAuth client (Sveltia CMS Authenticator).
-# - Deploy it, then set base_url below to your Worker URL.
-# - Your GitHub OAuth App callback URL must be: <YOUR_WORKER_URL>/callback
+# Decap CMS Configuration
+# 
+# GitHub Pages Authentication:
+# - Uses Cloudflare Worker OAuth client (Sveltia CMS Authenticator)
+# - OAuth callback URL: <YOUR_WORKER_URL>/callback
 
 backend:
   name: github
   repo: rpretzer/stillgotit
   branch: main
-  # REPLACE: put your Cloudflare Worker URL here (no trailing slash)
-  # Example: https://stillgotit-auth.your-subdomain.workers.dev
   base_url: https://sveltia-cms-auth.rpretzer.workers.dev
 
-# Where uploaded images are stored in the repo
+# Media storage configuration
 media_folder: "assets/images/uploads"
-# How uploaded images are referenced in the site
 public_folder: "/assets/images/uploads"
 
-# Optional: nicer editorial flow (drafts/PRs) — uncomment if you want it
-# publish_mode: editorial_workflow
-
 collections:
-  # Media Library - Browse all uploaded images
-  - name: "media"
-    label: "Media Library"
-    description: "Browse all uploaded images with previews and URLs"
-    files:
-      - name: "media-index"
-        label: "All Images"
-        file: "content/media-index.json"
-        format: "json"
-        editor:
-          preview: false
-        fields:
-          - label: "Uploaded Images"
-            name: "files"
-            widget: "list"
-            required: false
-            summary: "{{fields.name}} ({{fields.path}})"
-            fields:
-              - { label: "File Name", name: "name", widget: "string", required: false }
-              - { label: "Path", name: "path", widget: "string", required: false, hint: "Path: assets/images/uploads/[path]" }
-              - { label: "Full URL", name: "url", widget: "string", required: false, hint: "Copy this URL to use in content" }
-              - { label: "Preview Image", name: "preview", widget: "image", required: false, hint: "Click to see preview" }
+  # ============================================
+  # CONTENT COLLECTIONS (User-Facing)
+  # ============================================
   
-  - name: "admin"
-    label: "Admin Links"
+  - name: "homepage"
+    label: "Homepage"
+    description: "Main page content and settings"
     files:
-      - name: "admin-links"
-        label: "Quick Access Links"
-        file: "content/admin-links.json"
-        format: "json"
-        editor:
-          preview: false
-        fields:
-          - label: "Admin Dashboard Links"
-            name: "links"
-            widget: "list"
-            summary: "{{fields.label}}"
-            fields:
-              - { label: "Label", name: "label", widget: "string" }
-              - { label: "URL", name: "url", widget: "string" }
-              - label: "Category"
-                name: "category"
-                widget: "select"
-                options:
-                  - { label: "Payment & Commerce", value: "Payment & Commerce" }
-                  - { label: "Ticketing", value: "Ticketing" }
-                  - { label: "Fulfillment", value: "Fulfillment" }
-                  - { label: "Development", value: "Development" }
-                  - { label: "Infrastructure", value: "Infrastructure" }
-                  - { label: "Analytics", value: "Analytics" }
-                  - { label: "Social Media", value: "Social Media" }
-                  - { label: "Website", value: "Website" }
-
-  - name: "site"
-    label: "Site Content"
-    files:
-      - name: "gallery"
-        label: "Event Gallery"
-        file: "content/gallery.json"
-        format: "json"
-        fields:
-          - label: "Images"
-            name: "images"
-            widget: "list"
-            summary: "{{fields.alt}}"
-            fields:
-              - label: "Full image URL (recommended: Cloudflare Images)"
-                name: "src"
-                widget: "string"
-                required: false
-                hint: "Paste an imagedelivery.net URL (variant like gallery_full). If blank, use Full image upload below."
-              - label: "Full image upload (fallback)"
-                name: "srcUpload"
-                widget: "image"
-                required: false
-                hint: "Uploads to this repo under assets/images/uploads/. Use only if you don't have a CDN URL."
-              - label: "Thumbnail URL (optional)"
-                name: "thumb"
-                widget: "string"
-                required: false
-                hint: "Paste an imagedelivery.net URL (variant like gallery_thumb). If blank, the full image will be used."
-              - label: "Thumbnail upload (fallback)"
-                name: "thumbUpload"
-                widget: "image"
-                required: false
-              - { label: "Alt text", name: "alt", widget: "string" }
-              - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
-              - label: "Tags"
-                name: "tags"
-                widget: "list"
-                required: false
-                hint: "Optional tags (e.g., 'birthday', 'corporate', 'DJ', 'outdoor')."
-              - { label: "Location", name: "location", widget: "string", required: false }
-              - { label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-
-      - name: "settings"
-        label: "Site Settings (All Content)"
+      - name: "site-settings"
+        label: "Site Settings"
         file: "content/site.json"
         format: "json"
         fields:
-          - label: "Meta Tags & SEO"
+          # SEO & Meta
+          - label: "SEO & Meta Tags"
             name: "meta"
             widget: "object"
             fields:
@@ -134,6 +40,7 @@ collections:
               - { label: "OG Image URL", name: "ogImage", widget: "string", required: false }
               - { label: "OG URL", name: "ogUrl", widget: "string" }
 
+          # Hero Section
           - label: "Hero Section"
             name: "hero"
             widget: "object"
@@ -147,29 +54,31 @@ collections:
               - { label: "Secondary CTA Label", name: "ctaSecondaryLabel", widget: "string" }
               - { label: "Secondary CTA URL", name: "ctaSecondaryUrl", widget: "string" }
 
+          # Announcement Banner
           - label: "Announcement Banner"
             name: "banner"
             widget: "object"
             fields:
               - { label: "Emoji", name: "emoji", widget: "string", required: false }
-              - { label: "Bold label (strong)", name: "strongText", widget: "string" }
+              - { label: "Bold Text", name: "strongText", widget: "string" }
               - { label: "Text", name: "text", widget: "string" }
               - { label: "CTA Label", name: "ctaLabel", widget: "string" }
               - { label: "CTA URL", name: "ctaUrl", widget: "string" }
 
+          # Section Titles
           - label: "Section Titles"
             name: "sections"
             widget: "object"
             fields:
-              - { label: "Announcements Title", name: "announcements", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
+              - { label: "Announcements", name: "announcements", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
               - label: "Events Calendar"
                 name: "events"
                 widget: "object"
                 fields:
                   - { label: "Title", name: "title", widget: "string" }
                   - { label: "Empty Message", name: "emptyMessage", widget: "string" }
-              - { label: "Gallery Title", name: "gallery", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
-              - { label: "Tickets & Merch Title", name: "tickets", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
+              - { label: "Gallery", name: "gallery", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
+              - { label: "Tickets & Merch", name: "tickets", widget: "object", fields: [{ label: "Title", name: "title", widget: "string" }] }
               - label: "Instagram"
                 name: "instagram"
                 widget: "object"
@@ -177,28 +86,30 @@ collections:
                   - { label: "Title", name: "title", widget: "string" }
                   - { label: "Subtitle", name: "subtitle", widget: "text", hint: "Use {handle} placeholder for username" }
 
-          - label: "Tickets / Merch Links"
+          # Tickets & Merch
+          - label: "Tickets & Merch"
             name: "tickets"
             widget: "object"
             fields:
               - { label: "Tickets Card Title", name: "ticketsTitle", widget: "string" }
               - { label: "Tickets Card Body", name: "ticketsBody", widget: "text" }
-              - { label: "Ticketing URL (TicketsCandy, etc.)", name: "ticketsUrl", widget: "string" }
+              - { label: "Ticketing URL", name: "ticketsUrl", widget: "string" }
               - { label: "Tickets Button Label", name: "ticketsLabel", widget: "string" }
-              - { label: "Tickets Note (small text)", name: "ticketsNote", widget: "string", required: false }
+              - { label: "Tickets Note", name: "ticketsNote", widget: "string", required: false }
               - { label: "Merch Card Title", name: "squareTitle", widget: "string" }
               - { label: "Merch Card Body", name: "squareBody", widget: "text" }
               - { label: "Merch Store URL", name: "squareUrl", widget: "string", hint: "Should be /merch/ for internal store" }
               - { label: "Merch Button Label", name: "squareLabel", widget: "string" }
-              - { label: "Merch Note (small text)", name: "squareNote", widget: "string", required: false }
+              - { label: "Merch Note", name: "squareNote", widget: "string", required: false }
 
+          # Instagram
           - label: "Instagram"
             name: "instagram"
             widget: "object"
             fields:
               - { label: "Username (no @)", name: "username", widget: "string" }
               - { label: "Profile URL", name: "profileUrl", widget: "string" }
-              - label: "Preview tiles"
+              - label: "Preview Tiles"
                 name: "previews"
                 widget: "list"
                 required: false
@@ -207,6 +118,7 @@ collections:
                   - { label: "Image", name: "image", widget: "image" }
                   - { label: "Alt text", name: "alt", widget: "string", required: false }
 
+          # Footer
           - label: "Footer"
             name: "footer"
             widget: "object"
@@ -216,7 +128,7 @@ collections:
               - { label: "Copyright Text", name: "copyright", widget: "string" }
               - { label: "Quick Links Title", name: "quickLinksTitle", widget: "string" }
               - { label: "Connect Title", name: "connectTitle", widget: "string" }
-              - label: "Social links"
+              - label: "Social Links"
                 name: "socialLinks"
                 widget: "list"
                 required: false
@@ -225,26 +137,26 @@ collections:
                   - { label: "Label", name: "label", widget: "string" }
                   - { label: "URL", name: "url", widget: "string" }
 
-          - label: "Merch Store"
+          # Calendar (optional embed)
+          - label: "Calendar"
+            name: "calendar"
+            widget: "object"
+            fields:
+              - label: "Embed URL (optional)"
+                name: "embedUrl"
+                widget: "string"
+                required: false
+                hint: "Google Calendar or Notion embed URL. Leave blank to use built-in calendar."
+
+          # Merch Store (global settings - page-specific settings in Pages > Merch)
+          - label: "Merch Store (Global)"
             name: "merch"
             widget: "object"
             fields:
               - { label: "Page Title", name: "pageTitle", widget: "string" }
               - { label: "Page Description", name: "pageDescription", widget: "text" }
-              - { label: "Hero Title", name: "heroTitle", widget: "string" }
-              - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text" }
-              - { label: "Catalog Label", name: "catalogLabel", widget: "string" }
-              - { label: "Cart Title", name: "cartTitle", widget: "string" }
-              - { label: "Cart Close Label", name: "cartCloseLabel", widget: "string" }
-              - { label: "Subtotal Label", name: "subtotalLabel", widget: "string" }
-              - { label: "Shipping Note", name: "shippingNote", widget: "text" }
-              - { label: "Checkout Label", name: "checkoutLabel", widget: "string" }
-              - { label: "Clear Cart Label", name: "clearCartLabel", widget: "string" }
-              - { label: "Empty Cart Message", name: "emptyCartMessage", widget: "string" }
-              - { label: "Loading Message", name: "loadingMessage", widget: "string" }
-              - { label: "Loading Subtext", name: "loadingSubtext", widget: "string" }
-              - { label: "Error Message", name: "errorMessage", widget: "string" }
 
+          # Checkout Page
           - label: "Checkout Page"
             name: "checkout"
             widget: "object"
@@ -260,6 +172,7 @@ collections:
               - { label: "Processing Label", name: "processingLabel", widget: "string" }
               - { label: "Empty Cart Redirect Message", name: "emptyCartRedirect", widget: "string" }
 
+          # Success Page
           - label: "Success Page"
             name: "success"
             widget: "object"
@@ -271,53 +184,107 @@ collections:
               - { label: "Back to Merch Label", name: "backToMerchLabel", widget: "string" }
               - { label: "Back to Site Label", name: "backToSiteLabel", widget: "string" }
 
-          - label: "Calendar"
-            name: "calendar"
-            widget: "object"
-            fields:
-              - label: "Embed URL (optional)"
-                name: "embedUrl"
-                widget: "string"
-                required: false
-                hint: "Paste your Google Calendar embed URL or Notion embed URL. Leave blank to show the placeholder instructions."
-
-      - name: "updates"
-        label: "Latest Updates"
-        file: "content/updates.json"
-        format: "json"
+  - name: "updates"
+    label: "Latest Updates"
+    description: "Announcement cards on homepage"
+    file: "content/updates.json"
+    format: "json"
+    fields:
+      - label: "Updates"
+        name: "updates"
+        widget: "list"
+        summary: "{{fields.title}}"
         fields:
-          - label: "Updates"
-            name: "updates"
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+          - { label: "Pinned", name: "pinned", widget: "boolean", default: false, required: false }
+          - label: "Image URL (recommended: Cloudflare Images)"
+            name: "image"
+            widget: "string"
+            required: false
+            hint: "CDN URL or use Image upload below"
+          - label: "Image upload (fallback)"
+            name: "imageUpload"
+            widget: "image"
+            required: false
+            hint: "Uploads to assets/images/uploads/"
+          - { label: "Image alt text", name: "alt", widget: "string", required: false }
+          - { label: "Body", name: "body", widget: "text" }
+          - { label: "CTA label", name: "ctaLabel", widget: "string", required: false }
+          - { label: "CTA URL", name: "ctaUrl", widget: "string", required: false }
+          - label: "CTA style"
+            name: "ctaStyle"
+            widget: "select"
+            options:
+              - { label: "Primary", value: "primary" }
+              - { label: "Secondary", value: "secondary" }
+            default: "primary"
+
+  - name: "gallery"
+    label: "Event Gallery"
+    description: "Photo gallery images"
+    file: "content/gallery.json"
+    format: "json"
+    fields:
+      - label: "Images"
+        name: "images"
+        widget: "list"
+        summary: "{{fields.alt}}"
+        fields:
+          - label: "Full image URL (recommended: Cloudflare Images)"
+            name: "src"
+            widget: "string"
+            required: false
+            hint: "CDN URL or use Full image upload below"
+          - label: "Full image upload (fallback)"
+            name: "srcUpload"
+            widget: "image"
+            required: false
+            hint: "Uploads to assets/images/uploads/"
+          - label: "Thumbnail URL (optional)"
+            name: "thumb"
+            widget: "string"
+            required: false
+            hint: "CDN URL or use Thumbnail upload below"
+          - label: "Thumbnail upload (fallback)"
+            name: "thumbUpload"
+            widget: "image"
+            required: false
+          - { label: "Alt text", name: "alt", widget: "string" }
+          - { label: "Featured", name: "featured", widget: "boolean", default: false, required: false }
+          - label: "Tags"
+            name: "tags"
             widget: "list"
-            summary: "{{fields.title}}"
-            fields:
-              - { label: "Title", name: "title", widget: "string" }
-              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-              - { label: "Pinned", name: "pinned", widget: "boolean", default: false, required: false }
-              - label: "Image URL (recommended: Cloudflare Images)"
-                name: "image"
-                widget: "string"
-                required: false
-                hint: "Paste an imagedelivery.net URL (variant like update_thumb/update_full) or any public URL. If blank, use Image upload below."
-              - label: "Image upload (fallback)"
-                name: "imageUpload"
-                widget: "image"
-                required: false
-                hint: "Uploads to this repo under assets/images/uploads/. Use only if you don't have a CDN URL."
-              - { label: "Image alt text", name: "alt", widget: "string", required: false }
-              - { label: "Body", name: "body", widget: "text" }
-              - { label: "CTA label", name: "ctaLabel", widget: "string", required: false }
-              - { label: "CTA URL", name: "ctaUrl", widget: "string", required: false }
-              - label: "CTA style"
-                name: "ctaStyle"
-                widget: "select"
-                options:
-                  - { label: "Primary", value: "primary" }
-                  - { label: "Secondary", value: "secondary" }
-                default: "primary"
+            required: false
+            hint: "e.g., 'birthday', 'corporate', 'DJ', 'outdoor'"
+          - { label: "Location", name: "location", widget: "string", required: false }
+          - { label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+
+  - name: "events"
+    label: "Events"
+    description: "Event calendar entries"
+    file: "data/events.json"
+    format: "json"
+    fields:
+      - label: "Events"
+        name: "events"
+        widget: "list"
+        summary: "{{fields.title}} - {{fields.date}}"
+        fields:
+          - { label: "ID", name: "id", widget: "string", required: true, hint: "Unique slug (e.g., 'big-energy-80s')" }
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+          - { label: "Time", name: "time", widget: "string", required: false }
+          - { label: "Location", name: "location", widget: "string", required: false }
+          - { label: "Venue", name: "venue", widget: "string", required: false }
+          - { label: "Description", name: "description", widget: "text", required: false }
+          - { label: "CTA Label", name: "ctaLabel", widget: "string", required: false, default: "Get Tickets" }
+          - { label: "Ticket URL", name: "ticketUrl", widget: "string", required: false }
+          - { label: "Image URL", name: "image", widget: "string", required: false, hint: "Optional poster/hero image" }
 
   - name: "pages"
     label: "Pages"
+    description: "Standalone pages (About, Contact, Legal, Merch)"
     files:
       - name: "about-page"
         label: "About"
@@ -339,7 +306,7 @@ collections:
                 name: "body"
                 widget: "list"
                 field: { label: "Paragraph", name: "paragraph", widget: "text" }
-                hint: "Each item will be rendered as a separate paragraph. HTML is supported."
+                hint: "Each item renders as a separate paragraph. HTML is supported."
               - label: "Contacts"
                 name: "contacts"
                 widget: "list"
@@ -370,7 +337,7 @@ collections:
                 name: "body"
                 widget: "list"
                 field: { label: "Paragraph", name: "paragraph", widget: "text" }
-                hint: "Each item will be rendered as a separate paragraph. HTML is supported."
+                hint: "Each item renders as a separate paragraph. HTML is supported."
               - label: "Contacts"
                 name: "contacts"
                 widget: "list"
@@ -401,7 +368,7 @@ collections:
                 name: "body"
                 widget: "list"
                 field: { label: "Paragraph", name: "paragraph", widget: "text" }
-                hint: "Each item will be rendered as a separate paragraph. HTML is supported."
+                hint: "Each item renders as a separate paragraph. HTML is supported."
               - label: "Contacts"
                 name: "contacts"
                 widget: "list"
@@ -424,7 +391,7 @@ collections:
           - { label: "Hero Subtitle", name: "heroSubtitle", widget: "text", required: false }
           - { label: "Catalog Label", name: "catalogLabel", widget: "string" }
           - { label: "Loading Message", name: "loadingMessage", widget: "string" }
-          - { label: "Loading Subtext", name: "loadingSubtext", widget: "string" }
+          - { label: "Loading Subtext", name: "loadingSubtext", widget: "text" }
           - { label: "Cart Title", name: "cartTitle", widget: "string" }
           - { label: "Cart Close Label", name: "cartCloseLabel", widget: "string" }
           - { label: "Subtotal Label", name: "subtotalLabel", widget: "string" }
@@ -434,26 +401,63 @@ collections:
           - { label: "Empty Cart Message", name: "emptyCartMessage", widget: "string" }
           - { label: "Error Message", name: "errorMessage", widget: "string" }
 
-  - name: "events"
-    label: "Events"
+  # ============================================
+  # MEDIA COLLECTIONS
+  # ============================================
+  
+  - name: "media"
+    label: "Media Library"
+    description: "Browse all uploaded images with previews and URLs"
     files:
-      - name: "events-file"
-        label: "Events JSON"
-        file: "data/events.json"
+      - name: "media-index"
+        label: "All Images"
+        file: "content/media-index.json"
         format: "json"
+        editor:
+          preview: false
         fields:
-          - label: "Events"
-            name: "events"
+          - label: "Uploaded Images"
+            name: "files"
             widget: "list"
-            summary: "{{fields.title}}"
+            required: false
+            summary: "{{fields.name}} ({{fields.path}})"
             fields:
-              - { label: "ID", name: "id", widget: "string", required: true, hint: "Slug/id for the event" }
-              - { label: "Title", name: "title", widget: "string" }
-              - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
-              - { label: "Time", name: "time", widget: "string", required: false }
-              - { label: "Location", name: "location", widget: "string", required: false }
-              - { label: "Venue", name: "venue", widget: "string", required: false }
-              - { label: "Description", name: "description", widget: "text", required: false }
-              - { label: "CTA Label", name: "ctaLabel", widget: "string", required: false, default: "Get Tickets" }
-              - { label: "Ticket URL", name: "ticketUrl", widget: "string", required: false }
-              - { label: "Image URL", name: "image", widget: "string", required: false, hint: "Optional poster/hero image" }
+              - { label: "File Name", name: "name", widget: "string", required: false }
+              - { label: "Path", name: "path", widget: "string", required: false, hint: "Relative to assets/images/uploads/" }
+              - { label: "Full URL", name: "url", widget: "string", required: false, hint: "Copy this URL to use in content" }
+              - { label: "Preview Image", name: "preview", widget: "image", required: false, hint: "Click to see preview" }
+
+  # ============================================
+  # ADMIN COLLECTIONS (Internal Tools)
+  # ============================================
+  
+  - name: "admin"
+    label: "Admin Tools"
+    description: "Quick access links and admin utilities"
+    files:
+      - name: "admin-links"
+        label: "Quick Access Links"
+        file: "content/admin-links.json"
+        format: "json"
+        editor:
+          preview: false
+        fields:
+          - label: "Admin Dashboard Links"
+            name: "links"
+            widget: "list"
+            summary: "{{fields.label}}"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+              - label: "Category"
+                name: "category"
+                widget: "select"
+                options:
+                  - { label: "Payment & Commerce", value: "Payment & Commerce" }
+                  - { label: "Ticketing", value: "Ticketing" }
+                  - { label: "Fulfillment", value: "Fulfillment" }
+                  - { label: "Development", value: "Development" }
+                  - { label: "Infrastructure", value: "Infrastructure" }
+                  - { label: "Analytics", value: "Analytics" }
+                  - { label: "Social Media", value: "Social Media" }
+                  - { label: "Website", value: "Website" }
