@@ -187,9 +187,12 @@ collections:
   - name: "updates"
     label: "Latest Updates"
     description: "Announcement cards on homepage"
-    file: "content/updates.json"
-    format: "json"
-    fields:
+    files:
+      - name: "updates-file"
+        label: "Updates"
+        file: "content/updates.json"
+        format: "json"
+        fields:
       - label: "Updates"
         name: "updates"
         widget: "list"
@@ -223,9 +226,12 @@ collections:
   - name: "gallery"
     label: "Event Gallery"
     description: "Photo gallery images"
-    file: "content/gallery.json"
-    format: "json"
-    fields:
+    files:
+      - name: "gallery-file"
+        label: "Gallery"
+        file: "content/gallery.json"
+        format: "json"
+        fields:
       - label: "Images"
         name: "images"
         widget: "list"
