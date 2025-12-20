@@ -116,22 +116,5 @@
   },
   "calendar": {
     "embedUrl": ""
-  },
-  "merch": {
-    "shippingNote": "Shipping and taxes are collected at checkout.",
-    "clearCartLabel": "Clear cart",
-    "pageTitle": "Merch",
-    "loadingMessage": "Loading merch…",
-    "pageDescription": "Shop Still Got It Collective merch. Secure checkout powered by Stripe.",
-    "checkoutLabel": "Checkout",
-    "subtotalLabel": "Subtotal",
-    "loadingSubtext": "If this takes too long, refresh the page.",
-    "heroSubtitle": "Secure checkout powered by Stripe. US shipping only (international by request).",
-    "cartTitle": "Your cart",
-    "emptyCartMessage": "Your cart is empty.",
-    "catalogLabel": "Catalog:",
-    "cartCloseLabel": "Close",
-    "heroTitle": "Merch",
-    "errorMessage": "Could not load merch."
   }
 }
