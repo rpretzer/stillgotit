@@ -224,6 +224,7 @@
           const link = document.createElement('button');
           link.className = 'event-link';
           link.type = 'button';
+          link.setAttribute('aria-label', `View event: ${ev.title}`);
           link.innerHTML = `<span class="event-dot"></span> ${ev.title}`;
           link.addEventListener('click', () => renderModal(ev));
           list.appendChild(link);

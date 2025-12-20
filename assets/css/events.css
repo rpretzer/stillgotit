@@ -317,5 +317,39 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
+
+  /* Mobile: Show only event indicators (dots), hide text */
+  .event-link {
+    padding: 0.35rem;
+    min-width: auto;
+    justify-content: center;
+  }
+
+  .event-link .event-dot {
+    width: 10px;
+    height: 10px;
+    margin: 0;
+  }
+
+  /* Hide event title text on mobile, show only dot */
+  .event-link {
+    font-size: 0;
+    line-height: 0;
+  }
+
+  .event-link .event-dot {
+    font-size: 0;
+    display: inline-block;
+  }
+
+  /* Ensure consistent column widths */
+  .event-day {
+    padding: 0.5rem;
+  }
+
+  .event-card-list {
+    gap: 0.25rem;
+    justify-items: center;
+  }
 }
 
