@@ -415,11 +415,11 @@ collections:
   # ============================================
   
   - name: "media"
-    label: "Media Library"
-    description: "Browse all uploaded images with previews and URLs"
+    label: "📷 Media Library"
+    description: "Browse all uploaded images (120+ files) with previews and URLs. Note: This is different from the 'Media assets' file picker - this shows ALL images in the repo."
     files:
       - name: "media-index"
-        label: "All Images"
+        label: "All Images (120+ files)"
         file: "content/media-index.json"
         format: "json"
         editor:
@@ -429,9 +429,9 @@ collections:
             name: "files"
             widget: "list"
             required: false
-            summary: "{{fields.name}} ({{fields.path}})"
+            summary: "{{fields.name}}"
             fields:
-              - { label: "File Name", name: "name", widget: "string", required: false }
+              - { label: "File Name", name: "name", widget: "string", required: false, hint: "Image filename" }
               - { label: "Path", name: "path", widget: "string", required: false, hint: "Relative to assets/images/uploads/" }
               - { label: "Full URL", name: "url", widget: "string", required: false, hint: "Copy this URL to use in content" }
               - { label: "Preview Image", name: "preview", widget: "image", required: false, hint: "Click to see preview" }
