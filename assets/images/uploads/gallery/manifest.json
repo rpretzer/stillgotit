@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-12-13T02:43:23.603Z",
+  "generatedAt": "2025-12-20T15:31:56.336Z",
   "inputDir": "assets/images/_incoming_raw",
   "inputDirs": [
     "assets/images/uploads",
@@ -10,6 +10,13 @@
     "thumbDir": "assets/images/uploads/gallery/thumb"
   },
   "items": [
+    {
+      "source": "assets/images/_incoming_raw/1f940ae3-2617-48ef-a8a6-e45dcf95b677.png",
+      "hash": "7584fb8271",
+      "full": "assets/images/uploads/gallery/full/1f940ae3-2617-48ef-a8a6-e45dcf95b677-7584fb8271-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/1f940ae3-2617-48ef-a8a6-e45dcf95b677-7584fb8271-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:56.719Z"
+    },
     {
       "source": "assets/images/_incoming_raw/20251125_175900~2.jpg",
       "hash": "a34adcbdbc",
@@ -23,6 +30,83 @@
       "full": "assets/images/uploads/gallery/full/20251125-201930-c47deda0c1-full.webp",
       "thumb": "assets/images/uploads/gallery/thumb/20251125-201930-c47deda0c1-thumb.webp",
       "generatedAt": "2025-12-13T02:34:19.345Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/cabin_fever1.png",
+      "hash": "8e81020dae",
+      "full": "assets/images/uploads/gallery/full/cabin-fever1-8e81020dae-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/cabin-fever1-8e81020dae-thumb.webp",
+      "generatedAt": "2025-12-20T15:32:00.724Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 19, 2025, 12_43_36 PM.png",
+      "hash": "1ae681e2eb",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-19-2025-12-43-36-pm-1ae681e2eb-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-19-2025-12-43-36-pm-1ae681e2eb-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:57.086Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 19, 2025, 12_43_58 PM.png",
+      "hash": "4974cfa915",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-19-2025-12-43-58-pm-4974cfa915-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-19-2025-12-43-58-pm-4974cfa915-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:57.457Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_22_50 AM.png",
+      "hash": "aad3c4552e",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-22-50-am-aad3c4552e-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-22-50-am-aad3c4552e-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:57.960Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_26_30 AM.png",
+      "hash": "0f3f643f28",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-26-30-am-0f3f643f28-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-26-30-am-0f3f643f28-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:58.335Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_26_56 AM.png",
+      "hash": "d1a2a7a643",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-26-56-am-d1a2a7a643-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-26-56-am-d1a2a7a643-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:58.695Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_27_12 AM.png",
+      "hash": "d362bd16ef",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-27-12-am-d362bd16ef-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-27-12-am-d362bd16ef-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:58.948Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_27_26 AM.png",
+      "hash": "4ea1dfd83b",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-27-26-am-4ea1dfd83b-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-27-26-am-4ea1dfd83b-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:59.305Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_27_49 AM.png",
+      "hash": "ec160d1f80",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-27-49-am-ec160d1f80-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-27-49-am-ec160d1f80-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:59.446Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/ChatGPT Image Dec 20, 2025, 10_28_17 AM.png",
+      "hash": "eb75cf628c",
+      "full": "assets/images/uploads/gallery/full/chatgpt-image-dec-20-2025-10-28-17-am-eb75cf628c-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/chatgpt-image-dec-20-2025-10-28-17-am-eb75cf628c-thumb.webp",
+      "generatedAt": "2025-12-20T15:31:59.815Z"
+    },
+    {
+      "source": "assets/images/_incoming_raw/checkyerhead - Edited.jpg",
+      "hash": "3f2d9b2ff2",
+      "full": "assets/images/uploads/gallery/full/checkyerhead-edited-3f2d9b2ff2-full.webp",
+      "thumb": "assets/images/uploads/gallery/thumb/checkyerhead-edited-3f2d9b2ff2-thumb.webp",
+      "generatedAt": "2025-12-20T15:32:00.895Z"
     },
     {
       "source": "assets/images/_incoming_raw/Still Got It Collective 11.25.25-10.jpg",
