@@ -2,15 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Redirecting to Tickets</title>
   <script>
-    window.location.href = "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226";
+    // Load tickets URL from CMS (content/site.json)
+    (async function() {
+      const FALLBACK_URL = 'https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226';
+      let ticketsUrl = FALLBACK_URL;
+      
+      try {
+        const res = await fetch('/content/site.json?t=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.tickets?.ticketsUrl) {
+            ticketsUrl = data.tickets.ticketsUrl;
+          }
+        }
+      } catch (err) {
+        // Fallback to default URL if CMS load fails
+        console.error('Failed to load tickets URL from CMS, using fallback:', err);
+      }
+      
+      // Set meta refresh
+      const metaRefresh = document.createElement('meta');
+      metaRefresh.httpEquiv = 'refresh';
+      metaRefresh.content = '0; url=' + ticketsUrl;
+      document.head.appendChild(metaRefresh);
+      
+      // Update link href
+      const link = document.getElementById('tickets-link');
+      if (link) link.href = ticketsUrl;
+      
+      // Redirect
+      window.location.href = ticketsUrl;
+    })();
   </script>
 </head>
 <body>
-  <p>Redirecting to tickets… <a href="https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226">click here</a> if you are not redirected.</p>
+  <p>Redirecting to tickets… <a href="#" id="tickets-link">click here</a> if you are not redirected.</p>
 </body>
 </html>
 

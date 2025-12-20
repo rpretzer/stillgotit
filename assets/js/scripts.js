@@ -1239,8 +1239,6 @@
 
     // ===== Initialize on DOM Load =====
     document.addEventListener('DOMContentLoaded', function() {
-        // Any initialization code that needs to run after DOM is ready
-        console.log('The Still Got It Collective website loaded successfully!');
         loadSiteSettings();
         loadPageContent();
         loadLatestUpdates();

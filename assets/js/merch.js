@@ -72,7 +72,7 @@
         }
       } catch (err) {
         // Silently fail - abandoned cart tracking is non-critical
-        console.debug('Abandoned cart tracking failed:', err);
+        // Error logged only in development if needed
       }
     }, 2000); // Wait 2 seconds after last cart change
   }
