@@ -1,40 +1,40 @@
 {
   "events": [
-  {
-      "id": "still-got-it-vol-1",
-      "title": "90s Dance Party: Still Got It Vol. 1",
-      "date": "2025-11-24",
-    "time": "6PM",
-      "location": "B-Side Lounge, Cleveland",
-      "venue": "",
-    "description": "Hip hop & house vibes with a retro twist. Dress code: bold colors.",
-    "ctaLabel": "Get Tickets",
-    "ticketUrl": "https://squareup.com/checkout/vol3",
-      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-10-aaa307ef5e-thumb.webp"
-  },
-  {
-      "id": "still-got-it-vol-2",
-      "title": "80's Dance Party: Still Got It Vol. 2",
-      "date": "2026-01-29",
-      "time": "6PM",
-      "location": "B-Side Lounge, Cleveland",
-      "venue": "",
-      "description": "Pure 80's nostalgia—synths, neon, and no pretense.",
+    {
+      "ticketUrl": "https://squareup.com/checkout/vol3",
       "ctaLabel": "Get Tickets",
-      "ticketUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
-      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-19-7dffb5a5b6-thumb.webp"
+      "time": "6PM",
+      "date": "2025-11-24",
+      "venue": "",
+      "location": "B-Side Lounge, Cleveland",
+      "title": "90s Dance Party: Still Got It Vol. 1",
+      "id": "still-got-it-vol-1",
+      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-10-aaa307ef5e-thumb.webp",
+      "description": "Hip hop & house vibes with a retro twist. Dress code: bold colors."
     },
     {
-      "id": "still-got-it-vol-3",
-      "title": "Cabin Fever: Still Got It Vol. 3",
-      "date": "2026-02-26",
+      "ticketUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+      "ctaLabel": "Get Tickets",
       "time": "6PM",
-      "location": "B-Side Lounge, Cleveland",
+      "date": "2026-01-29",
       "venue": "",
-      "description": "The perfect antidote to February in Cleveland. Seasonal beer flights curated for the event.",
-    "ctaLabel": "Get Tickets",
+      "location": "B-Side Lounge, Cleveland",
+      "title": "80's Dance Party: Still Got It Vol. 2",
+      "id": "still-got-it-vol-2",
+      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-19-7dffb5a5b6-thumb.webp",
+      "description": "Pure 80's nostalgia—synths, neon, and no pretense. Curated beer flights for the event."
+    },
+    {
       "ticketUrl": "",
-      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-11-ee2d5ab667-thumb.webp"
-  }
-]
+      "ctaLabel": "Get Tickets",
+      "time": "6PM",
+      "date": "2026-02-26",
+      "venue": "",
+      "location": "B-Side Lounge, Cleveland",
+      "title": "Cabin Fever: Still Got It Vol. 3",
+      "id": "still-got-it-vol-3",
+      "image": "/assets/images/uploads/gallery/thumb/still-got-it-collective-11-25-25-11-ee2d5ab667-thumb.webp",
+      "description": "The perfect antidote to February in Cleveland. SGC-themed whiskey tasting."
+    }
+  ]
 }
