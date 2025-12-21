@@ -684,6 +684,12 @@ body {
     margin-top: 0;
 }
 
+.content-block p {
+    padding-left: 0;
+    text-indent: 0;
+    margin-left: 0;
+}
+
 /* ===== Link Styles (Email, Tel, General) ===== */
 /* Email and phone links */
 a[href^="mailto:"],
@@ -1272,8 +1278,8 @@ button:focus-visible {
 
 /* ===== Footer ===== */
 .footer {
-    background: var(--color-neutral-900);
-    color: var(--text-inverse);
+    background: var(--bg-primary);
+    color: var(--text-primary);
     padding: var(--spacing-xxl) 0 var(--spacing-lg);
 }
 
@@ -1297,7 +1303,7 @@ button:focus-visible {
 .footer-section p {
     font-family: var(--font-body);
     font-size: var(--text-base);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-secondary);
     line-height: var(--leading-relaxed);
 }
 
@@ -1313,7 +1319,7 @@ button:focus-visible {
 .social-links a {
     font-family: var(--font-body);
     font-size: var(--text-base);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-primary);
     text-decoration: none;
     transition: var(--transition);
     line-height: var(--leading-relaxed);
@@ -1330,7 +1336,7 @@ button:focus-visible {
 }
 
 .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid var(--border-default);
     padding-top: var(--spacing-lg);
     display: flex;
     flex-direction: column;
@@ -1342,7 +1348,7 @@ button:focus-visible {
 .footer-bottom p {
     font-family: var(--font-body);
     font-size: var(--text-base);
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-secondary);
 }
 
 .back-to-top {
