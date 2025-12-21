@@ -9,7 +9,7 @@
   },
   "meta": {
     "siteName": "The Still Got It Collective",
-    "tagline": "Curating moments you'll never forget",
+    "tagline": "Dance like you did. Sleep like you should.",
     "description": "The Still Got It Collective - Curating moments you'll never forget. Event planning and unforgettable experiences.",
     "keywords": "event planning, event management, parties, celebrations, Still Got It Collective",
     "ogImage": "https://www.stillgotitcollective.com/assets/images/og-image.jpg",
@@ -99,7 +99,7 @@
   },
   "footer": {
     "organizationName": "The Still Got It Collective",
-    "tagline": "Curating moments you'll never forget",
+    "tagline": "Dance like you did. Sleep like you should.",
     "copyright": "© 2025 RSP Management Solutions LLC. All rights reserved.",
     "quickLinksTitle": "Quick Links",
     "connectTitle": "Connect",
@@ -116,5 +116,9 @@
   },
   "calendar": {
     "embedUrl": ""
+  },
+  "merch": {
+    "pageTitle": "merch",
+    "pageDescription": "Still Got It Collective branded merchandise"
   }
 }
