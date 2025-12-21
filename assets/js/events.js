@@ -76,10 +76,30 @@
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
+  /**
+   * Converts a date to ISO string (YYYY-MM-DD) in local timezone.
+   * Handles both Date objects and date strings (YYYY-MM-DD format).
+   * @param {Date|string} date - Date object or date string
+   * @returns {string} ISO date string (YYYY-MM-DD)
+   */
   function iso(date) {
-    const d = new Date(date);
+    let d;
+    if (typeof date === 'string') {
+      // Parse date string as local date (not UTC) to avoid timezone shifts
+      const parts = date.split('-');
+      if (parts.length === 3) {
+        d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      } else {
+        d = new Date(date);
+      }
+    } else {
+      d = new Date(date);
+    }
     d.setHours(0, 0, 0, 0);
-    return d.toISOString().slice(0, 10);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   function renderWeekdays() {
@@ -171,7 +191,15 @@
     const monthStart = new Date(year, month, 1);
     const monthEnd = new Date(year, month + 1, 0);
     const monthEvents = events.filter(ev => {
-      const evDate = new Date(ev.startDate);
+      // Parse date string as local date to avoid timezone shifts
+      let evDate;
+      if (typeof ev.startDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(ev.startDate)) {
+        const parts = ev.startDate.split('-');
+        evDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+      } else {
+        evDate = new Date(ev.startDate);
+      }
+      evDate.setHours(0, 0, 0, 0);
       return evDate >= monthStart && evDate <= monthEnd;
     });
 
