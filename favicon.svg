@@ -2,8 +2,15 @@
   <!-- Background with brand primary color -->
   <rect width="32" height="32" rx="6" fill="#e91e6f"/>
   
-  <!-- Bold, geometric "S" shape optimized for small sizes -->
-  <path 
-    d="M 10 8 C 8 8, 8 10, 8 12 C 8 14, 10 14, 12 14 L 20 14 C 22 14, 24 16, 24 18 C 24 20, 22 22, 20 22 L 12 22 C 10 22, 8 24, 8 26 C 8 28, 10 28, 12 28 L 20 28 C 22 28, 24 26, 24 24 L 22 24 C 22 25, 21 26, 20 26 L 12 26 C 11 26, 10 25, 10 24 C 10 23, 11 22, 12 22 L 20 22 C 21 22, 22 21, 22 20 C 22 19, 21 18, 20 18 L 12 18 C 11 18, 10 17, 10 16 C 10 15, 11 14, 12 14 L 20 14 C 21 14, 22 13, 22 12 C 22 11, 21 10, 20 10 L 12 10 C 11 10, 10 11, 10 12 Z" 
-    fill="#ffffff"/>
+  <!-- Simple, bold "S" using rectangles for clarity at small sizes -->
+  <!-- Top curve -->
+  <rect x="8" y="6" width="16" height="4" rx="2" fill="#ffffff"/>
+  <rect x="8" y="10" width="8" height="4" rx="2" fill="#ffffff"/>
+  
+  <!-- Middle bar -->
+  <rect x="12" y="14" width="8" height="4" rx="2" fill="#ffffff"/>
+  
+  <!-- Bottom curve -->
+  <rect x="16" y="18" width="8" height="4" rx="2" fill="#ffffff"/>
+  <rect x="8" y="22" width="16" height="4" rx="2" fill="#ffffff"/>
 </svg>
