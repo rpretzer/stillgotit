@@ -19,6 +19,19 @@
       ]
     },
     {
+      "title": "Events",
+      "body": [
+        "For questions about specific events, event details, or event-related inquiries."
+      ],
+      "contacts": [
+        {
+          "label": "Email",
+          "value": "events@stillgotitcollective.com",
+          "url": "mailto:events@stillgotitcollective.com"
+        }
+      ]
+    },
+    {
       "title": "Partnerships & bookings",
       "body": [
         "Interested in sponsoring an event, booking us for a special night, or hosting a Still Got It experience at your space?"
