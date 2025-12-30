@@ -691,14 +691,13 @@ body {
 }
 
 /* Ensure all content block children have consistent alignment */
-.content-block * {
+.content-block p,
+.content-block strong,
+.content-block a,
+.content-block span {
     padding-left: 0;
     margin-left: 0;
-}
-
-.content-block strong {
-    padding-left: 0;
-    margin-left: 0;
+    text-indent: 0;
 }
 
 /* ===== Link Styles (Email, Tel, General) ===== */
