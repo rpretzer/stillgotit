@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Unsubscribe | The Still Got It Collective</title>
+  <meta name="description" content="Unsubscribe from Still Got It Collective communications." />
+  <link rel="canonical" href="https://www.stillgotitcollective.com/unsubscribe/">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/merch.css" />
+  <style>
+    .unsubscribe-form {
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .unsubscribe-form .form-field {
+      margin-bottom: var(--spacing-lg);
+    }
+    .unsubscribe-message {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+    }
+  </style>
+</head>
+<body data-page="unsubscribe">
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="nav-wrapper">
+        <a href="/" class="logo">
+          <span class="logo-text">Still Got It Collective</span>
+        </a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/merch/" class="nav-link">Merch</a></li>
+          <li><a href="/tickets/" class="nav-link">Tickets</a></li>
+          <li><a href="/about/" class="nav-link">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <section class="section">
+      <div class="container">
+        <h1 class="section-title fade-in">Unsubscribe</h1>
+        <p class="section-subtitle fade-in">
+          We're sorry to see you go. Enter your email address below to unsubscribe from our communications.
+        </p>
+
+        <div class="content-grid fade-in">
+          <div class="content-block unsubscribe-form">
+            <form id="unsubscribe-form" novalidate>
+              <div class="form-field">
+                <label for="unsubscribe-email">Email Address *</label>
+                <input 
+                  type="email" 
+                  id="unsubscribe-email" 
+                  name="email" 
+                  autocomplete="email" 
+                  required 
+                  class="form-input"
+                  placeholder="your.email@example.com"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Unsubscribe
+              </button>
+            </form>
+            <div id="unsubscribe-message" class="unsubscribe-message" hidden></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 RSP Management Solutions LLC. All rights reserved.</p>
+        <a href="/" class="back-to-top">← Back to site</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/scripts.js"></script>
+  <script>
+    (function() {
+      'use strict';
+      
+      const form = document.getElementById('unsubscribe-form');
+      const emailInput = document.getElementById('unsubscribe-email');
+      const messageEl = document.getElementById('unsubscribe-message');
+      
+      if (!form || !emailInput || !messageEl) return;
+      
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = emailInput.value.trim();
+        
+        if (!email) {
+          emailInput.focus();
+          return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          messageEl.textContent = 'Please enter a valid email address.';
+          messageEl.hidden = false;
+          messageEl.style.color = 'var(--error)';
+          emailInput.focus();
+          return;
+        }
+        
+        // Construct mailto link with subject and body
+        const subject = encodeURIComponent('Unsubscribe Request');
+        const body = encodeURIComponent(`Please unsubscribe the following email address:\n\n${email}`);
+        const mailtoLink = `mailto:unsubscribe@stillgotitcollective.com?subject=${subject}&body=${body}`;
+        
+        // Open mailto link (will open user's default email client)
+        window.location.href = mailtoLink;
+        
+        // Show success message
+        messageEl.textContent = 'Your email client should open shortly. Please send the pre-filled message to complete your unsubscribe request.';
+        messageEl.hidden = false;
+        messageEl.style.color = 'var(--text-primary)';
+        messageEl.style.background = 'var(--bg-secondary)';
+        
+        // Reset form after a short delay
+        setTimeout(function() {
+          form.reset();
+        }, 1000);
+      });
+    })();
+  </script>
+</body>
+</html>
+
