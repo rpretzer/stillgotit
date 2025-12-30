@@ -8,6 +8,6 @@
     "media:index": "node scripts/generate-media-index.js"
   },
   "dependencies": {
-    "sharp": "^0.34.4"
+    "sharp": "^0.34.5"
   }
 }
