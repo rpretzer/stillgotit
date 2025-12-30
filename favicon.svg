@@ -2,15 +2,9 @@
   <!-- Background with brand primary color -->
   <rect width="32" height="32" rx="6" fill="#e91e6f"/>
   
-  <!-- Simple, bold "S" using rectangles for clarity at small sizes -->
-  <!-- Top curve -->
-  <rect x="8" y="6" width="16" height="4" rx="2" fill="#ffffff"/>
-  <rect x="8" y="10" width="8" height="4" rx="2" fill="#ffffff"/>
-  
-  <!-- Middle bar -->
-  <rect x="12" y="14" width="8" height="4" rx="2" fill="#ffffff"/>
-  
-  <!-- Bottom curve -->
-  <rect x="16" y="18" width="8" height="4" rx="2" fill="#ffffff"/>
-  <rect x="8" y="22" width="16" height="4" rx="2" fill="#ffffff"/>
+  <!-- Clean, bold "S" shape - optimized for favicon size -->
+  <path 
+    d="M 10 8 L 22 8 Q 24 8, 24 10 L 24 12 Q 24 14, 20 14 L 12 14 Q 10 14, 10 16 Q 10 18, 12 18 L 20 18 Q 24 18, 24 22 L 24 24 Q 24 26, 22 26 L 10 26 Q 8 26, 8 24 L 8 22 Q 8 20, 12 20 L 20 20 Q 22 20, 22 18 L 22 16 Q 22 14, 18 14 L 10 14 Q 8 14, 8 12 L 8 10 Q 8 8, 10 8 Z" 
+    fill="#ffffff" 
+    fill-rule="evenodd"/>
 </svg>
