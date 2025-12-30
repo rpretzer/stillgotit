@@ -2,17 +2,10 @@
   <!-- Background with brand primary color -->
   <rect width="32" height="32" rx="6" fill="#e91e6f"/>
   
-  <!-- SGIC initials - optimized for small size -->
-  <text 
-    x="16" 
-    y="22" 
-    font-family="Arial, Helvetica, sans-serif" 
-    font-size="16" 
-    font-weight="900" 
+  <!-- Stylized "S" shape - bold and recognizable at small sizes -->
+  <path 
+    d="M 8 10 Q 8 6, 12 6 L 20 6 Q 24 6, 24 10 Q 24 12, 22 13 L 18 14 Q 16 14, 16 16 Q 16 18, 18 18 L 22 19 Q 24 20, 24 22 Q 24 26, 20 26 L 12 26 Q 8 26, 8 22 L 10 22 Q 10 24, 12 24 L 20 24 Q 22 24, 22 22 Q 22 20, 20 19 L 16 18 Q 14 18, 14 16 Q 14 14, 16 13 L 20 12 Q 22 11, 22 10 Q 22 8, 20 8 L 12 8 Q 10 8, 10 10 Z" 
     fill="#ffffff" 
-    text-anchor="middle" 
-    letter-spacing="-1"
-    style="font-stretch: ultra-condensed;">
-    SGIC
-  </text>
+    stroke="#ffffff" 
+    stroke-width="0.5"/>
 </svg>
