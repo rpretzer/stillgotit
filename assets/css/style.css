@@ -690,6 +690,17 @@ body {
     margin-left: 0;
 }
 
+/* Ensure all content block children have consistent alignment */
+.content-block * {
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.content-block strong {
+    padding-left: 0;
+    margin-left: 0;
+}
+
 /* ===== Link Styles (Email, Tel, General) ===== */
 /* Email and phone links */
 a[href^="mailto:"],
