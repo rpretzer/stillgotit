@@ -297,12 +297,13 @@
   }
 
   /**
-   * Loads product catalog from CMS and renders it.
-   * Source: /content/merch.json (editable via /admin)
+   * Loads product catalog from API (synced from Printful).
+   * Fallback: /content/merch.json (editable via /admin)
    * @returns {Promise<void>}
    */
   async function loadCatalog() {
-    const src = els.grid?.dataset?.merchSource || '/content/merch.json';
+    const apiBase = window.SGIC_CONFIG?.API_BASE || 'https://sgic-merch-api.rpretzer.workers.dev/api';
+    const src = els.grid?.dataset?.merchSource || `${apiBase}/products`;
     const url = new URL(src, window.location.href);
     // Add cache-busting to ensure fresh catalog
     const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
