@@ -307,13 +307,7 @@
     const url = new URL(src, window.location.href);
     // Add cache-busting to ensure fresh catalog
     const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
-    const res = await fetch(fetchUrl, { 
-      cache: 'no-store',
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache'
-      }
-    });
+    const res = await fetch(fetchUrl, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Failed to load merch catalog (${res.status})`);
     return await res.json();
   }
