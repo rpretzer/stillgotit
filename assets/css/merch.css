@@ -516,6 +516,69 @@
   color: var(--interactive-primary);
 }
 
+/* ===== Trust Signals ===== */
+
+.trust-signals {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-default);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.trust-signal {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.trust-signal--secure {
+  color: var(--status-success);
+}
+
+.trust-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.trust-signal--stripe {
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.stripe-logo {
+  height: 16px;
+  width: auto;
+  color: var(--text-secondary);
+}
+
+.trust-signal--cards {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+}
+
+.trust-cards-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.trust-cards {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.card-icon {
+  height: 24px;
+  width: auto;
+  border-radius: var(--radius-sm);
+}
+
 .checkout-card {
   margin-top: var(--spacing-md);
 }
