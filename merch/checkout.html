@@ -67,6 +67,19 @@
       <div class="container">
         <h1 class="section-title" id="checkout-title">Checkout</h1>
 
+        <!-- Progress Indicator -->
+        <div class="checkout-progress" id="checkout-progress">
+          <div class="checkout-progress-step active" data-step="1">
+            <div class="checkout-progress-number">1</div>
+            <div class="checkout-progress-label">Shipping</div>
+          </div>
+          <div class="checkout-progress-line"></div>
+          <div class="checkout-progress-step" data-step="2">
+            <div class="checkout-progress-number">2</div>
+            <div class="checkout-progress-label">Payment</div>
+          </div>
+        </div>
+
         <div id="checkout-error" class="ticket-card checkout-alert" hidden></div>
 
         <!-- Shipping Form -->

@@ -61,8 +61,36 @@
     backToShipping: document.getElementById('back-to-shipping'),
     continueToPayment: document.getElementById('continue-to-payment'),
     error: document.getElementById('checkout-error'),
-    loading: document.getElementById('loading')
+    loading: document.getElementById('loading'),
+    progressSteps: document.querySelectorAll('.checkout-progress-step'),
+    progressLine: document.querySelector('.checkout-progress-line')
   };
+
+  /**
+   * Update the checkout progress indicator
+   * @param {number} currentStep - 1 for shipping, 2 for payment
+   */
+  function updateProgress(currentStep) {
+    els.progressSteps.forEach((step) => {
+      const stepNum = parseInt(step.dataset.step, 10);
+      step.classList.remove('active', 'completed');
+
+      if (stepNum < currentStep) {
+        step.classList.add('completed');
+      } else if (stepNum === currentStep) {
+        step.classList.add('active');
+      }
+    });
+
+    // Update line color if step 1 is completed
+    if (els.progressLine) {
+      if (currentStep > 1) {
+        els.progressLine.style.background = 'var(--status-success)';
+      } else {
+        els.progressLine.style.background = '';
+      }
+    }
+  }
 
   function loadCart() {
     try {
@@ -221,9 +249,10 @@
       elements = stripe.elements({ clientSecret });
     }
 
-    // Show payment form
+    // Show payment form and update progress
     els.shippingForm.hidden = true;
     els.paymentForm.hidden = false;
+    updateProgress(2);
     await initializePaymentElement(clientSecret);
   }
 
@@ -287,6 +316,7 @@
   function handleBackToShipping() {
     els.paymentForm.hidden = true;
     els.shippingForm.hidden = false;
+    updateProgress(1);
     if (paymentElement) {
       paymentElement.unmount();
       paymentElement = null;
