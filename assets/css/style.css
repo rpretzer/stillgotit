@@ -798,6 +798,9 @@ a[href^="tel:"]:visited {
 }
 
 .announcement-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--bg-primary);
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -829,7 +832,14 @@ a[href^="tel:"]:visited {
 }
 
 .card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     padding: var(--spacing-md);
+}
+
+.card-content .btn {
+    margin-top: auto;
 }
 
 .card-content h3 {
@@ -1173,12 +1183,19 @@ button:focus-visible {
 }
 
 .ticket-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--bg-primary);
     padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     text-align: center;
     transition: var(--transition);
+}
+
+.ticket-card .btn {
+    margin-top: auto;
 }
 
 .ticket-card:hover {
