@@ -58,6 +58,23 @@
   height: 100%;
 }
 
+.merch-card .card-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.merch-card .card-content .btn {
+  margin-top: auto;
+}
+
+.merch-description {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--spacing-sm);
+}
+
 .merch-card .card-image {
   height: 240px;
 }
@@ -99,9 +116,22 @@
   margin-left: 0.5rem;
   border-radius: 999px;
   background: var(--color-secondary-100);
-  color: var(--text-primary);
+  color: var(--color-neutral-900);
   font-weight: var(--font-black);
   padding: 0 0.5rem;
+}
+
+/* Dark mode: ensure cart count has sufficient contrast */
+:root[data-theme="dark"] .merch-cart-count {
+  background: var(--interactive-primary);
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .merch-cart-count {
+    background: var(--interactive-primary);
+    color: #ffffff;
+  }
 }
 
 .nav-cart {
@@ -176,6 +206,53 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-md);
+}
+
+.merch-estimates {
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px dashed var(--border-default);
+}
+
+.merch-estimate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.merch-estimate-row + .merch-estimate-row {
+  margin-top: var(--spacing-xs);
+}
+
+.merch-estimate-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.merch-estimate-hint {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.merch-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-default);
+  font-weight: var(--font-bold);
+}
+
+.merch-total-row strong {
+  font-size: var(--text-lg);
+  color: var(--interactive-primary);
 }
 
 .merch-error {
@@ -292,6 +369,207 @@
   .merch-cart-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* ===== Product Modal ===== */
+
+.merch-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.merch-modal[hidden] {
+  display: none;
+}
+
+.merch-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+}
+
+.merch-modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  max-height: 90vh;
+  width: 100%;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+.merch-modal-close {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.merch-modal-close:hover {
+  background: var(--bg-secondary);
+  transform: scale(1.1);
+}
+
+.merch-modal-gallery {
+  position: relative;
+  background: var(--color-secondary-100);
+}
+
+:root[data-theme="dark"] .merch-modal-gallery {
+  background: var(--bg-tertiary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .merch-modal-gallery {
+    background: var(--bg-tertiary);
+  }
+}
+
+.merch-modal-images {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.merch-modal-images::-webkit-scrollbar {
+  display: none;
+}
+
+.merch-modal-images img {
+  flex: 0 0 100%;
+  width: 100%;
+  height: auto;
+  max-height: 50vh;
+  object-fit: contain;
+  scroll-snap-align: start;
+}
+
+.merch-modal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm);
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-default);
+}
+
+.merch-modal-nav[hidden] {
+  display: none;
+}
+
+.merch-modal-prev,
+.merch-modal-next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border-default);
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.merch-modal-prev:hover,
+.merch-modal-next:hover {
+  background: var(--interactive-secondary);
+  border-color: var(--interactive-primary);
+}
+
+.merch-modal-counter {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.merch-modal-info {
+  padding: var(--spacing-lg);
+  overflow-y: auto;
+}
+
+.merch-modal-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs);
+}
+
+.merch-modal-price {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-extrabold);
+  color: var(--interactive-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.merch-modal-description {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+/* Make card image clickable */
+.merch-card .card-image {
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.merch-card .card-image:hover {
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .merch-modal-content {
+    flex-direction: row;
+    max-width: 900px;
+  }
+
+  .merch-modal-gallery {
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  .merch-modal-images img {
+    max-height: 60vh;
+  }
+
+  .merch-modal-info {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
 

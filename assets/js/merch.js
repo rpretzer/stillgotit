@@ -18,13 +18,35 @@
     cartCount: document.getElementById('cart-count'),
     cartItems: document.getElementById('cart-items'),
     subtotal: document.getElementById('cart-subtotal'),
+    estShipping: document.getElementById('cart-est-shipping'),
+    estTax: document.getElementById('cart-est-tax'),
+    estTotal: document.getElementById('cart-est-total'),
+    estimates: document.getElementById('cart-estimates'),
+    totalRow: document.getElementById('cart-total-row'),
     checkout: document.getElementById('checkout'),
     clear: document.getElementById('clear-cart'),
     openCart: document.getElementById('open-cart'),
     closeCart: document.getElementById('close-cart'),
     navCart: document.getElementById('nav-cart'),
-    error: document.getElementById('merch-error')
+    error: document.getElementById('merch-error'),
+    // Modal elements
+    modal: document.getElementById('product-modal'),
+    modalImages: document.getElementById('modal-images'),
+    modalNav: document.getElementById('modal-nav'),
+    modalCounter: document.getElementById('modal-counter'),
+    modalTitle: document.getElementById('modal-title'),
+    modalPrice: document.getElementById('modal-price'),
+    modalDescription: document.getElementById('modal-description')
   };
+
+  // Modal state
+  let currentModalImages = [];
+  let currentModalIndex = 0;
+
+  // Estimated shipping rates (flat rate per item for US standard shipping)
+  const EST_SHIPPING_BASE = 499; // $4.99 base
+  const EST_SHIPPING_PER_ITEM = 199; // $1.99 per additional item
+  const EST_TAX_RATE = 0.07; // 7% estimated average US sales tax
 
   function formatMoney(cents, currency = 'USD') {
     const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency });
@@ -123,13 +145,139 @@
     return v?.label || '';
   }
 
+  // ===== Product Modal =====
+
+  function openProductModal(product, currency = 'USD') {
+    if (!els.modal) return;
+
+    // Gather all images (main image + any mockups array if available)
+    const images = [];
+    if (product.image) images.push(product.image);
+    if (Array.isArray(product.images)) {
+      product.images.forEach((img) => {
+        if (img && !images.includes(img)) images.push(img);
+      });
+    }
+    if (Array.isArray(product.mockups)) {
+      product.mockups.forEach((img) => {
+        if (img && !images.includes(img)) images.push(img);
+      });
+    }
+
+    currentModalImages = images;
+    currentModalIndex = 0;
+
+    // Populate images
+    if (els.modalImages) {
+      els.modalImages.innerHTML = '';
+      images.forEach((src, i) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `${product.name || 'Product'} - Image ${i + 1}`;
+        img.loading = i === 0 ? 'eager' : 'lazy';
+        els.modalImages.appendChild(img);
+      });
+    }
+
+    // Show/hide navigation if multiple images
+    if (els.modalNav) {
+      els.modalNav.hidden = images.length <= 1;
+    }
+    updateModalCounter();
+
+    // Populate info
+    if (els.modalTitle) els.modalTitle.textContent = product.name || 'Product';
+    if (els.modalPrice) els.modalPrice.textContent = formatMoney(product.priceCents, currency);
+    if (els.modalDescription) {
+      els.modalDescription.textContent = product.description || '';
+      els.modalDescription.hidden = !product.description;
+    }
+
+    // Show modal
+    els.modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+
+    // Focus trap
+    els.modal.focus();
+  }
+
+  function closeProductModal() {
+    if (!els.modal) return;
+    els.modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function updateModalCounter() {
+    if (els.modalCounter && currentModalImages.length > 0) {
+      els.modalCounter.textContent = `${currentModalIndex + 1} / ${currentModalImages.length}`;
+    }
+  }
+
+  function navigateModal(direction) {
+    if (currentModalImages.length <= 1) return;
+
+    currentModalIndex = (currentModalIndex + direction + currentModalImages.length) % currentModalImages.length;
+    updateModalCounter();
+
+    // Scroll to image
+    if (els.modalImages) {
+      const targetImg = els.modalImages.children[currentModalIndex];
+      if (targetImg) {
+        targetImg.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      }
+    }
+  }
+
+  function initModalListeners() {
+    if (!els.modal) return;
+
+    // Close on backdrop click or close button
+    els.modal.querySelectorAll('[data-close-modal]').forEach((el) => {
+      el.addEventListener('click', closeProductModal);
+    });
+
+    // Navigation buttons
+    const prevBtn = els.modal.querySelector('.merch-modal-prev');
+    const nextBtn = els.modal.querySelector('.merch-modal-next');
+    if (prevBtn) prevBtn.addEventListener('click', () => navigateModal(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => navigateModal(1));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (els.modal.hidden) return;
+      if (e.key === 'Escape') closeProductModal();
+      if (e.key === 'ArrowLeft') navigateModal(-1);
+      if (e.key === 'ArrowRight') navigateModal(1);
+    });
+  }
+
+  function getItemPrice(product, variantId) {
+    if (!variantId || !product.variants) return product.priceCents;
+    const v = product.variants.find((x) => x.id === variantId);
+    return v?.priceCents || product.priceCents;
+  }
+
   function computeSubtotal(cart, catalog) {
     const byId = new Map((catalog.products || []).map((p) => [p.id, p]));
     return (cart.items || []).reduce((sum, it) => {
       const p = byId.get(it.productId);
       if (!p) return sum;
-      return sum + (Number(p.priceCents) || 0) * (Number(it.qty) || 0);
+      const itemPrice = getItemPrice(p, it.variantId);
+      return sum + (Number(itemPrice) || 0) * (Number(it.qty) || 0);
     }, 0);
+  }
+
+  function computeEstimates(cart, subtotalCents) {
+    const totalQty = cartCount(cart);
+    if (totalQty === 0) {
+      return { shipping: 0, tax: 0, total: 0 };
+    }
+    // Estimated shipping: base + per additional item
+    const shippingCents = EST_SHIPPING_BASE + (Math.max(0, totalQty - 1) * EST_SHIPPING_PER_ITEM);
+    // Estimated tax on subtotal only (shipping taxability varies by state)
+    const taxCents = Math.round(subtotalCents * EST_TAX_RATE);
+    const totalCents = subtotalCents + shippingCents + taxCents;
+    return { shipping: shippingCents, tax: taxCents, total: totalCents };
   }
 
   function renderCatalog(catalog) {
@@ -145,11 +293,22 @@
       if (p.image) {
         const media = document.createElement('div');
         media.className = 'card-image';
+        media.setAttribute('role', 'button');
+        media.setAttribute('tabindex', '0');
+        media.setAttribute('aria-label', `View ${p.name || 'product'} images`);
         const img = document.createElement('img');
         img.loading = 'lazy';
         img.src = p.image;
         img.alt = p.name || 'Merch item';
         media.appendChild(img);
+        // Open modal on click
+        media.addEventListener('click', () => openProductModal(p, currency));
+        media.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openProductModal(p, currency);
+          }
+        });
         card.appendChild(media);
       }
 
@@ -162,11 +321,19 @@
 
       const price = document.createElement('div');
       price.className = 'merch-price';
-      price.textContent = formatMoney(p.priceCents, currency);
+      // Get initial price (from first variant if available, else base price)
+      const getVariantPrice = (variantId) => {
+        if (!variantId || !p.variants) return p.priceCents;
+        const v = p.variants.find((x) => x.id === variantId);
+        return v?.priceCents || p.priceCents;
+      };
+      const initialVariantId = (p.variants && p.variants.length > 0) ? p.variants[0].id : null;
+      price.textContent = formatMoney(getVariantPrice(initialVariantId), currency);
       content.appendChild(price);
 
       if (p.description) {
         const desc = document.createElement('p');
+        desc.className = 'merch-description';
         desc.textContent = p.description;
         content.appendChild(desc);
       }
@@ -180,8 +347,16 @@
         (p.variants || []).forEach((v) => {
           const opt = document.createElement('option');
           opt.value = v.id;
-          opt.textContent = v.label || v.id;
+          // Show price in variant label if different from base
+          const variantPriceLabel = v.priceCents && v.priceCents !== p.priceCents
+            ? ` - ${formatMoney(v.priceCents, currency)}`
+            : '';
+          opt.textContent = (v.label || v.id) + variantPriceLabel;
           variantSelect.appendChild(opt);
+        });
+        // Update price display when variant changes
+        variantSelect.addEventListener('change', () => {
+          price.textContent = formatMoney(getVariantPrice(variantSelect.value), currency);
         });
         row.appendChild(variantSelect);
         content.appendChild(row);
@@ -238,7 +413,8 @@
       const meta = document.createElement('div');
       meta.className = 'merch-cart-item-meta';
       const variantLabel = getVariantLabel(p, it.variantId);
-      meta.textContent = [variantLabel, formatMoney(p.priceCents, currency)].filter(Boolean).join(' • ');
+      const itemPrice = getItemPrice(p, it.variantId);
+      meta.textContent = [variantLabel, formatMoney(itemPrice, currency)].filter(Boolean).join(' • ');
       left.appendChild(meta);
 
       const right = document.createElement('div');
@@ -281,6 +457,21 @@
 
     const subtotalCents = computeSubtotal(cart, catalog);
     if (els.subtotal) els.subtotal.textContent = formatMoney(subtotalCents, currency);
+
+    // Calculate and display estimates
+    const estimates = computeEstimates(cart, subtotalCents);
+    if (els.estShipping) els.estShipping.textContent = formatMoney(estimates.shipping, currency);
+    if (els.estTax) els.estTax.textContent = formatMoney(estimates.tax, currency);
+    if (els.estTotal) els.estTotal.textContent = formatMoney(estimates.total, currency);
+
+    // Show/hide estimates section based on cart contents
+    const hasItems = cart.items.length > 0;
+    if (els.estimates) {
+      els.estimates.hidden = !hasItems;
+    }
+    if (els.totalRow) {
+      els.totalRow.hidden = !hasItems;
+    }
   }
 
   function createCheckout(catalog) {
@@ -328,6 +519,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
+    initModalListeners();
     try {
       const catalog = await loadCatalog();
       renderCatalog(catalog);

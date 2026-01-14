@@ -1254,8 +1254,18 @@
         setTimeout(pruneCurrentPageLink, 600);
     })();
 
+    // ===== Copyright Year =====
+    function updateCopyrightYear() {
+        const yearEls = document.querySelectorAll('.copyright-year');
+        const currentYear = new Date().getFullYear();
+        yearEls.forEach(el => {
+            el.textContent = currentYear;
+        });
+    }
+
     // ===== Initialize on DOM Load =====
     document.addEventListener('DOMContentLoaded', function() {
+        updateCopyrightYear();
         loadSiteSettings();
         loadPageContent();
         loadLatestUpdates();

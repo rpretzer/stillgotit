@@ -611,6 +611,10 @@ body {
     padding: var(--spacing-xxl) 0;
 }
 
+.section--compact {
+    padding: var(--spacing-xl) 0;
+}
+
 .section-title {
     font-family: var(--font-display);
     font-size: clamp(2.5rem, 6vw, 5.96rem);

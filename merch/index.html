@@ -53,13 +53,6 @@
 
     <section id="products" class="section merch-products">
       <div class="container">
-        <div class="merch-toolbar">
-          <div class="merch-pill">
-            <span class="merch-pill-label" id="merch-catalog-label">Catalog:</span>
-            <code class="merch-pill-value" id="merch-source">Printful (live)</code>
-          </div>
-        </div>
-
         <div class="merch-grid" id="merch-grid" data-merch-source="https://sgic-merch-api.rpretzer.workers.dev/api/products">
           <!-- Filled by assets/js/merch.js -->
           <div class="ticket-card">
@@ -85,9 +78,21 @@
               <span id="merch-subtotal-label">Subtotal</span>
               <strong id="cart-subtotal">$0.00</strong>
             </div>
-            <p class="note" id="merch-shipping-note">
-              Shipping and taxes are collected at checkout.
-            </p>
+            <div class="merch-estimates" id="cart-estimates">
+              <div class="merch-estimate-row">
+                <span class="merch-estimate-label">Est. Shipping</span>
+                <span id="cart-est-shipping">$0.00</span>
+              </div>
+              <div class="merch-estimate-row">
+                <span class="merch-estimate-label">Est. Tax</span>
+                <span id="cart-est-tax">$0.00</span>
+              </div>
+              <p class="merch-estimate-hint">Estimates based on standard US shipping. Final amounts calculated at checkout.</p>
+            </div>
+            <div class="merch-total-row" id="cart-total-row">
+              <span>Est. Total</span>
+              <strong id="cart-est-total">$0.00</strong>
+            </div>
           </div>
 
           <div class="merch-cart-actions">
@@ -101,10 +106,33 @@
     </section>
   </main>
 
+  <!-- Product Modal -->
+  <div class="merch-modal" id="product-modal" hidden>
+    <div class="merch-modal-backdrop" data-close-modal></div>
+    <div class="merch-modal-content">
+      <button class="merch-modal-close" type="button" data-close-modal aria-label="Close modal">&times;</button>
+      <div class="merch-modal-gallery">
+        <div class="merch-modal-images" id="modal-images">
+          <!-- Images inserted by JS -->
+        </div>
+        <div class="merch-modal-nav" id="modal-nav" hidden>
+          <button class="merch-modal-prev" type="button" aria-label="Previous image">&larr;</button>
+          <span class="merch-modal-counter" id="modal-counter">1 / 1</span>
+          <button class="merch-modal-next" type="button" aria-label="Next image">&rarr;</button>
+        </div>
+      </div>
+      <div class="merch-modal-info">
+        <h2 class="merch-modal-title" id="modal-title"></h2>
+        <div class="merch-modal-price" id="modal-price"></div>
+        <p class="merch-modal-description" id="modal-description"></p>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">
     <div class="container">
       <div class="footer-bottom">
-        <p>&copy; 2025 RSP Management Solutions LLC. All rights reserved.</p>
+        <p>&copy; <span class="copyright-year">2025</span> RSP Management Solutions LLC. All rights reserved.</p>
         <a href="/" class="back-to-top">← Back to site</a>
       </div>
     </div>
