@@ -63,8 +63,15 @@
     error: document.getElementById('checkout-error'),
     loading: document.getElementById('loading'),
     progressSteps: document.querySelectorAll('.checkout-progress-step'),
-    progressLine: document.querySelector('.checkout-progress-line')
+    progressLine: document.querySelector('.checkout-progress-line'),
+    // Order summary elements
+    orderSummaryItems: document.getElementById('order-summary-items'),
+    summarySubtotal: document.getElementById('summary-subtotal'),
+    summaryTotal: document.getElementById('summary-total')
   };
+
+  // Store catalog for order summary
+  let productCatalog = null;
 
   /**
    * Update the checkout progress indicator
@@ -90,6 +97,74 @@
         els.progressLine.style.background = '';
       }
     }
+  }
+
+  /**
+   * Format cents as currency
+   */
+  function formatMoney(cents, currency = 'USD') {
+    const fmt = new Intl.NumberFormat(undefined, { style: 'currency', currency });
+    return fmt.format((Number(cents) || 0) / 100);
+  }
+
+  /**
+   * Fetch the product catalog from the API
+   */
+  async function fetchCatalog() {
+    if (productCatalog) return productCatalog;
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/products`);
+      if (!res.ok) throw new Error('Failed to load products');
+      productCatalog = await res.json();
+      return productCatalog;
+    } catch (err) {
+      console.error('Failed to fetch catalog:', err);
+      return { products: [] };
+    }
+  }
+
+  /**
+   * Render the order summary sidebar
+   */
+  async function renderOrderSummary() {
+    const cart = loadCart();
+    if (!cart.items.length || !els.orderSummaryItems) return;
+
+    const catalog = await fetchCatalog();
+    const byId = new Map((catalog.products || []).map((p) => [p.id, p]));
+
+    let subtotalCents = 0;
+    els.orderSummaryItems.innerHTML = '';
+
+    for (const item of cart.items) {
+      const product = byId.get(item.productId);
+      if (!product) continue;
+
+      // Find variant info
+      const variant = product.variants?.find(v => v.id === item.variantId);
+      const variantLabel = variant?.label || '';
+      const priceCents = Number(product.priceCents) || 0;
+      const lineTotal = priceCents * item.qty;
+      subtotalCents += lineTotal;
+
+      // Create item element
+      const itemEl = document.createElement('div');
+      itemEl.className = 'order-summary-item';
+      itemEl.innerHTML = `
+        <img src="${product.image || ''}" alt="${product.name || 'Product'}" class="order-summary-item-image" loading="lazy">
+        <div class="order-summary-item-details">
+          <div class="order-summary-item-name">${product.name || 'Product'}</div>
+          ${variantLabel ? `<div class="order-summary-item-variant">${variantLabel}</div>` : ''}
+          <div class="order-summary-item-qty">Qty: ${item.qty}</div>
+        </div>
+        <div class="order-summary-item-price">${formatMoney(lineTotal)}</div>
+      `;
+      els.orderSummaryItems.appendChild(itemEl);
+    }
+
+    // Update totals
+    if (els.summarySubtotal) els.summarySubtotal.textContent = formatMoney(subtotalCents);
+    if (els.summaryTotal) els.summaryTotal.textContent = formatMoney(subtotalCents);
   }
 
   function loadCart() {
@@ -330,6 +405,9 @@
       window.location.href = '/merch/';
       return;
     }
+
+    // Render order summary
+    renderOrderSummary();
 
     if (!stripe) {
       showError('Stripe is not configured. Please contact support.');
