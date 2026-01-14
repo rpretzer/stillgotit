@@ -12,29 +12,69 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/merch.css" />
-  <script src="/assets/js/success.js"></script>
 </head>
 <body>
   <main class="merch-main">
     <section class="section">
-      <div class="container">
-        <div class="ticket-card">
-          <h1 class="merch-h2" id="success-title">Order confirmed</h1>
-          <p id="success-message">
-            Thanks! Your payment was completed successfully.
-          </p>
-          <p class="note" id="order-note">
-            A receipt will be emailed to you. If you have questions, reach out via Instagram.
-          </p>
-          <div id="order-details" style="margin-top: var(--spacing-md);"></div>
-          <div class="merch-cart-actions">
-            <a class="btn btn-primary" href="/merch/" id="back-to-merch">Back to merch</a>
-            <a class="btn btn-secondary" href="/" id="back-to-site">Back to site</a>
+      <div class="container" style="max-width: 600px;">
+        <div class="ticket-card success-card">
+          <!-- Success Icon -->
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
           </div>
+
+          <h1 class="success-title" id="success-title">Order Confirmed!</h1>
+
+          <p class="success-message" id="success-message">
+            Thank you for your purchase. Your order has been received and is being processed.
+          </p>
+
+          <!-- Order Number -->
+          <div class="success-order-number" id="order-number-section">
+            <span class="success-order-label">Order Number</span>
+            <strong class="success-order-id" id="order-id">Loading...</strong>
+          </div>
+
+          <!-- Order Details -->
+          <div id="order-details" class="success-details">
+            <div class="success-loading">Loading order details...</div>
+          </div>
+
+          <!-- What's Next -->
+          <div class="success-next-steps">
+            <h3 class="success-next-title">What happens next?</h3>
+            <ol class="success-steps">
+              <li>
+                <strong>Confirmation email</strong>
+                <span>You'll receive an email confirmation with your order details shortly.</span>
+              </li>
+              <li>
+                <strong>Order processing</strong>
+                <span>Your items will be printed and prepared for shipping within 2-5 business days.</span>
+              </li>
+              <li>
+                <strong>Shipping notification</strong>
+                <span>Once shipped, you'll receive tracking information via email.</span>
+              </li>
+            </ol>
+          </div>
+
+          <div class="success-actions">
+            <a class="btn btn-primary" href="/merch/" id="back-to-merch">Continue Shopping</a>
+            <a class="btn btn-secondary" href="/" id="back-to-site">Back to Home</a>
+          </div>
+
+          <p class="success-support">
+            Questions about your order? <a href="/contact/">Contact us</a> or reach out on Instagram.
+          </p>
         </div>
       </div>
     </section>
   </main>
+  <script src="/assets/js/success.js"></script>
 </body>
 </html>
 
