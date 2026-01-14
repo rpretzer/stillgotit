@@ -398,6 +398,73 @@
     }
   }
 
+  // Canadian provinces for dynamic state/province dropdown
+  const CA_PROVINCES = [
+    { value: '', label: 'Select province...' },
+    { value: 'AB', label: 'Alberta' },
+    { value: 'BC', label: 'British Columbia' },
+    { value: 'MB', label: 'Manitoba' },
+    { value: 'NB', label: 'New Brunswick' },
+    { value: 'NL', label: 'Newfoundland and Labrador' },
+    { value: 'NS', label: 'Nova Scotia' },
+    { value: 'NT', label: 'Northwest Territories' },
+    { value: 'NU', label: 'Nunavut' },
+    { value: 'ON', label: 'Ontario' },
+    { value: 'PE', label: 'Prince Edward Island' },
+    { value: 'QC', label: 'Quebec' },
+    { value: 'SK', label: 'Saskatchewan' },
+    { value: 'YT', label: 'Yukon' }
+  ];
+
+  // Store original US states HTML for switching back
+  let originalStateHTML = '';
+
+  /**
+   * Update the state/province field based on selected country
+   */
+  function handleCountryChange(countryCode) {
+    const stateField = document.getElementById('state');
+    const stateLabel = document.getElementById('state-label');
+    const stateContainer = stateField?.parentElement;
+
+    if (!stateField || !stateContainer) return;
+
+    // Store original HTML on first call
+    if (!originalStateHTML && stateField.tagName === 'SELECT') {
+      originalStateHTML = stateField.outerHTML;
+    }
+
+    if (countryCode === 'US') {
+      // Restore US states dropdown
+      if (stateField.tagName !== 'SELECT' || !stateField.innerHTML.includes('Alabama')) {
+        stateContainer.innerHTML = `
+          <label for="state" id="state-label">State *</label>
+          ${originalStateHTML}
+        `;
+      }
+    } else if (countryCode === 'CA') {
+      // Switch to Canadian provinces
+      const options = CA_PROVINCES.map(p =>
+        `<option value="${p.value}">${p.label}</option>`
+      ).join('');
+      stateContainer.innerHTML = `
+        <label for="state" id="state-label">Province *</label>
+        <select id="state" name="state" autocomplete="address-level1" required class="form-input form-select">
+          ${options}
+        </select>
+      `;
+    } else {
+      // Switch to text input for other countries
+      stateContainer.innerHTML = `
+        <label for="state" id="state-label">State / Province / Region</label>
+        <input type="text" id="state" name="state" autocomplete="address-level1" class="form-input" placeholder="Optional">
+      `;
+      // Remove required for other countries
+      const newStateField = document.getElementById('state');
+      if (newStateField) newStateField.removeAttribute('required');
+    }
+  }
+
   // Initialize
   document.addEventListener('DOMContentLoaded', () => {
     const cart = loadCart();
@@ -408,6 +475,18 @@
 
     // Render order summary
     renderOrderSummary();
+
+    // Set up country change handler
+    const countrySelect = document.getElementById('country');
+    if (countrySelect) {
+      // Store original state HTML
+      const stateField = document.getElementById('state');
+      if (stateField) originalStateHTML = stateField.outerHTML;
+
+      countrySelect.addEventListener('change', (e) => {
+        handleCountryChange(e.target.value);
+      });
+    }
 
     if (!stripe) {
       showError('Stripe is not configured. Please contact support.');
