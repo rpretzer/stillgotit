@@ -7,6 +7,34 @@
 
   const CART_KEY = 'sgic_merch_cart_v1';
   const API_BASE = 'https://sgic-merch-api.rpretzer.workers.dev/api';
+  const REQUEST_TIMEOUT_MS = 30000; // 30 second timeout for API requests
+
+  /**
+   * Fetch with timeout support using AbortController
+   * @param {string} url - URL to fetch
+   * @param {Object} options - Fetch options
+   * @param {number} timeoutMs - Timeout in milliseconds
+   * @returns {Promise<Response>}
+   */
+  async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      return response;
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw new Error('Request timed out. Please check your connection and try again.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
 
   // Get Stripe publishable key (from injected file or fallback)
   const STRIPE_PK = window.STRIPE_PUBLISHABLE_KEY || '';
@@ -84,7 +112,7 @@
     hideError();
 
     try {
-      const res = await fetch(`${API_BASE}/checkout`, {
+      const res = await fetchWithTimeout(`${API_BASE}/checkout`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -110,7 +138,11 @@
       });
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || `Checkout failed (${res.status})`);
+      if (!res.ok) {
+        // Parse Stripe-specific error messages
+        const errorMsg = data?.error?.message || data?.error || `Checkout failed (${res.status})`;
+        throw new Error(errorMsg);
+      }
       if (!data?.clientSecret || !data?.orderId) {
         throw new Error('Checkout failed (missing client secret or order ID).');
       }

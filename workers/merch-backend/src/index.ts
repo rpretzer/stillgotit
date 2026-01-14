@@ -92,6 +92,93 @@ function corsHeaders(req: Request) {
   };
 }
 
+// Validation helpers
+
+/**
+ * Validate email format
+ */
+function isValidEmail(email: string): boolean {
+  // Basic email validation - allows most valid emails without being overly strict
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email) && email.length <= 254;
+}
+
+/**
+ * Valid ISO 3166-1 alpha-2 country codes supported by Printful
+ * (subset of commonly used countries for shipping)
+ */
+const VALID_COUNTRY_CODES = new Set([
+  'US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'AT', 'CH', 'SE',
+  'NO', 'DK', 'FI', 'IE', 'PT', 'PL', 'CZ', 'GR', 'HU', 'RO', 'BG', 'SK', 'SI',
+  'HR', 'EE', 'LV', 'LT', 'LU', 'MT', 'CY', 'NZ', 'JP', 'KR', 'SG', 'HK', 'MX',
+  'BR', 'AR', 'CL', 'CO', 'IN', 'ZA', 'IL', 'AE', 'SA', 'TR', 'MY', 'TH', 'PH',
+  'ID', 'VN', 'TW'
+]);
+
+/**
+ * Normalize and validate country code
+ */
+function normalizeCountryCode(country: string): string | null {
+  const normalized = String(country || '').toUpperCase().trim();
+
+  // Handle common variations
+  if (normalized === 'USA' || normalized === 'UNITED STATES') return 'US';
+  if (normalized === 'UK' || normalized === 'UNITED KINGDOM') return 'GB';
+  if (normalized === 'CAN' || normalized === 'CANADA') return 'CA';
+
+  if (VALID_COUNTRY_CODES.has(normalized)) return normalized;
+  return null;
+}
+
+/**
+ * Validate US ZIP code format (5 digits or ZIP+4)
+ */
+function isValidUSZip(zip: string): boolean {
+  const zipRegex = /^\d{5}(-\d{4})?$/;
+  return zipRegex.test(zip.trim());
+}
+
+/**
+ * Validate Canadian postal code format (A1A 1A1)
+ */
+function isValidCAPostal(postal: string): boolean {
+  const postalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+  return postalRegex.test(postal.trim());
+}
+
+/**
+ * Validate postal code based on country
+ */
+function isValidPostalCode(postalCode: string, countryCode: string): boolean {
+  const normalized = postalCode.trim();
+  if (!normalized) return false;
+
+  switch (countryCode) {
+    case 'US':
+      return isValidUSZip(normalized);
+    case 'CA':
+      return isValidCAPostal(normalized);
+    default:
+      // For other countries, just check it's not empty and reasonable length
+      return normalized.length >= 2 && normalized.length <= 20;
+  }
+}
+
+/**
+ * Validate US state code (2-letter abbreviation)
+ */
+const VALID_US_STATES = new Set([
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL',
+  'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT',
+  'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI',
+  'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY', 'DC', 'PR',
+  'VI', 'GU', 'AS', 'MP'
+]);
+
+function isValidUSState(state: string): boolean {
+  return VALID_US_STATES.has(state.toUpperCase().trim());
+}
+
 async function fetchCatalog(env: Env): Promise<MerchCatalog> {
   // Try to get products from D1 first (synced from Printful)
   const dbProducts = await env.DB.prepare(`
@@ -358,6 +445,33 @@ async function getOrder(env: Env, orderId: string): Promise<OrderRow | null> {
   return row || null;
 }
 
+/**
+ * Wait for an order to appear in the database with exponential backoff.
+ * This handles the race condition where a webhook arrives before the checkout
+ * API has finished creating the order in the database.
+ * @param env - Environment bindings
+ * @param orderId - Order ID to look up
+ * @param maxAttempts - Maximum number of retry attempts (default: 5)
+ * @param initialDelayMs - Initial delay in milliseconds (default: 100ms)
+ * @returns The order if found, null if not found after all attempts
+ */
+async function waitForOrder(env: Env, orderId: string, maxAttempts = 5, initialDelayMs = 100): Promise<OrderRow | null> {
+  let delay = initialDelayMs;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const order = await getOrder(env, orderId);
+    if (order) return order;
+
+    // Don't wait after the last attempt
+    if (attempt < maxAttempts) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+      delay = Math.min(delay * 2, 2000); // Exponential backoff, max 2 seconds
+    }
+  }
+
+  return null;
+}
+
 async function getOrderItems(env: Env, orderId: string): Promise<OrderItemRow[]> {
   const { results } = await env.DB.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(orderId).all<OrderItemRow>();
   return results || [];
@@ -414,18 +528,66 @@ async function addOrderEvent(env: Env, orderId: string, status: string, message:
 async function handleCheckout(req: Request, env: Env): Promise<Response> {
   const cors = corsHeaders(req);
   const body = await req.json().catch(() => null) as any;
-  
+
   const currency = String(body?.currency || 'USD');
   const items = Array.isArray(body?.items) ? body.items : [];
   const shippingDetails = body?.shippingDetails || {};
   const contactDetails = body?.contactDetails || {};
 
+  // Basic required field validation
   if (!items.length) return json({ error: 'Cart is empty.' }, { status: 400, headers: cors });
   if (!shippingDetails.address1 || !shippingDetails.city || !shippingDetails.state || !shippingDetails.postalCode) {
     return json({ error: 'Shipping address required.' }, { status: 400, headers: cors });
   }
   if (!contactDetails.email || !contactDetails.name) {
     return json({ error: 'Email and name required.' }, { status: 400, headers: cors });
+  }
+
+  // Email format validation
+  const email = String(contactDetails.email).trim();
+  if (!isValidEmail(email)) {
+    return json({ error: 'Please enter a valid email address.' }, { status: 400, headers: cors });
+  }
+
+  // Name validation (basic sanity check)
+  const name = String(contactDetails.name).trim();
+  if (name.length < 2 || name.length > 100) {
+    return json({ error: 'Please enter a valid name.' }, { status: 400, headers: cors });
+  }
+
+  // Country code normalization and validation
+  const countryCode = normalizeCountryCode(shippingDetails.country || 'US');
+  if (!countryCode) {
+    return json({ error: 'Invalid or unsupported country. Please select a valid country.' }, { status: 400, headers: cors });
+  }
+
+  // State validation for US orders
+  const state = String(shippingDetails.state).trim().toUpperCase();
+  if (countryCode === 'US' && !isValidUSState(state)) {
+    return json({ error: 'Please enter a valid US state abbreviation (e.g., CA, NY, TX).' }, { status: 400, headers: cors });
+  }
+
+  // Postal code validation
+  const postalCode = String(shippingDetails.postalCode).trim();
+  if (!isValidPostalCode(postalCode, countryCode)) {
+    if (countryCode === 'US') {
+      return json({ error: 'Please enter a valid ZIP code (e.g., 12345 or 12345-6789).' }, { status: 400, headers: cors });
+    } else if (countryCode === 'CA') {
+      return json({ error: 'Please enter a valid Canadian postal code (e.g., A1A 1A1).' }, { status: 400, headers: cors });
+    } else {
+      return json({ error: 'Please enter a valid postal code.' }, { status: 400, headers: cors });
+    }
+  }
+
+  // Address validation (basic sanity checks)
+  const address1 = String(shippingDetails.address1).trim();
+  if (address1.length < 3 || address1.length > 200) {
+    return json({ error: 'Please enter a valid street address.' }, { status: 400, headers: cors });
+  }
+
+  const city = String(shippingDetails.city).trim();
+  if (city.length < 2 || city.length > 100) {
+    return json({ error: 'Please enter a valid city.' }, { status: 400, headers: cors });
   }
 
   const catalog = await fetchCatalog(env);
@@ -469,17 +631,17 @@ async function handleCheckout(req: Request, env: Env): Promise<Response> {
       { orderId }
     );
 
-    // Create order in D1
+    // Create order in D1 (using validated/normalized values)
     await createOrder(env, {
       id: orderId,
-      email: contactDetails.email,
-      name: contactDetails.name,
-      shipping_address1: shippingDetails.address1,
-      shipping_address2: shippingDetails.address2 || null,
-      shipping_city: shippingDetails.city,
-      shipping_state: shippingDetails.state,
-      shipping_postal_code: shippingDetails.postalCode,
-      shipping_country: shippingDetails.country || 'US',
+      email,
+      name,
+      shipping_address1: address1,
+      shipping_address2: String(shippingDetails.address2 || '').trim() || null,
+      shipping_city: city,
+      shipping_state: state,
+      shipping_postal_code: postalCode,
+      shipping_country: countryCode,
       currency,
       subtotal_cents: subtotalCents,
       stripe_payment_intent_id: paymentIntentId
@@ -512,13 +674,33 @@ async function handleStripeWebhook(req: Request, env: Env): Promise<Response> {
   if (event.type === 'payment_intent.succeeded') {
     const pi = event.data.object;
     const orderId = pi?.metadata?.orderId;
-    if (!orderId) return json({ received: true }, { status: 200 });
+    if (!orderId) {
+      console.warn('Webhook received payment_intent.succeeded without orderId in metadata');
+      return json({ received: true }, { status: 200 });
+    }
 
-    const order = await getOrder(env, orderId);
-    if (!order) return json({ received: true }, { status: 200 });
+    // Wait for order to appear in database (handles race condition where webhook
+    // arrives before checkout API finishes creating the order)
+    const order = await waitForOrder(env, orderId);
+    if (!order) {
+      console.error(`Order ${orderId} not found after retries - webhook may have arrived before order creation completed`);
+      // Return 200 to prevent Stripe from retrying - the order may never exist
+      // (e.g., user abandoned checkout before database write completed)
+      return json({ received: true, warning: 'Order not found' }, { status: 200 });
+    }
 
-    // Idempotency: skip if already processed
-    if (order.printful_order_id) return json({ received: true }, { status: 200 });
+    // Idempotency: skip if already processed (prevents duplicate Printful orders)
+    if (order.printful_order_id) {
+      console.log(`Order ${orderId} already fulfilled with Printful order ${order.printful_order_id}`);
+      return json({ received: true }, { status: 200 });
+    }
+
+    // Additional idempotency check: skip if order is already past PENDING status
+    // This prevents reprocessing if webhook is retried after partial processing
+    if (order.status !== 'PENDING') {
+      console.log(`Order ${orderId} already in status ${order.status}, skipping webhook processing`);
+      return json({ received: true }, { status: 200 });
+    }
 
     try {
       // Mark as PAID
@@ -590,6 +772,9 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
   const errors: string[] = [];
   let synced = 0;
 
+  // Track all synced product IDs to identify discontinued products
+  const syncedProductIds = new Set<string>();
+
   try {
     // Fetch store products from Printful
     const listRes = await fetch('https://api.printful.com/store/products', {
@@ -630,6 +815,9 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
           const productId = `pf-${syncProduct.id}-${variant.id}`;
           const priceCents = Math.round(Number(variant.retail_price || '0') * 100);
           const variantLabel = variant.name || `Variant ${variant.id}`;
+
+          // Track this product ID as synced (exists in Printful)
+          syncedProductIds.add(productId);
 
           try {
             await env.DB.prepare(`
@@ -676,15 +864,34 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
     }
 
     // Mark products that no longer exist in Printful as inactive
-    if (synced > 0) {
-      const activeVariantIds = Array.from(new Set(
-        storeProducts.flatMap(sp => {
-          // We'd need to fetch details again or store them, but for now just mark all as active
-          // This is a simplified approach - in production you might want to track which variants exist
-          return [];
-        })
-      ));
-      // For now, we'll leave this as a future enhancement
+    // Only do this if we successfully synced at least one product (to avoid marking all inactive on API failure)
+    if (syncedProductIds.size > 0) {
+      try {
+        // Get all currently active Printful products from the database
+        const activeProducts = await env.DB.prepare(`
+          SELECT id FROM products WHERE active = 1 AND fulfillment_type = 'printful'
+        `).all<{ id: string }>();
+
+        const activeDbIds = activeProducts.results || [];
+        let deactivated = 0;
+
+        // Deactivate products that exist in DB but weren't in the Printful sync
+        for (const row of activeDbIds) {
+          if (!syncedProductIds.has(row.id)) {
+            await env.DB.prepare(`
+              UPDATE products SET active = 0, updated_at = datetime('now') WHERE id = ?
+            `).bind(row.id).run();
+            deactivated++;
+            console.log(`Deactivated discontinued product: ${row.id}`);
+          }
+        }
+
+        if (deactivated > 0) {
+          console.log(`Deactivated ${deactivated} discontinued products`);
+        }
+      } catch (err: any) {
+        errors.push(`Failed to deactivate discontinued products: ${err?.message || 'Unknown error'}`);
+      }
     }
 
     return { synced, errors };

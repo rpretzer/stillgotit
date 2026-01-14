@@ -10,7 +10,35 @@
 
   const CART_KEY = 'sgic_merch_cart_v1';
   const ABANDONED_CART_API = 'https://sgic-merch-api.rpretzer.workers.dev/api/carts/abandoned';
+  const REQUEST_TIMEOUT_MS = 15000; // 15 second timeout for API requests
   let abandonedCartToken = null;
+
+  /**
+   * Fetch with timeout support using AbortController
+   * @param {string} url - URL to fetch
+   * @param {Object} options - Fetch options
+   * @param {number} timeoutMs - Timeout in milliseconds
+   * @returns {Promise<Response>}
+   */
+  async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      return response;
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw new Error('Request timed out. Please check your connection and try again.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
 
   const els = {
     grid: document.getElementById('merch-grid'),
@@ -78,7 +106,7 @@
     clearTimeout(abandonCartTimeout);
     abandonCartTimeout = setTimeout(async () => {
       try {
-        const res = await fetch(ABANDONED_CART_API, {
+        const res = await fetchWithTimeout(ABANDONED_CART_API, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({
@@ -86,7 +114,7 @@
             currency: 'USD',
             email: null // Can be collected later
           })
-        });
+        }, 10000); // 10 second timeout for non-critical abandoned cart tracking
         const data = await res.json().catch(() => ({}));
         if (data.recoveryToken) {
           abandonedCartToken = data.recoveryToken;
@@ -490,7 +518,7 @@
   /**
    * Loads product catalog from API (synced from Printful).
    * Fallback: /content/merch.json (editable via /admin)
-   * @returns {Promise<void>}
+   * @returns {Promise<Object>} Product catalog
    */
   async function loadCatalog() {
     const apiBase = window.SGIC_CONFIG?.API_BASE || 'https://sgic-merch-api.rpretzer.workers.dev/api';
@@ -498,7 +526,7 @@
     const url = new URL(src, window.location.href);
     // Add cache-busting to ensure fresh catalog
     const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
-    const res = await fetch(fetchUrl, { cache: 'no-store' });
+    const res = await fetchWithTimeout(fetchUrl, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Failed to load merch catalog (${res.status})`);
     return await res.json();
   }
