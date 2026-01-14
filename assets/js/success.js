@@ -100,6 +100,43 @@
     `;
   }
 
+  /**
+   * Set up social sharing buttons
+   */
+  function setupSocialSharing() {
+    const shareUrl = window.location.origin + '/merch/';
+    const shareText = 'Just snagged some awesome merch from Still Got It Collective! Check it out:';
+
+    const twitterBtn = document.getElementById('share-twitter');
+    const facebookBtn = document.getElementById('share-facebook');
+    const copyBtn = document.getElementById('share-copy');
+
+    if (twitterBtn) {
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      twitterBtn.href = twitterUrl;
+    }
+
+    if (facebookBtn) {
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+      facebookBtn.href = facebookUrl;
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          copyBtn.classList.add('is-copied');
+          setTimeout(() => {
+            copyBtn.classList.remove('is-copied');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const orderId = getOrderId();
     const orderIdEl = document.getElementById('order-id');
@@ -124,5 +161,8 @@
         detailsEl.innerHTML = '<p class="success-error">No order ID found. Please check your email for order confirmation.</p>';
       }
     }
+
+    // Set up social sharing
+    setupSocialSharing();
   });
 })();

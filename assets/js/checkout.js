@@ -72,6 +72,8 @@
 
   // Store catalog for order summary
   let productCatalog = null;
+  // Store cart subtotal for payment button
+  let cartSubtotalCents = 0;
 
   /**
    * Update the checkout progress indicator
@@ -108,6 +110,196 @@
   }
 
   /**
+   * Calculate and display estimated delivery date
+   * Printful: 2-5 business days fulfillment + 3-7 business days US shipping
+   */
+  function updateEstimatedDelivery() {
+    const deliveryDateEl = document.getElementById('delivery-date');
+    if (!deliveryDateEl) return;
+
+    const today = new Date();
+
+    // Add business days (skip weekends)
+    function addBusinessDays(date, days) {
+      const result = new Date(date);
+      let added = 0;
+      while (added < days) {
+        result.setDate(result.getDate() + 1);
+        const dayOfWeek = result.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          added++;
+        }
+      }
+      return result;
+    }
+
+    // Min: 2 fulfillment + 3 shipping = 5 business days
+    // Max: 5 fulfillment + 7 shipping = 12 business days
+    const minDate = addBusinessDays(today, 5);
+    const maxDate = addBusinessDays(today, 12);
+
+    const formatOptions = { month: 'short', day: 'numeric' };
+    const minDateStr = minDate.toLocaleDateString('en-US', formatOptions);
+    const maxDateStr = maxDate.toLocaleDateString('en-US', formatOptions);
+
+    deliveryDateEl.textContent = `${minDateStr} - ${maxDateStr}`;
+  }
+
+  // =========================================
+  // Inline Form Validation
+  // =========================================
+
+  const validators = {
+    email: (value) => {
+      if (!value.trim()) return 'Email is required';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) return 'Please enter a valid email address';
+      return null;
+    },
+    name: (value) => {
+      if (!value.trim()) return 'Full name is required';
+      if (value.trim().length < 2) return 'Name must be at least 2 characters';
+      return null;
+    },
+    address1: (value) => {
+      if (!value.trim()) return 'Address is required';
+      if (value.trim().length < 5) return 'Please enter a valid street address';
+      return null;
+    },
+    city: (value) => {
+      if (!value.trim()) return 'City is required';
+      return null;
+    },
+    state: (value) => {
+      const country = document.getElementById('country')?.value || 'US';
+      if ((country === 'US' || country === 'CA') && !value) {
+        return country === 'US' ? 'Please select a state' : 'Please select a province';
+      }
+      return null;
+    },
+    postalCode: (value) => {
+      if (!value.trim()) return 'ZIP/Postal code is required';
+      const country = document.getElementById('country')?.value || 'US';
+      if (country === 'US') {
+        const usZipRegex = /^\d{5}(-\d{4})?$/;
+        if (!usZipRegex.test(value.trim())) return 'Please enter a valid US ZIP code (12345 or 12345-6789)';
+      } else if (country === 'CA') {
+        const caPostalRegex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+        if (!caPostalRegex.test(value.trim())) return 'Please enter a valid Canadian postal code (A1A 1A1)';
+      }
+      return null;
+    }
+  };
+
+  /**
+   * Show field error
+   */
+  function showFieldError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    const errorEl = document.getElementById(`${fieldId}-error`);
+    if (field) {
+      field.classList.remove('is-valid');
+      field.classList.add('is-invalid');
+    }
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.add('is-visible');
+    }
+  }
+
+  /**
+   * Clear field error and show valid state
+   */
+  function clearFieldError(fieldId, showValid = true) {
+    const field = document.getElementById(fieldId);
+    const errorEl = document.getElementById(`${fieldId}-error`);
+    if (field) {
+      field.classList.remove('is-invalid');
+      if (showValid && field.value.trim()) {
+        field.classList.add('is-valid');
+      } else {
+        field.classList.remove('is-valid');
+      }
+    }
+    if (errorEl) {
+      errorEl.textContent = '';
+      errorEl.classList.remove('is-visible');
+    }
+  }
+
+  /**
+   * Validate a single field
+   */
+  function validateField(fieldId) {
+    const field = document.getElementById(fieldId);
+    if (!field) return true;
+
+    const validator = validators[fieldId];
+    if (!validator) return true;
+
+    const error = validator(field.value);
+    if (error) {
+      showFieldError(fieldId, error);
+      return false;
+    } else {
+      clearFieldError(fieldId);
+      return true;
+    }
+  }
+
+  /**
+   * Validate all shipping form fields
+   */
+  function validateShippingForm() {
+    const fields = ['email', 'name', 'address1', 'city', 'state', 'postalCode'];
+    let isValid = true;
+    let firstInvalid = null;
+
+    for (const fieldId of fields) {
+      if (!validateField(fieldId)) {
+        isValid = false;
+        if (!firstInvalid) {
+          firstInvalid = document.getElementById(fieldId);
+        }
+      }
+    }
+
+    if (firstInvalid) {
+      firstInvalid.focus();
+    }
+
+    return isValid;
+  }
+
+  /**
+   * Set up inline validation listeners
+   */
+  function setupInlineValidation() {
+    const fieldsToValidate = ['email', 'name', 'address1', 'city', 'state', 'postalCode'];
+
+    for (const fieldId of fieldsToValidate) {
+      const field = document.getElementById(fieldId);
+      if (!field) continue;
+
+      // Validate on blur
+      field.addEventListener('blur', () => {
+        if (field.value.trim()) {
+          validateField(fieldId);
+        }
+      });
+
+      // Clear error on input (while typing)
+      field.addEventListener('input', () => {
+        const errorEl = document.getElementById(`${fieldId}-error`);
+        if (errorEl && errorEl.classList.contains('is-visible')) {
+          // Re-validate if there's currently an error showing
+          validateField(fieldId);
+        }
+      });
+    }
+  }
+
+  /**
    * Fetch the product catalog from the API
    */
   async function fetchCatalog() {
@@ -124,11 +316,34 @@
   }
 
   /**
+   * Create skeleton loader HTML for order summary
+   */
+  function createSkeletonLoader(itemCount) {
+    let html = '';
+    for (let i = 0; i < itemCount; i++) {
+      html += `
+        <div class="skeleton-item">
+          <div class="skeleton skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton skeleton-line skeleton-line--medium"></div>
+            <div class="skeleton skeleton-line skeleton-line--short"></div>
+          </div>
+          <div class="skeleton skeleton-price"></div>
+        </div>
+      `;
+    }
+    return html;
+  }
+
+  /**
    * Render the order summary sidebar
    */
   async function renderOrderSummary() {
     const cart = loadCart();
     if (!cart.items.length || !els.orderSummaryItems) return;
+
+    // Show skeleton loaders while loading
+    els.orderSummaryItems.innerHTML = createSkeletonLoader(cart.items.length);
 
     const catalog = await fetchCatalog();
     const byId = new Map((catalog.products || []).map((p) => [p.id, p]));
@@ -165,6 +380,9 @@
     // Update totals
     if (els.summarySubtotal) els.summarySubtotal.textContent = formatMoney(subtotalCents);
     if (els.summaryTotal) els.summaryTotal.textContent = formatMoney(subtotalCents);
+
+    // Store for payment button
+    cartSubtotalCents = subtotalCents;
   }
 
   function loadCart() {
@@ -281,6 +499,11 @@
     e.preventDefault();
     hideError();
 
+    // Run inline validation
+    if (!validateShippingForm()) {
+      return;
+    }
+
     const formData = new FormData(e.target);
     const shippingDetails = {
       address1: formData.get('address1'),
@@ -295,13 +518,6 @@
       email: formData.get('email'),
       name: formData.get('name')
     };
-
-    // Validate required fields
-    if (!contactDetails.email || !contactDetails.name || !shippingDetails.address1 ||
-        !shippingDetails.city || !shippingDetails.state || !shippingDetails.postalCode) {
-      showError('Please fill in all required fields.');
-      return;
-    }
 
     // Create PaymentIntent
     const result = await createPaymentIntent(shippingDetails, contactDetails);
@@ -328,6 +544,12 @@
     els.shippingForm.hidden = true;
     els.paymentForm.hidden = false;
     updateProgress(2);
+
+    // Update payment button with total amount
+    if (els.submitPayment && cartSubtotalCents > 0) {
+      els.submitPayment.textContent = `Pay ${formatMoney(cartSubtotalCents)}`;
+    }
+
     await initializePaymentElement(clientSecret);
   }
 
@@ -476,6 +698,12 @@
     // Render order summary
     renderOrderSummary();
 
+    // Update estimated delivery
+    updateEstimatedDelivery();
+
+    // Set up inline form validation
+    setupInlineValidation();
+
     // Set up country change handler
     const countrySelect = document.getElementById('country');
     if (countrySelect) {
@@ -503,6 +731,46 @@
 
     if (els.backToShipping) {
       els.backToShipping.addEventListener('click', handleBackToShipping);
+    }
+
+    // Set up promo code toggle
+    const promoToggle = document.getElementById('promo-code-toggle');
+    const promoSection = document.getElementById('promo-code-section');
+    const promoForm = document.getElementById('promo-code-form');
+    const promoInput = document.getElementById('promo-code-input');
+    const promoApply = document.getElementById('promo-code-apply');
+    const promoMessage = document.getElementById('promo-code-message');
+
+    if (promoToggle && promoForm && promoSection) {
+      promoToggle.addEventListener('click', () => {
+        const isOpen = !promoForm.hidden;
+        promoForm.hidden = isOpen;
+        promoSection.classList.toggle('is-open', !isOpen);
+        if (!isOpen && promoInput) {
+          promoInput.focus();
+        }
+      });
+    }
+
+    if (promoApply && promoInput && promoMessage) {
+      promoApply.addEventListener('click', () => {
+        const code = promoInput.value.trim();
+        if (!code) {
+          promoMessage.textContent = 'Please enter a promo code';
+          promoMessage.className = 'promo-code-message is-error';
+          return;
+        }
+        // For now, show that promo codes are coming soon
+        promoMessage.textContent = 'Promo codes coming soon! Stay tuned for exclusive discounts.';
+        promoMessage.className = 'promo-code-message is-error';
+      });
+
+      promoInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          promoApply.click();
+        }
+      });
     }
   });
 })();
