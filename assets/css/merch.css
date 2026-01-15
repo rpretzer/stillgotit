@@ -1214,7 +1214,9 @@
   justify-content: center;
 }
 
-#loading[hidden] {
+#loading[hidden],
+#payment-form[hidden],
+#shipping-form[hidden] {
   display: none;
 }
 
