@@ -722,7 +722,7 @@
 }
 
 .trust-signal--secure {
-  color: var(--status-success);
+  color: #22c55e;
 }
 
 .trust-icon {
