@@ -1096,6 +1096,10 @@
   font-weight: var(--font-medium);
 }
 
+.checkout-alert[hidden] {
+  display: none;
+}
+
 .checkout-form-grid {
   display: flex;
   flex-direction: column;
