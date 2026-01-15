@@ -213,8 +213,9 @@
     }
     updateModalCounter();
 
-    // Populate info
-    if (els.modalTitle) els.modalTitle.textContent = product.name || 'Product';
+    // Populate info - strip size suffix (e.g., " / L", " / XL") from name
+    const displayName = (product.name || 'Product').replace(/\s*\/\s*(XS|S|M|L|XL|2XL|3XL|4XL|5XL)$/i, '');
+    if (els.modalTitle) els.modalTitle.textContent = displayName;
     if (els.modalPrice) els.modalPrice.textContent = formatMoney(product.priceCents, currency);
     if (els.modalDescription) {
       els.modalDescription.textContent = product.description || '';

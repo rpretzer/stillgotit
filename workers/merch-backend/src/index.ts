@@ -33,8 +33,9 @@ type MerchCatalog = {
     description?: string;
     priceCents: number;
     image?: string;
+    mockups?: string[];
     variants?: Array<{ id: string; label?: string; printfulVariantId?: number }>;
-    fulfillment?: { type?: 'printful' | 'manual'; printfulVariantId?: number };
+    fulfillment?: { type?: 'printful' | 'manual' | string; printfulVariantId?: number };
   }>;
 };
 
@@ -190,6 +191,7 @@ async function fetchCatalog(env: Env): Promise<MerchCatalog> {
     name: string;
     description: string | null;
     image_url: string | null;
+    mockup_urls: string | null;
     currency: string;
     price_cents: number;
     fulfillment_type: string;
@@ -206,6 +208,7 @@ async function fetchCatalog(env: Env): Promise<MerchCatalog> {
       description?: string;
       priceCents: number;
       image?: string;
+      mockups?: string[];
       variants: Array<{ id: string; label?: string; printfulVariantId?: number }>;
       fulfillment: { type: string };
     }>();
@@ -214,12 +217,23 @@ async function fetchCatalog(env: Env): Promise<MerchCatalog> {
       const productId = `pf-${p.printful_product_id}`;
       
       if (!productMap.has(productId)) {
+        // Parse mockup_urls JSON array
+        let mockups: string[] | undefined;
+        if (p.mockup_urls) {
+          try {
+            mockups = JSON.parse(p.mockup_urls);
+          } catch {
+            mockups = undefined;
+          }
+        }
+
         productMap.set(productId, {
           id: productId,
           name: p.name,
           description: p.description || undefined,
           priceCents: p.price_cents,
           image: p.image_url || undefined,
+          mockups: mockups && mockups.length > 0 ? mockups : undefined,
           variants: [],
           fulfillment: { type: p.fulfillment_type }
         });
@@ -810,6 +824,20 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
         const syncProduct = details.sync_product || {};
         const syncVariants = details.sync_variants || [];
 
+        // Collect all unique mockup image URLs from variant files
+        // Printful provides multiple mockup views (front, back, etc.) in the files array
+        const mockupUrls = new Set<string>();
+        for (const variant of syncVariants) {
+          const files = variant.files || [];
+          for (const file of files) {
+            // Include preview images (mockups) - these show the product with the design
+            if (file.type === 'preview' && file.preview_url) {
+              mockupUrls.add(file.preview_url);
+            }
+          }
+        }
+        const mockupUrlsJson = mockupUrls.size > 0 ? JSON.stringify(Array.from(mockupUrls)) : null;
+
         // Upsert each variant as a product row
         for (const variant of syncVariants) {
           const productId = `pf-${syncProduct.id}-${variant.id}`;
@@ -822,14 +850,15 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
           try {
             await env.DB.prepare(`
               INSERT INTO products (
-                id, name, description, image_url, currency, price_cents,
+                id, name, description, image_url, mockup_urls, currency, price_cents,
                 active, fulfillment_type, printful_product_id, printful_variant_id,
                 variant_label, updated_at, last_synced_at
-              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+              ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
               ON CONFLICT(id) DO UPDATE SET
                 name = excluded.name,
                 description = excluded.description,
                 image_url = excluded.image_url,
+                mockup_urls = excluded.mockup_urls,
                 currency = excluded.currency,
                 price_cents = excluded.price_cents,
                 active = excluded.active,
@@ -844,6 +873,7 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
               variant.name || syncProduct.name || 'Unknown Product',
               syncProduct.description || null,
               syncProduct.thumbnail_url || sp.thumbnail_url || null,
+              mockupUrlsJson,
               variant.currency || 'USD',
               priceCents,
               1, // active
