@@ -636,12 +636,16 @@
   flex: 1;
   font-size: var(--text-sm);
   padding: 0.5rem 0.75rem;
+  height: 36px;
+  box-sizing: border-box;
 }
 
 .promo-code-apply {
   flex-shrink: 0;
   padding: 0.5rem 0.75rem;
   font-size: var(--text-sm);
+  height: 36px;
+  box-sizing: border-box;
 }
 
 .promo-code-message {
