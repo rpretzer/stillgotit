@@ -1207,6 +1207,17 @@
   margin-top: var(--spacing-md);
 }
 
+.checkout-actions .btn {
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#loading[hidden] {
+  display: none;
+}
+
 .btn-full-width {
   width: 100%;
   justify-content: center;
