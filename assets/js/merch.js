@@ -544,7 +544,14 @@
     const openCart = () => { window.location.hash = '#cart'; };
     if (els.openCart) els.openCart.addEventListener('click', openCart);
     if (els.navCart) els.navCart.addEventListener('click', openCart);
-    if (els.closeCart) els.closeCart.addEventListener('click', () => { window.location.hash = '#products'; });
+    if (els.closeCart) els.closeCart.addEventListener('click', () => {
+      // Force scroll to products even if hash is already #products
+      const productsSection = document.getElementById('products');
+      if (productsSection) {
+        productsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+      window.location.hash = '#products';
+    });
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
