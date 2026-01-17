@@ -6,6 +6,7 @@
   'use strict';
 
   const CART_KEY = 'sgic_merch_cart_v1';
+  const SHIPPING_FORM_STATE_KEY = 'sgic_merch_shipping_form';
   const API_BASE = 'https://sgic-merch-api.rpretzer.workers.dev/api';
   const REQUEST_TIMEOUT_MS = 30000; // 30 second timeout for API requests
 
@@ -51,6 +52,8 @@
   let paymentElement = null;
   let clientSecret = null;
   let orderId = null;
+  let currentShippingDetails = null;
+  let currentContactDetails = null;
 
   const els = {
     shippingForm: document.getElementById('shipping-form'),
@@ -228,6 +231,46 @@
   }
 
   /**
+   * Saves the current shipping form state to localStorage
+   */
+  function saveShippingFormState() {
+    const formFields = ['email', 'name', 'address1', 'address2', 'city', 'state', 'postalCode', 'country'];
+    const formData = {};
+    for (const fieldId of formFields) {
+      const field = document.getElementById(fieldId);
+      if (field) {
+        formData[fieldId] = field.value;
+      }
+    }
+    localStorage.setItem(SHIPPING_FORM_STATE_KEY, JSON.stringify(formData));
+  }
+
+  /**
+   * Loads and pre-fills the shipping form from localStorage
+   */
+  function loadShippingFormState() {
+    try {
+      const savedState = localStorage.getItem(SHIPPING_FORM_STATE_KEY);
+      if (savedState) {
+        const formData = JSON.parse(savedState);
+        for (const fieldId in formData) {
+          const field = document.getElementById(fieldId);
+          if (field) {
+            field.value = formData[fieldId];
+            // Trigger change for country to update state/province dropdown
+            if (fieldId === 'country') {
+              handleCountryChange(field.value);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load shipping form state from localStorage', e);
+      localStorage.removeItem(SHIPPING_FORM_STATE_KEY); // Clear potentially corrupt data
+    }
+  }
+
+  /**
    * Validate a single field
    */
   function validateField(fieldId) {
@@ -288,13 +331,14 @@
         }
       });
 
-      // Clear error on input (while typing)
+      // Clear error on input (while typing) and save state
       field.addEventListener('input', () => {
         const errorEl = document.getElementById(`${fieldId}-error`);
         if (errorEl && errorEl.classList.contains('is-visible')) {
           // Re-validate if there's currently an error showing
           validateField(fieldId);
         }
+        saveShippingFormState(); // Save state on every input
       });
     }
   }
@@ -411,9 +455,16 @@
   }
 
   function setLoading(loading) {
-    if (els.loading) els.loading.hidden = !loading;
+    if (loading) {
+      els.continueToPayment?.classList.add('is-loading');
+      els.submitPayment?.classList.add('is-loading');
+    } else {
+      els.continueToPayment?.classList.remove('is-loading');
+      els.submitPayment?.classList.remove('is-loading');
+    }
     if (els.continueToPayment) els.continueToPayment.disabled = loading;
     if (els.submitPayment) els.submitPayment.disabled = loading;
+    if (els.loading) els.loading.hidden = true; // Hide the old generic loader
   }
 
   /**
@@ -485,7 +536,24 @@
 
     paymentElement = elements.getElement('payment');
     if (!paymentElement) {
-      paymentElement = elements.create('payment');
+      const billingDetails = {
+        name: currentContactDetails.name,
+        email: currentContactDetails.email,
+        address: {
+          line1: currentShippingDetails.address1,
+          line2: currentShippingDetails.address2,
+          city: currentShippingDetails.city,
+          state: currentShippingDetails.state,
+          postal_code: currentShippingDetails.postalCode,
+          country: currentShippingDetails.country,
+        },
+      };
+
+      paymentElement = elements.create('payment', {
+        defaultValues: {
+          billingDetails: billingDetails,
+        }
+      });
       paymentElement.mount(els.paymentElement);
     }
 
@@ -518,6 +586,9 @@
       email: formData.get('email'),
       name: formData.get('name')
     };
+
+    currentShippingDetails = shippingDetails; // Store globally
+    currentContactDetails = contactDetails;   // Store globally
 
     // Create PaymentIntent
     const result = await createPaymentIntent(shippingDetails, contactDetails);
@@ -703,6 +774,9 @@
 
     // Set up inline form validation
     setupInlineValidation();
+
+    // Load any previously saved shipping form state
+    loadShippingFormState();
 
     // Set up country change handler
     const countrySelect = document.getElementById('country');

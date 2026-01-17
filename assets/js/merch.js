@@ -406,9 +406,18 @@
         renderCart(loadCart(), catalog);
         window.location.hash = '#cart';
         setError('');
+
+        // Animate cart icon
+        if (els.navCart) {
+          els.navCart.classList.add('is-animating');
+          els.navCart.addEventListener('animationend', () => {
+            els.navCart.classList.remove('is-animating');
+          }, { once: true });
+        }
+
         if (typeof window.showToast === 'function') {
           const variantLabel = getVariantLabel(p, variantId);
-          const itemName = variantLabel ? `${p.name} (${variantLabel})` : p.name;
+          const itemName = variantLabel ? `${getDisplayName(p.name)} (${variantLabel})` : getDisplayName(p.name);
           window.showToast({ title: 'Added to cart', message: itemName, variant: 'success', timeout: 3000 });
         }
       });

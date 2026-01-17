@@ -6,6 +6,51 @@
   'use strict';
 
   const API_BASE = 'https://sgic-merch-api.rpretzer.workers.dev/api';
+  const REQUEST_TIMEOUT_MS = 15000; // 15 second timeout for API requests
+  let productCatalog = null;
+
+  /**
+   * Fetch with timeout support using AbortController
+   * @param {string} url - URL to fetch
+   * @param {Object} options - Fetch options
+   * @param {number} timeoutMs - Timeout in milliseconds
+   * @returns {Promise<Response>}
+   */
+  async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+      return response;
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw new Error('Request timed out. Please check your connection and try again.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  /**
+   * Fetch the product catalog from the API
+   */
+  async function fetchCatalog() {
+    if (productCatalog) return productCatalog;
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/products`);
+      if (!res.ok) throw new Error('Failed to load products');
+      productCatalog = await res.json();
+      return productCatalog;
+    } catch (err) {
+      console.error('Failed to fetch catalog:', err);
+      return { products: [] };
+    }
+  }
 
   function getOrderId() {
     const params = new URLSearchParams(window.location.search);
@@ -32,6 +77,10 @@
     return orderId ? orderId.slice(0, 8).toUpperCase() : 'N/A';
   }
 
+  function getDisplayName(productName) {
+    return (productName || '').replace(/\s*\/\s*(XS|S|M|L|XL|2XL|3XL|4XL|5XL)$/i, '');
+  }
+
   function getStatusDisplay(status) {
     const statusMap = {
       'PENDING': { label: 'Pending', class: 'status--pending' },
@@ -45,7 +94,7 @@
     return statusMap[status] || { label: status, class: '' };
   }
 
-  function renderOrderDetails(order) {
+  function renderOrderDetails(order, catalog) {
     const detailsEl = document.getElementById('order-details');
     const orderIdEl = document.getElementById('order-id');
 
@@ -61,19 +110,29 @@
       return;
     }
 
+    const byId = new Map((catalog.products || []).map((p) => [p.id, p]));
     const statusInfo = getStatusDisplay(order.status);
 
     // Build items HTML
-    const itemsHtml = (order.items || []).map(it => `
-      <div class="success-item">
-        <div class="success-item-info">
-          <span class="success-item-name">${it.productId || 'Item'}</span>
-          ${it.variantId ? `<span class="success-item-variant">${it.variantId}</span>` : ''}
+    const itemsHtml = (order.items || []).map(it => {
+      const product = byId.get(it.productId);
+      if (!product) return ''; // Skip if product not found in catalog
+
+      const variant = product.variants?.find(v => v.id === it.variantId);
+      const variantLabel = variant?.label;
+      const productName = getDisplayName(product.name);
+
+      return `
+        <div class="success-item">
+          <div class="success-item-info">
+            <span class="success-item-name">${productName || 'Item'}</span>
+            ${variantLabel ? `<span class="success-item-variant">${variantLabel}</span>` : ''}
+          </div>
+          <div class="success-item-qty">×${it.quantity}</div>
+          <div class="success-item-price">${formatMoney(it.priceCents * it.quantity, order.currency)}</div>
         </div>
-        <div class="success-item-qty">×${it.quantity}</div>
-        <div class="success-item-price">${formatMoney(it.priceCents * it.quantity, order.currency)}</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     detailsEl.innerHTML = `
       <div class="success-status">
@@ -147,9 +206,12 @@
         orderIdEl.textContent = formatOrderId(orderId);
       }
 
-      // Load full order details
-      loadOrderDetails(orderId).then(order => {
-        renderOrderDetails(order);
+      // Load full order details and catalog
+      Promise.all([
+        loadOrderDetails(orderId),
+        fetchCatalog()
+      ]).then(([order, catalog]) => {
+        renderOrderDetails(order, catalog);
       });
     } else {
       // No order ID in URL

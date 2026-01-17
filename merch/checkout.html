@@ -200,7 +200,10 @@
                   </div>
                 </div>
                 <div class="checkout-actions">
-                  <button type="submit" class="btn btn-primary btn-full-width" id="continue-to-payment">Continue to Payment</button>
+                  <button type="submit" class="btn btn-primary btn-full-width" id="continue-to-payment">
+                    <span class="btn-text">Continue to Payment</span>
+                    <div class="spinner"></div>
+                  </button>
                 </div>
               </form>
             </div>
@@ -212,7 +215,10 @@
                 <!-- Stripe Payment Element will mount here -->
               </div>
               <div class="checkout-actions">
-                <button type="button" class="btn btn-primary" id="submit-payment" disabled>Pay Now</button>
+                <button type="button" class="btn btn-primary" id="submit-payment" disabled>
+                  <span class="btn-text">Pay Now</span>
+                  <div class="spinner"></div>
+                </button>
                 <button type="button" class="btn btn-tertiary" id="back-to-shipping">Back</button>
               </div>
             </div>
@@ -265,7 +271,7 @@
               <a href="/merch/" class="order-summary-edit">Edit cart</a>
 
               <!-- Promo Code -->
-              <div class="promo-code-section" id="promo-code-section">
+              <div class="promo-code-section" id="promo-code-section" hidden>
                 <button type="button" class="promo-code-toggle" id="promo-code-toggle">
                   <span>Have a promo code?</span>
                   <svg class="promo-code-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
