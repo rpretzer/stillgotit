@@ -173,6 +173,10 @@
     return v?.label || '';
   }
 
+  function getDisplayName(productName) {
+    return (productName || '').replace(/\s*\/\s*(XS|S|M|L|XL|2XL|3XL|4XL|5XL)$/i, '');
+  }
+
   // ===== Product Modal =====
 
   function openProductModal(product, currency = 'USD') {
@@ -213,8 +217,7 @@
     }
     updateModalCounter();
 
-    // Populate info - strip size suffix (e.g., " / L", " / XL") from name
-    const displayName = (product.name || 'Product').replace(/\s*\/\s*(XS|S|M|L|XL|2XL|3XL|4XL|5XL)$/i, '');
+    const displayName = getDisplayName(product.name || 'Product');
     if (els.modalTitle) els.modalTitle.textContent = displayName;
     if (els.modalPrice) els.modalPrice.textContent = formatMoney(product.priceCents, currency);
     if (els.modalDescription) {
@@ -345,7 +348,7 @@
       content.className = 'card-content';
 
       const h3 = document.createElement('h3');
-      h3.textContent = p.name || 'Item';
+      h3.textContent = getDisplayName(p.name) || 'Item';
       content.appendChild(h3);
 
       const price = document.createElement('div');
@@ -436,14 +439,17 @@
       const left = document.createElement('div');
       const title = document.createElement('div');
       title.className = 'merch-cart-item-title';
-      title.textContent = p.name || it.productId;
+      
+      const variantLabel = getVariantLabel(p, it.variantId);
+      const displayName = getDisplayName(p.name || it.productId);
+      const titleText = variantLabel ? `${displayName} (${variantLabel})` : displayName;
+      title.textContent = titleText;
       left.appendChild(title);
 
       const meta = document.createElement('div');
       meta.className = 'merch-cart-item-meta';
-      const variantLabel = getVariantLabel(p, it.variantId);
       const itemPrice = getItemPrice(p, it.variantId);
-      meta.textContent = [variantLabel, formatMoney(itemPrice, currency)].filter(Boolean).join(' • ');
+      meta.textContent = formatMoney(itemPrice, currency);
       left.appendChild(meta);
 
       const right = document.createElement('div');
