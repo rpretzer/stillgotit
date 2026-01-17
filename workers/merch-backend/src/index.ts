@@ -830,9 +830,10 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
         for (const variant of syncVariants) {
           const files = variant.files || [];
           for (const file of files) {
-            // Include preview images (mockups) - these show the product with the design
-            if (file.type === 'preview' && file.preview_url) {
-              mockupUrls.add(file.preview_url);
+            // A 'default' type often represents the primary mockup for a given view (e.g., front).
+            // Include 'mockup' and 'preview' types, and check both preview_url and url.
+            if ((file.type === 'preview' || file.type === 'mockup' || file.type === 'default') && (file.preview_url || file.url)) {
+              mockupUrls.add(file.preview_url || file.url);
             }
           }
         }
