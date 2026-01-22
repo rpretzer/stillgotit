@@ -177,6 +177,42 @@
     return (productName || '').replace(/\s*\/\s*(XS|S|M|L|XL|2XL|3XL|4XL|5XL)$/i, '');
   }
 
+  /**
+   * Extract size from variant label (e.g., "STG - Unisex t-shirt / M" -> "M")
+   * @param {string} label - Variant label
+   * @returns {string} Size or empty string
+   */
+  function extractSize(label) {
+    const match = (label || '').match(/\b(XS|S|M|L|XL|2XL|3XL|4XL|5XL)\b/i);
+    return match ? match[1].toUpperCase() : '';
+  }
+
+  /**
+   * Sort variants by size (smallest to largest)
+   * @param {Array} variants - Array of variant objects
+   * @returns {Array} Sorted variants
+   */
+  function sortVariantsBySize(variants) {
+    // Size order from smallest to largest
+    const sizeOrder = { 'XS': 1, 'S': 2, 'M': 3, 'L': 4, 'XL': 5, '2XL': 6, '3XL': 7, '4XL': 8, '5XL': 9 };
+
+    return [...variants].sort((a, b) => {
+      const sizeA = extractSize(a.label || '');
+      const sizeB = extractSize(b.label || '');
+
+      const orderA = sizeOrder[sizeA] || 999;
+      const orderB = sizeOrder[sizeB] || 999;
+
+      // If both have sizes, sort by size order
+      if (orderA !== 999 && orderB !== 999) {
+        return orderA - orderB;
+      }
+
+      // Otherwise maintain original order
+      return 0;
+    });
+  }
+
   // ===== Product Modal =====
 
   function openProductModal(product, currency = 'USD') {
@@ -351,15 +387,20 @@
       h3.textContent = getDisplayName(p.name) || 'Item';
       content.appendChild(h3);
 
+      // Sort variants by size if available
+      const sortedVariants = (Array.isArray(p.variants) && p.variants.length > 0)
+        ? sortVariantsBySize(p.variants)
+        : [];
+
       const price = document.createElement('div');
       price.className = 'merch-price';
-      // Get initial price (from first variant if available, else base price)
+      // Get initial price (from first sorted variant if available, else base price)
       const getVariantPrice = (variantId) => {
         if (!variantId || !p.variants) return p.priceCents;
         const v = p.variants.find((x) => x.id === variantId);
         return v?.priceCents || p.priceCents;
       };
-      const initialVariantId = (p.variants && p.variants.length > 0) ? p.variants[0].id : null;
+      const initialVariantId = sortedVariants.length > 0 ? sortedVariants[0].id : null;
       price.textContent = formatMoney(getVariantPrice(initialVariantId), currency);
       content.appendChild(price);
 
@@ -371,12 +412,12 @@
       }
 
       let variantSelect = null;
-      if (Array.isArray(p.variants) && p.variants.length > 0) {
+      if (sortedVariants.length > 0) {
         const row = document.createElement('div');
         row.className = 'merch-variant-row';
         variantSelect = document.createElement('select');
         variantSelect.className = 'merch-select';
-        (p.variants || []).forEach((v) => {
+        sortedVariants.forEach((v) => {
           const opt = document.createElement('option');
           opt.value = v.id;
           // Show price in variant label if different from base

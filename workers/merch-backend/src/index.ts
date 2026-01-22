@@ -34,7 +34,7 @@ type MerchCatalog = {
     priceCents: number;
     image?: string;
     mockups?: string[];
-    variants?: Array<{ id: string; label?: string; printfulVariantId?: number }>;
+    variants?: Array<{ id: string; label?: string; printfulVariantId?: number; priceCents?: number }>;
     fulfillment?: { type?: 'printful' | 'manual' | string; printfulVariantId?: number };
   }>;
 };
@@ -209,7 +209,7 @@ async function fetchCatalog(env: Env): Promise<MerchCatalog> {
       priceCents: number;
       image?: string;
       mockups?: string[];
-      variants: Array<{ id: string; label?: string; printfulVariantId?: number }>;
+      variants: Array<{ id: string; label?: string; printfulVariantId?: number; priceCents?: number }>;
       fulfillment: { type: string };
     }>();
 
@@ -244,7 +244,8 @@ async function fetchCatalog(env: Env): Promise<MerchCatalog> {
         product.variants.push({
           id: `${productId}-${p.printful_variant_id}`,
           label: p.variant_label,
-          printfulVariantId: p.printful_variant_id
+          printfulVariantId: p.printful_variant_id,
+          priceCents: p.price_cents
         });
       }
     }
@@ -782,9 +783,12 @@ async function handleGetProducts(req: Request, env: Env): Promise<Response> {
 }
 
 // Printful product sync functions
-async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors: string[] }> {
+async function syncPrintfulProducts(env: Env): Promise<{ synced: number; updated: number; unchanged: number; errors: string[]; changes: string[] }> {
   const errors: string[] = [];
+  const changes: string[] = [];
   let synced = 0;
+  let updated = 0;
+  let unchanged = 0;
 
   // Track all synced product IDs to identify discontinued products
   const syncedProductIds = new Set<string>();
@@ -844,11 +848,74 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
           const productId = `pf-${syncProduct.id}-${variant.id}`;
           const priceCents = Math.round(Number(variant.retail_price || '0') * 100);
           const variantLabel = variant.name || `Variant ${variant.id}`;
+          const newName = variant.name || syncProduct.name || 'Unknown Product';
+          const newDescription = syncProduct.description || null;
+          const newImageUrl = syncProduct.thumbnail_url || sp.thumbnail_url || null;
+          const newCurrency = variant.currency || 'USD';
 
           // Track this product ID as synced (exists in Printful)
           syncedProductIds.add(productId);
 
           try {
+            // Check if product exists and compare values
+            const existing = await env.DB.prepare(`
+              SELECT id, name, description, image_url, mockup_urls, currency, price_cents,
+                     active, printful_product_id, printful_variant_id, variant_label
+              FROM products WHERE id = ?
+            `).bind(productId).first<{
+              id: string;
+              name: string;
+              description: string | null;
+              image_url: string | null;
+              mockup_urls: string | null;
+              currency: string;
+              price_cents: number;
+              active: number;
+              printful_product_id: number;
+              printful_variant_id: number;
+              variant_label: string;
+            }>();
+
+            let hasChanges = false;
+            const changeList: string[] = [];
+
+            if (existing) {
+              // Check for differences
+              if (existing.price_cents !== priceCents) {
+                hasChanges = true;
+                changeList.push(`price: $${existing.price_cents/100} -> $${priceCents/100}`);
+              }
+              if (existing.mockup_urls !== mockupUrlsJson) {
+                hasChanges = true;
+                const oldCount = existing.mockup_urls ? JSON.parse(existing.mockup_urls).length : 0;
+                const newCount = mockupUrlsJson ? JSON.parse(mockupUrlsJson).length : 0;
+                changeList.push(`mockups: ${oldCount} -> ${newCount} images`);
+              }
+              if (existing.name !== newName) {
+                hasChanges = true;
+                changeList.push(`name: "${existing.name}" -> "${newName}"`);
+              }
+              if (existing.image_url !== newImageUrl) {
+                hasChanges = true;
+                changeList.push(`image_url changed`);
+              }
+              if (existing.description !== newDescription) {
+                hasChanges = true;
+                changeList.push(`description changed`);
+              }
+
+              if (hasChanges) {
+                changes.push(`${productId}: ${changeList.join(', ')}`);
+                updated++;
+              } else {
+                unchanged++;
+              }
+            } else {
+              // New product
+              changes.push(`${productId}: NEW product (price: $${priceCents/100}, mockups: ${mockupUrlsJson ? JSON.parse(mockupUrlsJson).length : 0})`);
+            }
+
+            // Perform upsert
             await env.DB.prepare(`
               INSERT INTO products (
                 id, name, description, image_url, mockup_urls, currency, price_cents,
@@ -871,11 +938,11 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
                 last_synced_at = datetime('now')
             `).bind(
               productId,
-              variant.name || syncProduct.name || 'Unknown Product',
-              syncProduct.description || null,
-              syncProduct.thumbnail_url || sp.thumbnail_url || null,
+              newName,
+              newDescription,
+              newImageUrl,
               mockupUrlsJson,
-              variant.currency || 'USD',
+              newCurrency,
               priceCents,
               1, // active
               'printful',
@@ -925,10 +992,10 @@ async function syncPrintfulProducts(env: Env): Promise<{ synced: number; errors:
       }
     }
 
-    return { synced, errors };
+    return { synced, updated, unchanged, errors, changes };
   } catch (err: any) {
     errors.push(`Sync failed: ${err?.message || 'Unknown error'}`);
-    return { synced, errors };
+    return { synced, updated, unchanged, errors, changes };
   }
 }
 
@@ -948,7 +1015,10 @@ async function handleSyncProducts(req: Request, env: Env): Promise<Response> {
     return json({
       success: true,
       synced: result.synced,
+      updated: result.updated,
+      unchanged: result.unchanged,
       errors: result.errors,
+      changes: result.changes,
       timestamp: new Date().toISOString()
     }, { status: 200 });
   } catch (err: any) {
@@ -1172,7 +1242,10 @@ export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil(
       syncPrintfulProducts(env).then(result => {
-        console.log(`[Cron] Product sync completed: ${result.synced} products synced, ${result.errors.length} errors`);
+        console.log(`[Cron] Product sync completed: ${result.synced} products synced, ${result.updated} updated, ${result.unchanged} unchanged, ${result.errors.length} errors`);
+        if (result.changes.length > 0) {
+          console.log('[Cron] Changes detected:', result.changes.slice(0, 10)); // Log first 10 changes
+        }
         if (result.errors.length > 0) {
           console.error('[Cron] Sync errors:', result.errors);
         }
