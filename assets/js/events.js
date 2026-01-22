@@ -71,7 +71,16 @@
   }
 
   function formatDate(dateStr) {
-    const d = new Date(dateStr);
+    let d;
+    // Check if dateStr matches YYYY-MM-DD format
+    if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const parts = dateStr.split('-');
+      // Create date in local time
+      d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    } else {
+      d = new Date(dateStr);
+    }
+
     if (Number.isNaN(d.getTime())) return dateStr;
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   }
