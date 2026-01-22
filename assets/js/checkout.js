@@ -525,7 +525,15 @@
         taxCalculationId: data.taxCalculationId
       };
     } catch (err) {
-      showError(err?.message || 'Failed to calculate shipping and tax. Please try again.');
+      console.error('Calculate totals error:', err);
+      // Provide helpful error message based on error type
+      let errorMsg = 'Failed to calculate shipping and tax. Please try again.';
+      if (err?.message?.includes('fetch')) {
+        errorMsg = 'Unable to connect to server. Please check your connection and try again.';
+      } else if (err?.message) {
+        errorMsg = err.message;
+      }
+      showError(errorMsg);
       return null;
     } finally {
       setLoading(false);

@@ -1656,6 +1656,15 @@
   color: var(--text-tertiary);
 }
 
+/* Responsive button text */
+.btn-text-mobile {
+  display: none;
+}
+
+.btn-text-desktop {
+  display: inline;
+}
+
 @media (max-width: 640px) {
   .payment-methods-preview {
     flex-direction: column;
@@ -1673,6 +1682,15 @@
 
   .checkout-actions .btn {
     width: 100%;
+  }
+
+  /* Show shorter text on mobile */
+  .btn-text-mobile {
+    display: inline;
+  }
+
+  .btn-text-desktop {
+    display: none;
   }
 }
 
