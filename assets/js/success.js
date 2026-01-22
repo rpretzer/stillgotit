@@ -147,7 +147,7 @@
 
       <div class="success-total">
         <span>Order Total</span>
-        <strong>${formatMoney(order.subtotalCents, order.currency)}</strong>
+        <strong>${formatMoney(order.totalCents || order.subtotalCents, order.currency)}</strong>
       </div>
 
       ${order.email ? `

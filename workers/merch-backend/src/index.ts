@@ -1,7 +1,8 @@
 /**
  * Cloudflare Worker: Stripe + Printful Merch Backend
- * 
+ *
  * Routes:
+ * - POST /api/calculate-totals - Calculate shipping and tax for cart
  * - POST /api/checkout - Create Stripe PaymentIntent and order
  * - POST /api/stripe/webhook - Handle Stripe webhooks
  * - GET /api/products - Serve product catalog (from D1 or static JSON)
@@ -10,7 +11,7 @@
  * - GET /api/carts/recover/:token - Get cart by recovery token
  * - POST /api/carts/recover/:token - Mark cart as recovered
  * - POST /api/sync/products - Sync Printful products (manual trigger)
- * 
+ *
  * Cron Triggers:
  * - Daily at 2 AM UTC: Sync Printful products
  */
@@ -51,6 +52,9 @@ type OrderRow = {
   shipping_country: string;
   currency: string;
   subtotal_cents: number;
+  shipping_cents: number;
+  tax_cents: number;
+  total_cents: number;
   status: string;
   stripe_payment_intent_id: string | null;
   stripe_charge_id: string | null;
@@ -268,11 +272,95 @@ function safeQty(n: unknown) {
 }
 
 // Stripe API helpers
+
+/**
+ * Calculate tax using Stripe Tax API
+ * Creates a tax calculation that can be used with PaymentIntent
+ */
+async function calculateStripeTax(
+  env: Env,
+  amountCents: number,
+  currency: string,
+  address: {
+    line1: string;
+    city: string;
+    state: string;
+    postal_code: string;
+    country: string;
+  }
+): Promise<{ taxCents: number; calculationId: string }> {
+  const params = new URLSearchParams();
+  params.set('currency', currency.toLowerCase());
+  params.set('line_items[0][amount]', String(amountCents));
+  params.set('line_items[0][reference]', 'merchandise');
+  params.set('customer_details[address][line1]', address.line1);
+  params.set('customer_details[address][city]', address.city);
+  params.set('customer_details[address][state]', address.state);
+  params.set('customer_details[address][postal_code]', address.postal_code);
+  params.set('customer_details[address][country]', address.country);
+  params.set('customer_details[address_source]', 'shipping');
+
+  const res = await fetch('https://api.stripe.com/v1/tax/calculations', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: params
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    // If Stripe Tax is not enabled or fails, fall back to manual calculation
+    console.warn('Stripe Tax API failed, falling back to manual calculation:', data?.error?.message);
+    const fallbackTax = await calculateManualTax(amountCents, address.state, address.country);
+    return { taxCents: fallbackTax, calculationId: '' };
+  }
+
+  const taxCents = data.tax_amount_exclusive || 0;
+  return { taxCents, calculationId: data.id };
+}
+
+/**
+ * Manual tax calculation fallback for US states
+ * Uses approximate state tax rates
+ */
+async function calculateManualTax(
+  amountCents: number,
+  state: string,
+  country: string
+): Promise<number> {
+  // Only calculate tax for US orders
+  if (country !== 'US') {
+    return 0;
+  }
+
+  // Approximate US state sales tax rates (as of 2026)
+  // These are simplified and should be updated with actual rates
+  const stateTaxRates: Record<string, number> = {
+    'AL': 0.04, 'AK': 0.00, 'AZ': 0.056, 'AR': 0.065, 'CA': 0.0725,
+    'CO': 0.029, 'CT': 0.0635, 'DE': 0.00, 'FL': 0.06, 'GA': 0.04,
+    'HI': 0.04, 'ID': 0.06, 'IL': 0.0625, 'IN': 0.07, 'IA': 0.06,
+    'KS': 0.065, 'KY': 0.06, 'LA': 0.0445, 'ME': 0.055, 'MD': 0.06,
+    'MA': 0.0625, 'MI': 0.06, 'MN': 0.06875, 'MS': 0.07, 'MO': 0.04225,
+    'MT': 0.00, 'NE': 0.055, 'NV': 0.0685, 'NH': 0.00, 'NJ': 0.06625,
+    'NM': 0.05125, 'NY': 0.04, 'NC': 0.0475, 'ND': 0.05, 'OH': 0.0575,
+    'OK': 0.045, 'OR': 0.00, 'PA': 0.06, 'RI': 0.07, 'SC': 0.06,
+    'SD': 0.045, 'TN': 0.07, 'TX': 0.0625, 'UT': 0.0485, 'VT': 0.06,
+    'VA': 0.053, 'WA': 0.065, 'WV': 0.06, 'WI': 0.05, 'WY': 0.04,
+    'DC': 0.06, 'PR': 0.115
+  };
+
+  const taxRate = stateTaxRates[state.toUpperCase()] || 0;
+  return Math.round(amountCents * taxRate);
+}
+
 async function createPaymentIntent(
   env: Env,
   amountCents: number,
   currency: string,
-  metadata: Record<string, string>
+  metadata: Record<string, string>,
+  taxCalculationId?: string
 ): Promise<{ clientSecret: string; id: string }> {
   const params = new URLSearchParams();
   params.set('amount', String(amountCents));
@@ -280,6 +368,11 @@ async function createPaymentIntent(
   if (metadata.orderId) params.set('metadata[orderId]', metadata.orderId);
   // Restrict to card payments only (no Cash App, Klarna, Amazon Pay, etc.)
   params.append('payment_method_types[]', 'card');
+
+  // Link to tax calculation if provided (for Stripe Tax integration)
+  if (taxCalculationId) {
+    params.set('metadata[tax_calculation]', taxCalculationId);
+  }
 
   const res = await fetch('https://api.stripe.com/v1/payment_intents', {
     method: 'POST',
@@ -372,7 +465,61 @@ function hexToArrayBuffer(hex: string): ArrayBuffer {
   return bytes.buffer;
 }
 
-// Printful API helper
+// Printful API helpers
+
+/**
+ * Calculate shipping rates from Printful
+ * @returns Shipping cost in cents for the default/cheapest option
+ */
+async function calculatePrintfulShipping(
+  env: Env,
+  recipient: {
+    address1: string;
+    city: string;
+    state_code: string;
+    country_code: string;
+    zip: string;
+  },
+  items: Array<{ sync_variant_id: number; quantity: number }>
+): Promise<{ shippingCents: number; carrier: string; service: string }> {
+  const res = await fetch('https://api.printful.com/shipping/rates', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.PRINTFUL_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      recipient,
+      items,
+      currency: 'USD',
+      locale: 'en_US'
+    })
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    const msg = data?.result?.error?.message || data?.error?.message || `Failed to calculate shipping (${res.status})`;
+    throw new Error(msg);
+  }
+
+  const rates = data?.result || [];
+  if (rates.length === 0) {
+    throw new Error('No shipping rates available for this destination');
+  }
+
+  // Find the cheapest standard shipping option (prefer STANDARD over BUDGET if available)
+  let selectedRate = rates.find((r: any) => r.id === 'STANDARD') || rates[0];
+
+  // Convert rate to cents (Printful returns decimal dollars)
+  const shippingCents = Math.round(parseFloat(selectedRate.rate) * 100);
+
+  return {
+    shippingCents,
+    carrier: selectedRate.name || 'Standard Shipping',
+    service: selectedRate.id || 'STANDARD'
+  };
+}
+
 async function createPrintfulOrder(
   env: Env,
   orderId: string,
@@ -422,6 +569,9 @@ async function createOrder(env: Env, order: {
   shipping_country: string;
   currency: string;
   subtotal_cents: number;
+  shipping_cents: number;
+  tax_cents: number;
+  total_cents: number;
   stripe_payment_intent_id: string;
 }): Promise<void> {
   await env.DB.prepare(`
@@ -429,13 +579,15 @@ async function createOrder(env: Env, order: {
       id, email, name,
       shipping_address1, shipping_address2, shipping_city, shipping_state,
       shipping_postal_code, shipping_country,
-      currency, subtotal_cents, status, stripe_payment_intent_id
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)
+      currency, subtotal_cents, shipping_cents, tax_cents, total_cents,
+      status, stripe_payment_intent_id
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)
   `).bind(
     order.id, order.email, order.name,
     order.shipping_address1, order.shipping_address2, order.shipping_city, order.shipping_state,
     order.shipping_postal_code, order.shipping_country,
-    order.currency, order.subtotal_cents, order.stripe_payment_intent_id
+    order.currency, order.subtotal_cents, order.shipping_cents, order.tax_cents, order.total_cents,
+    order.stripe_payment_intent_id
   ).run();
 }
 
@@ -540,6 +692,141 @@ async function addOrderEvent(env: Env, orderId: string, status: string, message:
 }
 
 // Route handlers
+
+/**
+ * Calculate shipping and tax for cart
+ * Called after user enters shipping address but before payment
+ */
+async function handleCalculateTotals(req: Request, env: Env): Promise<Response> {
+  const cors = corsHeaders(req);
+  const body = await req.json().catch(() => null) as any;
+
+  const currency = String(body?.currency || 'USD');
+  const items = Array.isArray(body?.items) ? body.items : [];
+  const shippingDetails = body?.shippingDetails || {};
+
+  // Validate required fields
+  if (!items.length) {
+    return json({ error: 'Cart is empty.' }, { status: 400, headers: cors });
+  }
+  if (!shippingDetails.address1 || !shippingDetails.city || !shippingDetails.state || !shippingDetails.postalCode) {
+    return json({ error: 'Shipping address required.' }, { status: 400, headers: cors });
+  }
+
+  // Validate and normalize country code
+  const countryCode = normalizeCountryCode(shippingDetails.country || 'US');
+  if (!countryCode) {
+    return json({ error: 'Invalid or unsupported country.' }, { status: 400, headers: cors });
+  }
+
+  // Validate state for US/CA
+  const state = String(shippingDetails.state).trim().toUpperCase();
+  if (countryCode === 'US' && !isValidUSState(state)) {
+    return json({ error: 'Invalid US state code.' }, { status: 400, headers: cors });
+  }
+
+  // Validate postal code
+  const postalCode = String(shippingDetails.postalCode).trim();
+  if (!isValidPostalCode(postalCode, countryCode)) {
+    return json({ error: 'Invalid postal code.' }, { status: 400, headers: cors });
+  }
+
+  try {
+    // Get catalog and calculate subtotal
+    const catalog = await fetchCatalog(env);
+    const byId = new Map((catalog.products || []).map((p) => [p.id, p]));
+
+    let subtotalCents = 0;
+    const printfulItems: Array<{ sync_variant_id: number; quantity: number }> = [];
+
+    for (const it of items) {
+      const productId = String(it?.productId || '');
+      const variantId = it?.variantId ? String(it.variantId) : null;
+      const qty = safeQty(it?.qty);
+
+      const p = byId.get(productId);
+      if (!p) continue;
+
+      const priceCents = Number(p.priceCents) || 0;
+      subtotalCents += priceCents * qty;
+
+      // Collect Printful items for shipping calculation
+      if (p.fulfillment?.type === 'printful' || (!p.fulfillment?.type && variantId)) {
+        const variant = p.variants?.find(v => v.id === variantId);
+        const printfulVariantId = variant?.printfulVariantId || p.fulfillment?.printfulVariantId;
+        if (printfulVariantId) {
+          printfulItems.push({ sync_variant_id: Number(printfulVariantId), quantity: qty });
+        }
+      }
+    }
+
+    if (subtotalCents === 0) {
+      return json({ error: 'Cart total cannot be zero.' }, { status: 400, headers: cors });
+    }
+
+    // Calculate shipping from Printful
+    let shippingCents = 0;
+    let shippingCarrier = 'Standard Shipping';
+
+    if (printfulItems.length > 0) {
+      try {
+        const shippingResult = await calculatePrintfulShipping(env, {
+          address1: String(shippingDetails.address1).trim(),
+          city: String(shippingDetails.city).trim(),
+          state_code: state,
+          country_code: countryCode,
+          zip: postalCode
+        }, printfulItems);
+
+        shippingCents = shippingResult.shippingCents;
+        shippingCarrier = shippingResult.carrier;
+      } catch (err: any) {
+        console.error('Printful shipping calculation failed:', err);
+        // Fallback to flat rate shipping
+        shippingCents = countryCode === 'US' ? 599 : 1299; // $5.99 US, $12.99 international
+        shippingCarrier = 'Standard Shipping (estimated)';
+      }
+    }
+
+    // Calculate tax using Stripe Tax API
+    let taxCents = 0;
+    let taxCalculationId = '';
+
+    try {
+      const taxResult = await calculateStripeTax(env, subtotalCents + shippingCents, currency, {
+        line1: String(shippingDetails.address1).trim(),
+        city: String(shippingDetails.city).trim(),
+        state: state,
+        postal_code: postalCode,
+        country: countryCode
+      });
+
+      taxCents = taxResult.taxCents;
+      taxCalculationId = taxResult.calculationId;
+    } catch (err: any) {
+      console.error('Tax calculation failed:', err);
+      // Fallback to manual tax calculation
+      taxCents = await calculateManualTax(subtotalCents + shippingCents, state, countryCode);
+    }
+
+    const totalCents = subtotalCents + shippingCents + taxCents;
+
+    return json({
+      subtotalCents,
+      shippingCents,
+      shippingCarrier,
+      taxCents,
+      totalCents,
+      taxCalculationId,
+      currency
+    }, { status: 200, headers: cors });
+
+  } catch (err: any) {
+    console.error('Calculate totals error:', err);
+    return json({ error: err?.message || 'Failed to calculate totals.' }, { status: 500, headers: cors });
+  }
+}
+
 async function handleCheckout(req: Request, env: Env): Promise<Response> {
   const cors = corsHeaders(req);
   const body = await req.json().catch(() => null) as any;
@@ -635,15 +922,59 @@ async function handleCheckout(req: Request, env: Env): Promise<Response> {
     }
   }
 
+  // Calculate shipping and tax (server-side validation to prevent tampering)
+  let shippingCents = 0;
+  let taxCents = 0;
+  let taxCalculationId = '';
+
+  if (printfulItems.length > 0) {
+    try {
+      const shippingResult = await calculatePrintfulShipping(env, {
+        address1,
+        city,
+        state_code: state,
+        country_code: countryCode,
+        zip: postalCode
+      }, printfulItems);
+      shippingCents = shippingResult.shippingCents;
+    } catch (err: any) {
+      console.error('Shipping calculation failed at checkout:', err);
+      // Fallback to flat rate
+      shippingCents = countryCode === 'US' ? 599 : 1299;
+    }
+  }
+
+  try {
+    const taxResult = await calculateStripeTax(env, subtotalCents + shippingCents, currency, {
+      line1: address1,
+      city,
+      state,
+      postal_code: postalCode,
+      country: countryCode
+    });
+    taxCents = taxResult.taxCents;
+    taxCalculationId = taxResult.calculationId;
+  } catch (err: any) {
+    console.error('Tax calculation failed at checkout:', err);
+    taxCents = await calculateManualTax(subtotalCents + shippingCents, state, countryCode);
+  }
+
+  const totalCents = subtotalCents + shippingCents + taxCents;
+
+  if (totalCents === 0) {
+    return json({ error: 'Order total cannot be zero.' }, { status: 400, headers: cors });
+  }
+
   const orderId = crypto.randomUUID();
 
   try {
-    // Create Stripe PaymentIntent
+    // Create Stripe PaymentIntent with full total amount
     const { clientSecret, id: paymentIntentId } = await createPaymentIntent(
       env,
-      subtotalCents,
+      totalCents, // Now includes subtotal + shipping + tax
       currency,
-      { orderId }
+      { orderId },
+      taxCalculationId
     );
 
     // Create order in D1 (using validated/normalized values)
@@ -659,13 +990,23 @@ async function handleCheckout(req: Request, env: Env): Promise<Response> {
       shipping_country: countryCode,
       currency,
       subtotal_cents: subtotalCents,
+      shipping_cents: shippingCents,
+      tax_cents: taxCents,
+      total_cents: totalCents,
       stripe_payment_intent_id: paymentIntentId
     });
 
     await createOrderItems(env, orderId, orderItems);
     await addOrderEvent(env, orderId, 'PENDING', 'Order created, payment pending');
 
-    return json({ clientSecret, orderId }, { status: 200, headers: cors });
+    return json({
+      clientSecret,
+      orderId,
+      subtotalCents,
+      shippingCents,
+      taxCents,
+      totalCents
+    }, { status: 200, headers: cors });
   } catch (err: any) {
     return json({ error: err?.message || 'Checkout failed.' }, { status: 500, headers: cors });
   }
@@ -1052,6 +1393,9 @@ async function handleGetOrder(req: Request, env: Env, orderId: string): Promise<
     },
     currency: order.currency,
     subtotalCents: order.subtotal_cents,
+    shippingCents: order.shipping_cents,
+    taxCents: order.tax_cents,
+    totalCents: order.total_cents,
     status: order.status,
     stripePaymentIntentId: order.stripe_payment_intent_id,
     printfulOrderId: order.printful_order_id,
@@ -1193,6 +1537,14 @@ export default {
     }
 
     // Routes
+    if (req.method === 'POST' && path === '/api/calculate-totals') {
+      try {
+        return await handleCalculateTotals(req, env);
+      } catch (err: any) {
+        return json({ error: err?.message || 'Failed to calculate totals.' }, { status: 500, headers: corsHeaders(req) });
+      }
+    }
+
     if (req.method === 'POST' && path === '/api/checkout') {
       try {
         return await handleCheckout(req, env);

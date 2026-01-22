@@ -75,8 +75,11 @@
 
   // Store catalog for order summary
   let productCatalog = null;
-  // Store cart subtotal for payment button
+  // Store cart amounts for payment button
   let cartSubtotalCents = 0;
+  let cartShippingCents = 0;
+  let cartTaxCents = 0;
+  let cartTotalCents = 0;
 
   /**
    * Update the checkout progress indicator
@@ -423,10 +426,13 @@
 
     // Update totals
     if (els.summarySubtotal) els.summarySubtotal.textContent = formatMoney(subtotalCents);
+
+    // Initially show subtotal as total (shipping/tax calculated after address entry)
     if (els.summaryTotal) els.summaryTotal.textContent = formatMoney(subtotalCents);
 
     // Store for payment button
     cartSubtotalCents = subtotalCents;
+    cartTotalCents = subtotalCents; // Will be updated after shipping/tax calculation
   }
 
   function loadCart() {
@@ -465,6 +471,65 @@
     if (els.continueToPayment) els.continueToPayment.disabled = loading;
     if (els.submitPayment) els.submitPayment.disabled = loading;
     if (els.loading) els.loading.hidden = true; // Hide the old generic loader
+  }
+
+  /**
+   * Calculate shipping and tax via the backend API.
+   * @param {Object} shippingDetails - Shipping address information
+   * @returns {Promise<Object|null>} Calculated totals or null if failed
+   */
+  async function calculateTotals(shippingDetails) {
+    const cart = loadCart();
+    if (!cart.items.length) {
+      showError('Your cart is empty.');
+      return null;
+    }
+
+    setLoading(true);
+    hideError();
+
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/calculate-totals`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          currency: 'USD',
+          items: cart.items.map((it) => ({
+            productId: it.productId,
+            variantId: it.variantId,
+            qty: it.qty
+          })),
+          shippingDetails: {
+            address1: shippingDetails.address1,
+            address2: shippingDetails.address2 || '',
+            city: shippingDetails.city,
+            state: shippingDetails.state,
+            postalCode: shippingDetails.postalCode,
+            country: shippingDetails.country || 'US'
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const errorMsg = data?.error || `Failed to calculate totals (${res.status})`;
+        throw new Error(errorMsg);
+      }
+
+      return {
+        subtotalCents: data.subtotalCents,
+        shippingCents: data.shippingCents,
+        shippingCarrier: data.shippingCarrier,
+        taxCents: data.taxCents,
+        totalCents: data.totalCents,
+        taxCalculationId: data.taxCalculationId
+      };
+    } catch (err) {
+      showError(err?.message || 'Failed to calculate shipping and tax. Please try again.');
+      return null;
+    } finally {
+      setLoading(false);
+    }
   }
 
   /**
@@ -590,13 +655,58 @@
     currentShippingDetails = shippingDetails; // Store globally
     currentContactDetails = contactDetails;   // Store globally
 
+    // First, calculate shipping and tax
+    const totals = await calculateTotals(shippingDetails);
+    if (!totals) return;
+
+    // Update order summary with calculated amounts
+    cartSubtotalCents = totals.subtotalCents;
+    cartShippingCents = totals.shippingCents;
+    cartTaxCents = totals.taxCents;
+    cartTotalCents = totals.totalCents;
+
+    // Update the order summary display with calculated amounts
+    const summaryShipping = document.getElementById('summary-shipping');
+    const summaryTax = document.getElementById('summary-tax');
+    const summaryTotal = document.getElementById('summary-total');
+
+    if (summaryShipping) {
+      summaryShipping.textContent = formatMoney(cartShippingCents);
+      const row = summaryShipping.parentElement;
+      row.classList.remove('order-summary-row--muted');
+      row.style.color = 'var(--text-secondary)';
+      row.style.fontSize = 'var(--text-sm)';
+      row.style.fontWeight = 'var(--font-medium)';
+    }
+    if (summaryTax) {
+      summaryTax.textContent = formatMoney(cartTaxCents);
+      const row = summaryTax.parentElement;
+      row.classList.remove('order-summary-row--muted');
+      row.style.color = 'var(--text-secondary)';
+      row.style.fontSize = 'var(--text-sm)';
+      row.style.fontWeight = 'var(--font-medium)';
+    }
+    if (summaryTotal) {
+      summaryTotal.textContent = formatMoney(cartTotalCents);
+    }
+
+    // Show toast with calculated amounts
+    if (typeof window.showToast === 'function') {
+      window.showToast({
+        title: 'Shipping & tax calculated',
+        message: `Total: ${formatMoney(cartTotalCents)}`,
+        variant: 'success',
+        timeout: 3000
+      });
+    }
+
     // Create PaymentIntent
     const result = await createPaymentIntent(shippingDetails, contactDetails);
     if (!result) return;
 
     clientSecret = result.clientSecret;
     orderId = result.orderId;
-    
+
     if (typeof window.showToast === 'function') {
       window.showToast({ title: 'Order created', message: 'Please complete payment', variant: 'info', timeout: 3000 });
     }
@@ -616,9 +726,14 @@
     els.paymentForm.hidden = false;
     updateProgress(2);
 
-    // Update payment button with total amount
-    if (els.submitPayment && cartSubtotalCents > 0) {
-      els.submitPayment.textContent = `Pay ${formatMoney(cartSubtotalCents)}`;
+    // Update payment button with total amount (now includes shipping and tax)
+    if (els.submitPayment && cartTotalCents > 0) {
+      const buttonText = els.submitPayment.querySelector('.btn-text');
+      if (buttonText) {
+        buttonText.textContent = `Complete Order • ${formatMoney(cartTotalCents)}`;
+      } else {
+        els.submitPayment.textContent = `Complete Order • ${formatMoney(cartTotalCents)}`;
+      }
     }
 
     await initializePaymentElement(clientSecret);
