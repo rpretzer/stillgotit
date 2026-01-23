@@ -104,8 +104,22 @@
 
                 const dateP = document.createElement('p');
                 dateP.className = 'card-date';
-                if (u?.date && !Number.isNaN(Date.parse(u.date))) {
-                    dateP.textContent = fmt.format(new Date(u.date));
+                if (u?.date) {
+                    let d;
+                    // Check if date matches YYYY-MM-DD format
+                    if (typeof u.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(u.date)) {
+                        const parts = u.date.split('-');
+                        // Create date in local time
+                        d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    } else {
+                        d = new Date(u.date);
+                    }
+                    
+                    if (!Number.isNaN(d.getTime())) {
+                        dateP.textContent = fmt.format(d);
+                    } else {
+                        dateP.textContent = '';
+                    }
                 } else {
                     dateP.textContent = '';
                 }
