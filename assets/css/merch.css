@@ -605,6 +605,33 @@
   margin-left: auto;
 }
 
+/* Product card skeleton loaders */
+.skeleton-card {
+  pointer-events: none;
+}
+
+.skeleton-card .card-image {
+  height: 240px;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 70%;
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-price {
+  height: 24px;
+  width: 40%;
+  margin-bottom: var(--spacing-md);
+}
+
+.skeleton-button {
+  height: 44px;
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
 /* ===== Promo Code ===== */
 
 .promo-code-section {
@@ -1246,6 +1273,26 @@
 @media (min-width: 768px) {
   .btn-full-width {
     width: auto;
+  }
+}
+
+/* Sticky cart on desktop */
+@media (min-width: 900px) {
+  .merch-products {
+    padding-bottom: var(--spacing-xxl);
+  }
+
+  .merch-cart {
+    position: sticky;
+    top: 100px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+  }
+
+  .merch-cart .container {
+    max-width: var(--merch-max);
   }
 }
 

@@ -893,6 +893,30 @@
                     el.alt = img.alt || `Gallery image ${start + idx + 1}`;
                     el.dataset.fullSrc = addImageCacheBust(fullSrc);
                     cell.appendChild(el);
+
+                    // Add caption if available
+                    const caption = img.caption || img.alt;
+                    if (caption) {
+                        const captionEl = document.createElement('div');
+                        captionEl.className = 'gallery-caption';
+
+                        // Parse date from alt text if it follows pattern "Still Got It Collective MM.DD.YY"
+                        const dateMatch = caption.match(/(\d{2})\.(\d{2})\.(\d{2})/);
+                        if (dateMatch) {
+                            const month = parseInt(dateMatch[1], 10);
+                            const day = parseInt(dateMatch[2], 10);
+                            const year = 2000 + parseInt(dateMatch[3], 10);
+                            const date = new Date(year, month - 1, day);
+                            const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                            captionEl.textContent = formatter.format(date);
+                        } else {
+                            // Fallback to showing alt text
+                            captionEl.textContent = caption;
+                        }
+
+                        cell.appendChild(captionEl);
+                    }
+
                     grid.appendChild(cell);
                 });
 
@@ -1268,6 +1292,57 @@
         setTimeout(pruneCurrentPageLink, 600);
     })();
 
+    // ===== Contact Form Handler =====
+    function initContactForm() {
+        const form = document.getElementById('contact-form');
+        if (!form) return;
+
+        const statusEl = document.getElementById('contact-form-status');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message')
+            };
+
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            statusEl.className = 'form-status';
+            statusEl.textContent = '';
+
+            try {
+                // TODO: Replace with actual form submission endpoint
+                // For now, we'll use mailto as fallback
+                const mailtoLink = `mailto:info@stillgotitcollective.com?subject=${encodeURIComponent(data.subject + ' - ' + data.name)}&body=${encodeURIComponent(data.message + '\n\nFrom: ' + data.name + ' (' + data.email + ')')}`;
+
+                // Open mailto link
+                window.location.href = mailtoLink;
+
+                // Show success message
+                statusEl.className = 'form-status success';
+                statusEl.textContent = 'Your email client should open. If not, please email us directly at info@stillgotitcollective.com';
+                form.reset();
+
+            } catch (error) {
+                // Show error message
+                statusEl.className = 'form-status error';
+                statusEl.textContent = 'Failed to send message. Please email us directly at info@stillgotitcollective.com';
+            } finally {
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
+    }
+
     // ===== Copyright Year =====
     function updateCopyrightYear() {
         const yearEls = document.querySelectorAll('.copyright-year');
@@ -1284,6 +1359,7 @@
         loadPageContent();
         loadLatestUpdates();
         loadGallery();
+        initContactForm();
     });
 
 })();

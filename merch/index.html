@@ -33,13 +33,31 @@
         <a href="/" class="logo">
           <span class="logo-text">Still Got It Collective</span>
         </a>
-
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/#upcoming-events" class="nav-link">Events</a></li>
+          <li><a href="/merch/" class="nav-link">Merch</a></li>
+          <li><a href="/about/" class="nav-link">About</a></li>
+          <li><a href="/contact/" class="nav-link">Contact</a></li>
+        </ul>
         <button class="btn btn-secondary nav-cart" id="nav-cart" type="button">
           Cart <span class="merch-cart-count" id="cart-count">0</span>
         </button>
       </div>
     </div>
   </nav>
+
+  <div class="breadcrumbs">
+    <nav aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li>Merch</li>
+      </ol>
+    </nav>
+  </div>
 
   <main id="main-content" class="merch-main">
     <section class="section merch-hero">
@@ -54,10 +72,30 @@
     <section id="products" class="section merch-products">
       <div class="container">
         <div class="merch-grid" id="merch-grid" data-merch-source="https://sgic-merch-api.rpretzer.workers.dev/api/products">
-          <!-- Filled by assets/js/merch.js -->
-          <div class="ticket-card">
-            <h3 id="merch-loading-title">Loading merch…</h3>
-            <p id="merch-loading-subtext">If this takes too long, refresh the page.</p>
+          <!-- Skeleton loaders - replaced by assets/js/merch.js when products load -->
+          <div class="merch-card skeleton-card">
+            <div class="card-image skeleton"></div>
+            <div class="card-content">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-price"></div>
+              <div class="skeleton skeleton-button"></div>
+            </div>
+          </div>
+          <div class="merch-card skeleton-card">
+            <div class="card-image skeleton"></div>
+            <div class="card-content">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-price"></div>
+              <div class="skeleton skeleton-button"></div>
+            </div>
+          </div>
+          <div class="merch-card skeleton-card">
+            <div class="card-image skeleton"></div>
+            <div class="card-content">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-price"></div>
+              <div class="skeleton skeleton-button"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -79,18 +117,18 @@
               <strong id="cart-subtotal">$0.00</strong>
             </div>
             <div class="merch-estimates" id="cart-estimates">
+              <p class="merch-estimate-hint">Shipping and tax calculated at checkout (US shipping only)</p>
               <div class="merch-estimate-row">
-                <span class="merch-estimate-label">Est. Shipping</span>
+                <span class="merch-estimate-label">Shipping</span>
                 <span id="cart-est-shipping">$0.00</span>
               </div>
               <div class="merch-estimate-row">
-                <span class="merch-estimate-label">Est. Tax</span>
+                <span class="merch-estimate-label">Tax</span>
                 <span id="cart-est-tax">$0.00</span>
               </div>
-              <p class="merch-estimate-hint">Estimates based on standard US shipping. Final amounts calculated at checkout.</p>
             </div>
             <div class="merch-total-row" id="cart-total-row">
-              <span>Est. Total</span>
+              <span>Total</span>
               <strong id="cart-est-total">$0.00</strong>
             </div>
           </div>

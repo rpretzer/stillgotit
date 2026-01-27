@@ -28,55 +28,77 @@
         </button>
         <ul class="nav-menu" id="nav-menu">
           <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/#upcoming-events" class="nav-link">Events</a></li>
           <li><a href="/merch/" class="nav-link">Merch</a></li>
-          <li><a href="/tickets/" class="nav-link">Tickets</a></li>
           <li><a href="/about/" class="nav-link">About</a></li>
+          <li><a href="/contact/" class="nav-link">Contact</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
+  <div class="breadcrumbs">
+    <nav aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li>Contact</li>
+      </ol>
+    </nav>
+  </div>
+
   <main id="main-content">
     <section class="section section--compact">
       <div class="container">
         <div id="page-content-grid" class="content-grid fade-in">
-          <div class="content-block">
-            <h2>General inquiries</h2>
-            <p>
-              For questions about upcoming events, tickets, or accessibility, send us an email and we’ll get back to you as soon as we can.
-            </p>
-            <p>
-              <strong>Email:</strong>
-              <a href="mailto:info@stillgotitcollective.com">info@stillgotitcollective.com</a>
-            </p>
+          <div class="content-block content-block--wide">
+            <h2>Send us a message</h2>
+            <form id="contact-form" class="contact-form">
+              <div class="form-field">
+                <label for="contact-name">Name *</label>
+                <input type="text" id="contact-name" name="name" class="form-input" required>
+              </div>
+
+              <div class="form-field">
+                <label for="contact-email">Email *</label>
+                <input type="email" id="contact-email" name="email" class="form-input" required>
+              </div>
+
+              <div class="form-field">
+                <label for="contact-subject">Subject *</label>
+                <select id="contact-subject" name="subject" class="form-input form-select" required>
+                  <option value="">Select a topic</option>
+                  <option value="general">General inquiry</option>
+                  <option value="events">Event question</option>
+                  <option value="bookings">Partnership or booking</option>
+                  <option value="tickets">Tickets or orders</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="contact-message">Message *</label>
+                <textarea id="contact-message" name="message" class="form-input" rows="6" required></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Send Message</button>
+              </div>
+
+              <p class="form-status" id="contact-form-status"></p>
+            </form>
           </div>
 
           <div class="content-block">
-            <h2>Events</h2>
+            <h2>Or email us directly</h2>
             <p>
-              For questions about specific events, event details, or event-related inquiries.
-            </p>
-            <p>
-              <strong>Email:</strong>
-              <a href="mailto:events@stillgotitcollective.com">events@stillgotitcollective.com</a>
-            </p>
-          </div>
-
-          <div class="content-block">
-            <h2>Partnerships & bookings</h2>
-            <p>
-              Interested in sponsoring an event, booking us for a special night, or hosting a Still Got It experience at your space?
-            </p>
-            <p>
-              <strong>Email:</strong>
-              <a href="mailto:bookings@stillgotitcollective.com">bookings@stillgotitcollective.com</a>
+              Prefer email? Reach us at <a href="mailto:info@stillgotitcollective.com">info@stillgotitcollective.com</a> for all inquiries.
             </p>
           </div>
 
           <div class="content-block">
             <h2>Follow along</h2>
             <p>
-              The fastest way to see what’s next is to follow us on Instagram:
+              The fastest way to see what's next is to follow us on Instagram:
               <a href="https://www.instagram.com/stillgotitcollective" target="_blank" rel="noopener noreferrer">@stillgotitcollective</a>
             </p>
           </div>
