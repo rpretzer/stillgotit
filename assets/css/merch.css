@@ -72,6 +72,16 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.merch-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
 }
 
 .merch-card .card-content {
@@ -111,12 +121,21 @@
 
 .merch-select {
   width: 100%;
-  padding: 0.75rem 0.75rem;
+  padding: 0.75rem 0.9rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.merch-select:focus {
+  outline: none;
+  border-color: var(--interactive-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--interactive-primary) 40%, transparent);
 }
 
 .merch-cart-button {

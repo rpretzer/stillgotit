@@ -134,9 +134,11 @@
     --spacing-xxl: 4rem;
     
     /* Border Radius */
+    --radius-xs: 6px;
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
+    --radius-xl: 16px;
     
     /* Shadows */
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -633,19 +635,6 @@ body {
 /* Keep CTA buttons readable inside the banner */
 .announcement-banner .btn {
     text-decoration: none;
-    color: var(--text-inverse);
-}
-
-.announcement-banner .btn-primary {
-    background: var(--interactive-primary);
-    border: none;
-    color: var(--text-inverse);
-}
-
-.announcement-banner .btn-secondary {
-    background: var(--color-secondary-500);
-    border: none;
-    color: var(--text-inverse);
 }
 
 @media (min-width: 768px) {
@@ -706,7 +695,7 @@ body {
 
 .content-block h2 {
     font-family: var(--font-heading);
-    font-size: clamp(1.5rem, 3vw, 2.441rem);
+    font-size: clamp(1.75rem, 4vw, 3.815rem);
     font-weight: var(--font-bold);
     line-height: var(--leading-tight);
     color: var(--text-primary);
