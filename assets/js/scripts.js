@@ -831,6 +831,9 @@
      * Supports both repo uploads (Decap) and external CDN/DAM URLs.
      * @returns {Promise<void>}
      */
+    // Store full gallery array for lightbox access
+    let fullGalleryImages = [];
+
     async function loadGallery() {
         const grid = document.getElementById('gallery-grid');
         if (!grid) return;
@@ -841,7 +844,7 @@
         try {
             // Add cache-busting to ensure fresh content
             const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
-            const res = await fetch(fetchUrl, { 
+            const res = await fetch(fetchUrl, {
                 cache: 'no-store',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -857,6 +860,12 @@
                 const bf = b?.featured ? 1 : 0;
                 return bf - af;
             });
+
+            // Store full array for lightbox to access all images
+            fullGalleryImages = items.map(img => ({
+                src: addImageCacheBust(img?.src || img?.srcUpload),
+                alt: img.alt || 'Gallery image'
+            }));
 
             // Pagination
             const state = {
@@ -939,15 +948,6 @@
         }
     }
 
-    function getGalleryImagesFromDOM() {
-        const grid = document.getElementById('gallery-grid');
-        if (!grid) return [];
-        return Array.from(grid.querySelectorAll('.gallery-item img')).map((img) => ({
-            src: img.dataset.fullSrc || img.src,
-            alt: img.alt || 'Gallery image'
-        }));
-    }
-
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightbox-image');
     const lightboxClose = document.getElementById('lightbox-close');
@@ -958,19 +958,18 @@
     let currentImageIndex = 0;
 
     function openLightboxAt(index) {
-        const images = getGalleryImagesFromDOM();
-        if (!images.length) return;
-        currentImageIndex = Math.max(0, Math.min(index, images.length - 1));
-        openLightbox(images);
+        if (!fullGalleryImages.length) return;
+        currentImageIndex = Math.max(0, Math.min(index, fullGalleryImages.length - 1));
+        openLightbox();
     }
 
-    function openLightbox(images) {
-        if (!lightbox || !lightboxImage) return;
-        updateLightboxImage(images);
+    function openLightbox() {
+        if (!lightbox || !lightboxImage || !fullGalleryImages.length) return;
+        updateLightboxImage();
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
         if (lightboxCounter) {
-            lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+            lightboxCounter.textContent = `${currentImageIndex + 1} / ${fullGalleryImages.length}`;
         }
     }
 
@@ -980,26 +979,24 @@
         document.body.style.overflow = '';
     }
 
-    function updateLightboxImage(images) {
-        if (!lightboxImage || !images[currentImageIndex]) return;
-        lightboxImage.src = images[currentImageIndex].src;
-        lightboxImage.alt = images[currentImageIndex].alt;
+    function updateLightboxImage() {
+        if (!lightboxImage || !fullGalleryImages[currentImageIndex]) return;
+        lightboxImage.src = fullGalleryImages[currentImageIndex].src;
+        lightboxImage.alt = fullGalleryImages[currentImageIndex].alt;
     }
 
     function showPrevImage() {
-        const images = getGalleryImagesFromDOM();
-        if (!images.length) return;
-        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-        updateLightboxImage(images);
-        if (lightboxCounter) lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+        if (!fullGalleryImages.length) return;
+        currentImageIndex = (currentImageIndex - 1 + fullGalleryImages.length) % fullGalleryImages.length;
+        updateLightboxImage();
+        if (lightboxCounter) lightboxCounter.textContent = `${currentImageIndex + 1} / ${fullGalleryImages.length}`;
     }
 
     function showNextImage() {
-        const images = getGalleryImagesFromDOM();
-        if (!images.length) return;
-        currentImageIndex = (currentImageIndex + 1) % images.length;
-        updateLightboxImage(images);
-        if (lightboxCounter) lightboxCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
+        if (!fullGalleryImages.length) return;
+        currentImageIndex = (currentImageIndex + 1) % fullGalleryImages.length;
+        updateLightboxImage();
+        if (lightboxCounter) lightboxCounter.textContent = `${currentImageIndex + 1} / ${fullGalleryImages.length}`;
     }
 
     // Delegated click handler so dynamically-rendered items work
@@ -1008,9 +1005,9 @@
         galleryGrid.addEventListener('click', (e) => {
             const item = e.target?.closest?.('.gallery-item');
             if (!item) return;
-            const imgs = Array.from(galleryGrid.querySelectorAll('.gallery-item'));
-            const idx = imgs.indexOf(item);
-            if (idx >= 0) openLightboxAt(idx);
+            // Use the data-gallery-index which contains the true index in the full array
+            const idx = parseInt(item.dataset.galleryIndex, 10);
+            if (!isNaN(idx)) openLightboxAt(idx);
         });
     }
 
