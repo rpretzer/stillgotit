@@ -635,6 +635,12 @@ body {
 /* Keep CTA buttons readable inside the banner */
 .announcement-banner .btn {
     text-decoration: none;
+    color: var(--text-inverse);
+}
+
+.announcement-banner .btn-primary,
+.announcement-banner .btn-secondary {
+    color: var(--text-inverse);
 }
 
 @media (min-width: 768px) {
