@@ -820,7 +820,7 @@ a[href^="tel:"]:visited {
 
 /* ===== Contact Form ===== */
 .content-block--wide {
-    max-width: 600px;
+    max-width: 800px;
 }
 
 .contact-form {
@@ -844,6 +844,8 @@ a[href^="tel:"]:visited {
 
 .form-field .form-input {
     width: 100%;
+    max-width: none;
+    min-width: 0;
     padding: 1rem 1.25rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-default);
@@ -853,6 +855,15 @@ a[href^="tel:"]:visited {
     font-size: var(--text-base);
     line-height: var(--leading-normal);
     transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+    box-sizing: border-box;
+}
+
+/* Ensure all form input types have consistent width */
+.form-field input.form-input,
+.form-field select.form-input,
+.form-field textarea.form-input {
+    width: 100%;
+    display: block;
 }
 
 .form-field .form-input::placeholder {
