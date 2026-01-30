@@ -324,6 +324,17 @@ collections:
                   - { label: "Value", name: "value", widget: "string" }
                   - { label: "Link URL", name: "url", widget: "string", required: false }
 
+      - name: "events-page"
+        label: "Events Page"
+        file: "content/pages/events.json"
+        format: "json"
+        fields:
+          - { label: "Page Title (SEO)", name: "metaTitle", widget: "string" }
+          - { label: "Page Description (SEO)", name: "metaDescription", widget: "text" }
+          - { label: "Page Title", name: "pageTitle", widget: "string" }
+          - { label: "Page Subtitle", name: "pageSubtitle", widget: "text", required: false }
+          - { label: "Empty State Message", name: "emptyMessage", widget: "string" }
+
       - name: "legal"
         label: "Legal"
         file: "content/pages/legal.json"
