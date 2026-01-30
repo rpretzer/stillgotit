@@ -23,6 +23,13 @@
       "image": "",
       "imageUpload": "/assets/images/uploads/img_4860-edit.jpg",
       "ctaUrl": "#instagram"
+    },
+    {
+      "pinned": true,
+      "ctaStyle": "primary",
+      "title": "New Merch Drop!",
+      "date": "2026-01-30",
+      "body": "Limited edition event t-shirts, comfy hoodies, and a wicked cool hat... for hat people. Check out our new hotness on our merch page."
     }
   ]
 }
