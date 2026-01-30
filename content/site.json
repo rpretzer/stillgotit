@@ -28,8 +28,8 @@
     "title": "Checkout"
   },
   "tickets": {
-    "ticketsUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
-    "ticketsBody": "Still Got It Collective - 80's Dance Party. Thu, Jan 29, 2026 • 6–10 PM • B-Side Lounge, Cleveland.",
+    "ticketsUrl": "https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277",
+    "ticketsBody": "Still Got It Collective - Cabin Fever. Wed, Feb 26, 2026 • 6–10 PM • B-Side Lounge, Cleveland.",
     "ticketsLabel": "Get Tickets",
     "squareNote": "Shop our merch at the link above.",
     "ticketsTitle": "Buy Tickets",
@@ -42,9 +42,9 @@
   "banner": {
     "emoji": "",
     "strongText": "Next Event:",
-    "text": "80's Dance Party — Jan 29, 2026 • B-Side Lounge, Cleveland",
+    "text": "Cabin Fever — Feb 26, 2026 • B-Side Lounge, Cleveland",
     "ctaLabel": "Get Tickets",
-    "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226"
+    "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277"
   },
   "sections": {
     "announcements": {
@@ -93,7 +93,7 @@
     "imageUrl": "",
     "proofText": "2.4k+ attendees • 47 photos • Merch drop live",
     "ctaPrimaryLabel": "Get Tickets",
-    "ctaPrimaryUrl": "https://ticketscandy.com/e/still-got-it-collective-129-80s-dance-party-14226",
+    "ctaPrimaryUrl": "https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277",
     "ctaSecondaryLabel": "See the vibe",
     "ctaSecondaryUrl": "#gallery"
   },
