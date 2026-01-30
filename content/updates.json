@@ -1,26 +1,16 @@
 {
   "updates": [
     {
-      "pinned": true,
-      "ctaStyle": "primary",
-      "title": "Big Energy 80's",
-      "image": "/assets/images/uploads/chatgpt-image-dec-12-2025-05_54_21-pm.png",
-      "ctaLabel": "GET TICKETS",
-      "date": "2026-01-29",
-      "body": "Shoulder pads optional. Sweat mandatory. Still Got It Collective is throwing it back to the decade that invented the dance floor as we know it. Think synth-heavy bangers, neon everything, and zero shame about how hard you're going.\n\nDance like you did. Sleep like you should.",
-      "ctaUrl": "https://www.stillgotitcollective.com/tickets"
-    },
-    {
       "ctaStyle": "primary",
       "body": "Tired of staring at the same four walls? Break out. Still Got It Collective is serving up the antidote to your February funk: signature dance vibes, curated whiskey flights, and a packed room ready to move. Winter ends when you say it does.",
-      "ctaLabel": "COMING SOON",
+      "ctaLabel": "Get Tickets",
       "alt": "Woman looking out window",
       "date": "2026-02-26",
       "title": "Cure your cabin fever",
       "pinned": false,
       "image": "",
       "imageUpload": "/assets/images/uploads/cabin_fever2.png",
-      "ctaUrl": "#tickets"
+      "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277"
     },
     {
       "ctaStyle": "primary",
