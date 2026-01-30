@@ -31,8 +31,7 @@
         </button>
         <ul class="nav-menu" id="nav-menu">
           <li><a href="/" class="nav-link">Home</a></li>
-          <li><a href="/#upcoming-events" class="nav-link">Events</a></li>
-          <li><a href="https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277" class="nav-link" target="_blank" rel="noopener noreferrer">Tickets</a></li>
+          <li><a href="/events/" class="nav-link">Events</a></li>
           <li><a href="/merch/" class="nav-link">Merch</a></li>
           <li><a href="/about/" class="nav-link">About</a></li>
           <li><a href="/contact/" class="nav-link">Contact</a></li>
@@ -55,6 +54,12 @@
       <div class="container">
         <h1 class="section-title">All Events</h1>
         <p class="section-subtitle">Past and upcoming events from The Still Got It Collective</p>
+
+        <div class="events-filter-tabs fade-in">
+          <button class="filter-tab active" data-filter="upcoming">Upcoming</button>
+          <button class="filter-tab" data-filter="past">Past</button>
+          <button class="filter-tab" data-filter="all">All</button>
+        </div>
 
         <div id="events-page-grid" class="events-page-grid fade-in">
           <!-- Skeleton cards shown during loading -->

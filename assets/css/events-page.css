@@ -3,6 +3,45 @@
    Extends design system from style.css
    ======================================== */
 
+/* Filter tabs */
+.events-filter-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: center;
+  margin: var(--spacing-lg) 0;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.filter-tab:hover {
+  color: var(--text-primary);
+  border-color: var(--interactive-primary);
+  background: var(--bg-tertiary);
+}
+
+.filter-tab.active {
+  color: var(--text-inverse);
+  background: var(--interactive-primary);
+  border-color: var(--interactive-primary);
+}
+
+.filter-tab.active:hover {
+  background: var(--interactive-primary-hover);
+  border-color: var(--interactive-primary-hover);
+}
+
 /* Events page grid layout */
 .events-page-grid {
   display: grid;
@@ -161,9 +200,29 @@
     opacity: 0.5;
     filter: grayscale(50%);
   }
+
+  :root:not([data-theme]) .event-status-badge.upcoming {
+    background: rgba(34, 211, 238, 0.15);
+    color: #67e8f9;
+    border: 1px solid #22d3ee;
+  }
+
+  :root:not([data-theme]) .event-page-card .card-content h3 {
+    color: #ffa3cc;
+  }
 }
 
 :root[data-theme="dark"] .event-page-card.past-event {
   opacity: 0.5;
   filter: grayscale(50%);
+}
+
+:root[data-theme="dark"] .event-status-badge.upcoming {
+  background: rgba(34, 211, 238, 0.15);
+  color: #67e8f9;
+  border: 1px solid #22d3ee;
+}
+
+:root[data-theme="dark"] .event-page-card .card-content h3 {
+  color: #ffa3cc;
 }

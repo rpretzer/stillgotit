@@ -7,6 +7,11 @@
   // DOM elements
   const grid = document.getElementById('events-page-grid');
   const emptyState = document.getElementById('events-page-empty');
+  const filterTabs = document.querySelectorAll('.filter-tab');
+
+  // State
+  let allEvents = [];
+  let activeFilter = 'upcoming'; // Default filter
 
   if (!grid) return;
 
@@ -193,14 +198,33 @@
   }
 
   /**
+   * Filters events based on active filter
+   * @param {Array} events - Array of all events
+   * @param {string} filter - Filter type: 'upcoming', 'past', or 'all'
+   * @returns {Array} Filtered events
+   */
+  function filterEvents(events, filter) {
+    if (filter === 'all') return events;
+
+    return events.filter(event => {
+      const isPast = isPastEvent(event.date);
+      return filter === 'past' ? isPast : !isPast;
+    });
+  }
+
+  /**
    * Renders events to the grid
    * @param {Array} events - Array of normalized events
+   * @param {string} filter - Filter type: 'upcoming', 'past', or 'all'
    */
-  function renderEvents(events) {
+  function renderEvents(events, filter = 'upcoming') {
     // Clear loading skeletons
     grid.innerHTML = '';
 
-    if (events.length === 0) {
+    // Filter events based on active filter
+    const filteredEvents = filterEvents(events, filter);
+
+    if (filteredEvents.length === 0) {
       emptyState.hidden = false;
       return;
     }
@@ -208,7 +232,7 @@
     emptyState.hidden = true;
 
     // Sort events (newest first)
-    const sortedEvents = sortEvents(events);
+    const sortedEvents = sortEvents(filteredEvents);
 
     // Create and append cards
     sortedEvents.forEach(event => {
@@ -242,13 +266,37 @@
   }
 
   /**
+   * Sets up filter tab event listeners
+   */
+  function setupFilterTabs() {
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        // Update active filter
+        activeFilter = this.dataset.filter;
+
+        // Update active tab styling
+        filterTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        // Re-render events with new filter
+        renderEvents(allEvents, activeFilter);
+      });
+    });
+  }
+
+  /**
    * Main initialization function
    */
   async function init() {
     try {
       const rawEvents = await fetchEvents();
-      const events = rawEvents.map(normalizeEvent);
-      renderEvents(events);
+      allEvents = rawEvents.map(normalizeEvent);
+
+      // Setup filter tabs
+      setupFilterTabs();
+
+      // Render with default filter (upcoming)
+      renderEvents(allEvents, activeFilter);
     } catch (error) {
       console.error('Failed to initialize events page:', error);
       grid.innerHTML = '<p class="section-subtitle">Unable to load events. Please try again later.</p>';

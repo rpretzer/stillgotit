@@ -37,7 +37,6 @@
     
     <!-- Stylesheet -->
     <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/events.css">
     
     <!-- Google Analytics 4 (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-M23KTK21ZD"></script>
@@ -68,8 +67,7 @@
                 </button>
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="/" class="nav-link">Home</a></li>
-                    <li><a href="/#upcoming-events" class="nav-link">Events</a></li>
-                    <li><a href="https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277" class="nav-link" target="_blank" rel="noopener noreferrer">Tickets</a></li>
+                    <li><a href="/events/" class="nav-link">Events</a></li>
                     <li><a href="/merch/" class="nav-link">Merch</a></li>
                     <li><a href="/about/" class="nav-link">About</a></li>
                     <li><a href="/contact/" class="nav-link">Contact</a></li>
@@ -142,34 +140,7 @@
             </div>
         </section>
         
-        <!-- Events Calendar Section -->
-        <section id="upcoming-events" class="events-section section">
-            <div class="container">
-                <h2 class="section-title fade-in">Event Calendar</h2>
-                <div class="events-toolbar fade-in">
-                    <div class="events-month">
-                        <button class="btn btn-secondary" id="events-prev" type="button" aria-label="Previous month">Prev</button>
-                        <span id="events-month-label" class="month-label">Loading…</span>
-                        <button class="btn btn-secondary" id="events-next" type="button" aria-label="Next month">Next</button>
-                    </div>
-                </div>
-                <div class="events-calendar fade-in" aria-live="polite">
-                    <div class="events-weekdays" id="events-weekdays"></div>
-                    <div class="events-grid" id="events-grid"></div>
-                </div>
-                <p class="section-subtitle events-empty" id="events-empty" hidden>No events scheduled—stay tuned! Follow @stillgotitcollective on IG.</p>
-            </div>
-
-            <!-- Event modal -->
-            <div class="event-modal" id="event-modal" role="dialog" aria-modal="true" aria-labelledby="event-modal-title" hidden>
-                <div class="event-modal-content">
-                    <button class="event-modal-close" id="event-modal-close" aria-label="Close event details">×</button>
-                    <div class="event-modal-body" id="event-modal-body"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Removed unused external calendar embed section -->
+        <!-- Events Calendar Section - Removed (replaced by /events/ standalone page) -->
         
         <!-- Gallery Section -->
         <section id="gallery" class="gallery section">
@@ -335,7 +306,6 @@
     </footer>
     
     <!-- JavaScript -->
-    <script src="/assets/js/events.js"></script>
     <script src="/assets/js/scripts.js"></script>
 </body>
 </html>
