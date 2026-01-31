@@ -210,6 +210,12 @@
   :root:not([data-theme]) .event-page-card .card-content h3 {
     color: #ffa3cc;
   }
+
+  :root:not([data-theme]) .event-status-badge.past {
+    background: rgba(163, 163, 163, 0.15);
+    color: #d4d4d4;
+    border: 1px solid #525252;
+  }
 }
 
 :root[data-theme="dark"] .event-page-card.past-event {
@@ -221,6 +227,12 @@
   background: rgba(34, 211, 238, 0.15);
   color: #67e8f9;
   border: 1px solid #22d3ee;
+}
+
+:root[data-theme="dark"] .event-status-badge.past {
+  background: rgba(163, 163, 163, 0.15);
+  color: #d4d4d4;
+  border: 1px solid #525252;
 }
 
 :root[data-theme="dark"] .event-page-card .card-content h3 {
