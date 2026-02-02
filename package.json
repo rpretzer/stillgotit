@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "images:build": "node tools/process-images.mjs",
+    "gallery:sync": "node scripts/sync-gallery-content.js",
     "watch:images": "node scripts/watch-incoming-images.js",
     "media:index": "node scripts/generate-media-index.js"
   },
