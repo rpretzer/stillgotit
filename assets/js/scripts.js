@@ -887,7 +887,7 @@
                 const start = (state.page - 1) * state.pageSize;
                 const slice = state.items.slice(start, start + state.pageSize);
 
-                grid.innerHTML = '';
+                const fragment = document.createDocumentFragment();
                 slice.forEach((img, idx) => {
                     const fullSrc = img?.src || img?.srcUpload;
                     if (!fullSrc) return;
@@ -896,7 +896,6 @@
                     cell.dataset.galleryIndex = String(start + idx);
 
                     const el = document.createElement('img');
-                    el.loading = 'lazy';
                     const thumbSrc = img?.thumb || img?.thumbUpload || fullSrc;
                     el.src = addImageCacheBust(thumbSrc);
                     el.alt = img.alt || `Gallery image ${start + idx + 1}`;
@@ -926,8 +925,9 @@
                         cell.appendChild(captionEl);
                     }
 
-                    grid.appendChild(cell);
+                    fragment.appendChild(cell);
                 });
+                grid.replaceChildren(fragment);
 
                 if (prevEl) prevEl.disabled = state.page <= 1;
                 if (nextEl) nextEl.disabled = state.page >= pages;
