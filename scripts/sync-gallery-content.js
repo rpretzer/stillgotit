@@ -39,15 +39,14 @@ async function main() {
     gallery.images = [];
   }
 
+  // Manifest is the source of truth for what webps actually exist.
+  // Build a set of valid src paths so we can prune stale gallery entries.
+  const validSrcs = new Set(manifest.items.map(item => '/' + item.full));
+
   // Create a set of existing image src paths for quick lookup
   const existingSrcs = new Set(gallery.images.map(img => img.src));
   let addedCount = 0;
 
-  // Manifest items are sorted by source, but we might want new ones at the top?
-  // The gallery.json order determines display order.
-  // Usually, we want newer images at the top (beginning of the array).
-  // The manifest is sorted by source filename.
-  
   const newItems = [];
 
   for (const item of manifest.items) {
@@ -57,11 +56,7 @@ async function main() {
     const thumb = '/' + item.thumb;
 
     if (!existingSrcs.has(src)) {
-      // derive a simple alt text from the source filename
-      // item.source is relative path "assets/images/_incoming_raw/filename.jpg"
-      // we want just "filename" (no ext)
       const filename = path.basename(item.source, path.extname(item.source));
-      // replace dashes/underscores with spaces for better default alt
       const alt = filename.replace(/[-_]/g, ' ');
 
       newItems.push({
@@ -76,25 +71,28 @@ async function main() {
     }
   }
 
-  if (addedCount > 0) {
-    // Sort new items descending by source filename (Z-A)
-    // This assumes newer files have "higher" filenames (e.g. 2026 vs 2025, or seq-10 vs seq-1)
-    newItems.sort((a, b) => {
-      const sourceA = String(a._source || '').toLowerCase();
-      const sourceB = String(b._source || '').toLowerCase();
-      return sourceB.localeCompare(sourceA, undefined, { numeric: true, sensitivity: 'base' });
-    });
+  // Sort new items descending by source filename (Z-A, numeric-aware)
+  // so newer/higher-numbered files appear first.
+  newItems.sort((a, b) => {
+    const sourceA = String(a._source || '').toLowerCase();
+    const sourceB = String(b._source || '').toLowerCase();
+    return sourceB.localeCompare(sourceA, undefined, { numeric: true, sensitivity: 'base' });
+  });
 
-    // Cleanup temporary field
-    newItems.forEach(item => delete item._source);
+  newItems.forEach(item => delete item._source);
 
-    // Prepend new items to the beginning of the list (newest first assumption)
-    gallery.images = [...newItems, ...gallery.images];
-    
+  // Prepend new items, then prune any entries not backed by the manifest.
+  gallery.images = [...newItems, ...gallery.images];
+
+  const beforeCount = gallery.images.length;
+  gallery.images = gallery.images.filter(img => validSrcs.has(img.src));
+  const prunedCount = beforeCount - gallery.images.length;
+
+  if (addedCount > 0 || prunedCount > 0) {
     await fs.writeFile(GALLERY_CONTENT_PATH, JSON.stringify(gallery, null, 2) + '\n', 'utf8');
-    console.log(`Successfully synced. Added ${addedCount} new images to gallery.json.`);
+    console.log(`Synced gallery.json — added: ${addedCount}, pruned: ${prunedCount}.`);
   } else {
-    console.log('No new images to add to gallery.json.');
+    console.log('No changes to gallery.json.');
   }
 }
 
