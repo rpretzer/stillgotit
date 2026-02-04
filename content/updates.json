@@ -27,9 +27,12 @@
     {
       "pinned": true,
       "ctaStyle": "primary",
-      "title": "New Merch Drop!",
+      "title": "New Merch Drop",
       "date": "2026-01-30",
-      "body": "Limited edition event t-shirts, comfy hoodies, and a wicked cool hat... for hat people. Check out our new hotness on our merch page."
+      "body": "Limited edition event t-shirts, comfy hoodies, and a wicked cool hat... for hat people. Check out our new hotness on our merch page.",
+      "imageUpload": "/assets/images/uploads/merchshot.png",
+      "ctaLabel": "Shop merch",
+      "ctaUrl": "stillgotitcollective.com/merch"
     },
     {
       "pinned": false,
