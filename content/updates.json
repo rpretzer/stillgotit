@@ -13,18 +13,6 @@
       "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277"
     },
     {
-      "ctaStyle": "primary",
-      "body": "Follow us on Instagram for the stuff that doesn't make it to the flyer-setups, sound checks, and the chaos that makes it all work.",
-      "ctaLabel": "Follow Us",
-      "alt": "Event planning behind the scenes",
-      "date": "2025-12-29",
-      "title": "Behind the Scenes",
-      "pinned": false,
-      "image": "",
-      "imageUpload": "/assets/images/uploads/img_4860-edit.jpg",
-      "ctaUrl": "#instagram"
-    },
-    {
       "pinned": true,
       "ctaStyle": "primary",
       "title": "New Merch Drop",
@@ -43,6 +31,18 @@
       "ctaUrl": "http://bored.stillgotitcollective.com",
       "date": "2026-02-04",
       "imageUpload": "/assets/images/uploads/stggame.png"
+    },
+    {
+      "ctaStyle": "primary",
+      "body": "Follow us on Instagram for the stuff that doesn't make it to the flyer-setups, sound checks, and the chaos that makes it all work.",
+      "ctaLabel": "Follow Us",
+      "alt": "Event planning behind the scenes",
+      "date": "2025-12-29",
+      "title": "Behind the Scenes",
+      "pinned": false,
+      "image": "",
+      "imageUpload": "/assets/images/uploads/img_4860-edit.jpg",
+      "ctaUrl": "#instagram"
     }
   ]
 }
