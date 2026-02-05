@@ -285,14 +285,47 @@ body {
     left: 0;
     right: 0;
     background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     box-shadow: var(--shadow-sm);
     z-index: 1000;
     transition: var(--transition);
+    /* iOS WebKit fix for in-app browsers */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
 
 .navbar.scrolled {
     box-shadow: var(--shadow-md);
+}
+
+/* Dark mode navbar */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .navbar {
+        background: rgba(10, 10, 10, 0.95);
+    }
+}
+
+:root[data-theme="dark"] .navbar {
+    background: rgba(10, 10, 10, 0.95);
+}
+
+/* iOS WebKit in-app browser fixes */
+@supports (-webkit-touch-callout: none) {
+    /* Fallback for browsers that don't support backdrop-filter */
+    @supports not (backdrop-filter: blur(10px)) {
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme]) .navbar {
+                background: rgba(10, 10, 10, 0.98);
+            }
+        }
+        :root[data-theme="dark"] .navbar {
+            background: rgba(10, 10, 10, 0.98);
+        }
+    }
 }
 
 .nav-wrapper {

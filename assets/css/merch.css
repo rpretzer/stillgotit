@@ -2,6 +2,19 @@
   --merch-max: 1100px;
 }
 
+/* iOS WebKit general fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Ensure smooth scrolling on iOS */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Fix for iOS Safari preventing default tap behavior */
+  button, a, input, select {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
 .merch-main {
   padding-top: 80px;
 }
@@ -1352,6 +1365,9 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-md);
+  /* iOS WebKit fix for in-app browsers */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .merch-modal[hidden] {
@@ -1362,7 +1378,11 @@
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.75);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
+  /* iOS WebKit fix for in-app browsers */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .merch-modal-content {
@@ -1376,6 +1396,10 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   overflow: hidden;
+  /* iOS WebKit fix for in-app browsers */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-overflow-scrolling: touch;
 }
 
 .merch-modal-close {
@@ -1485,6 +1509,7 @@
 .merch-modal-info {
   padding: var(--spacing-lg);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .merch-modal-title {
@@ -1546,6 +1571,35 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+  }
+}
+
+/* iOS WebKit in-app browser fixes */
+@supports (-webkit-touch-callout: none) {
+  /* Improved backdrop fallback for browsers without backdrop-filter support */
+  @supports not (backdrop-filter: blur(4px)) {
+    .merch-modal-backdrop {
+      background: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  /* Ensure proper stacking context on iOS */
+  .merch-modal {
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+  }
+
+  /* Fix potential scrolling issues in modal */
+  .merch-modal-images,
+  .merch-modal-info {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ensure buttons remain clickable */
+  .merch-modal-close,
+  .merch-modal-prev,
+  .merch-modal-next {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
   }
 }
 
