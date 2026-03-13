@@ -86,10 +86,16 @@ function json(data: unknown, init?: ResponseInit) {
   });
 }
 
+const ALLOWED_ORIGINS = [
+  'https://www.stillgotitcollective.com',
+  'https://stillgotitcollective.com',
+];
+
 function corsHeaders(req: Request) {
-  const origin = req.headers.get('Origin') || '*';
+  const origin = req.headers.get('Origin') || '';
+  const allowed = ALLOWED_ORIGINS.includes(origin);
   return {
-    'access-control-allow-origin': origin,
+    'access-control-allow-origin': allowed ? origin : ALLOWED_ORIGINS[0],
     'access-control-allow-methods': 'GET, POST, OPTIONS',
     'access-control-allow-headers': 'content-type, authorization',
     'access-control-max-age': '86400',
@@ -851,6 +857,14 @@ async function handleCheckout(req: Request, env: Env): Promise<Response> {
     return json({ error: 'Please enter a valid email address.' }, { status: 400, headers: cors });
   }
 
+  // Rate limit: max 3 checkout attempts per email per 5 minutes
+  const recentAttempts = await env.DB.prepare(
+    `SELECT COUNT(*) as count FROM orders WHERE email = ? AND created_at > datetime('now', '-5 minutes')`
+  ).bind(email).first<{ count: number }>();
+  if ((recentAttempts?.count ?? 0) >= 3) {
+    return json({ error: 'Too many checkout attempts. Please wait a few minutes and try again.' }, { status: 429, headers: cors });
+  }
+
   // Name validation (basic sanity check)
   const name = String(contactDetails.name).trim();
   if (name.length < 2 || name.length > 100) {
@@ -1593,17 +1607,29 @@ export default {
   // Cron trigger handler (runs daily at 2 AM UTC)
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil(
-      syncPrintfulProducts(env).then(result => {
-        console.log(`[Cron] Product sync completed: ${result.synced} products synced, ${result.updated} updated, ${result.unchanged} unchanged, ${result.errors.length} errors`);
-        if (result.changes.length > 0) {
-          console.log('[Cron] Changes detected:', result.changes.slice(0, 10)); // Log first 10 changes
-        }
-        if (result.errors.length > 0) {
-          console.error('[Cron] Sync errors:', result.errors);
-        }
-      }).catch(err => {
-        console.error('[Cron] Sync failed:', err);
-      })
+      Promise.all([
+        // Sync Printful product catalog
+        syncPrintfulProducts(env).then(result => {
+          console.log(`[Cron] Product sync completed: ${result.synced} products synced, ${result.updated} updated, ${result.unchanged} unchanged, ${result.errors.length} errors`);
+          if (result.changes.length > 0) {
+            console.log('[Cron] Changes detected:', result.changes.slice(0, 10));
+          }
+          if (result.errors.length > 0) {
+            console.error('[Cron] Sync errors:', result.errors);
+          }
+        }).catch(err => {
+          console.error('[Cron] Sync failed:', err);
+        }),
+
+        // Purge abandoned carts older than 30 days
+        env.DB.prepare(
+          `DELETE FROM abandoned_carts WHERE created_at < datetime('now', '-30 days')`
+        ).run().then(result => {
+          console.log(`[Cron] Abandoned cart cleanup: ${result.meta?.changes ?? 0} expired carts deleted`);
+        }).catch(err => {
+          console.error('[Cron] Abandoned cart cleanup failed:', err);
+        }),
+      ])
     );
   }
 };
