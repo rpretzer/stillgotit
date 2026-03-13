@@ -4,7 +4,7 @@ Most recent entries at the top.
 
 ---
 
-## 2026-03-13
+## 2026-03-13 (continued)
 
 ### Session: claude/review-project-QZTyu
 
@@ -33,16 +33,40 @@ Most recent entries at the top.
 
 ---
 
+### Gap Assessment — Findings & Actions
+
+Full assessment run by subagent against 10 areas. Results:
+
+| Area | Finding | Action |
+|---|---|---|
+| CORS policy | Reflects any origin — effectively open to all domains | Needs Worker fix + deploy |
+| Rate limiting | `/api/carts/abandoned` has 1/hr per email; `/api/checkout` has none | Needs Worker fix + deploy |
+| Abandoned cart cleanup | Cron only syncs Printful; expired carts accumulate in D1 indefinitely | Needs Worker fix + deploy |
+| Sitemap | Missing `/events/`; no `<lastmod>` on any entry; checkout/success pages shouldn't be indexed | **Fixed** — see commit |
+| Unsubscribe page | Functional mailto handler; no GA4 intentionally | No action needed |
+| Cancel page | Static page, no GA4 | **Fixed** — GA4 added |
+| Promo code form | Hidden by default — correct UX | No action needed |
+| Dark mode toggle | JS-injected into navbar — works, slight paint delay possible | No action needed |
+| merch.json empty | No graceful fallback if Worker API fails | **Fixed** — static fallback added to `merch.js` |
+| admin/config.yml | All CMS collection paths verified correct | No action needed |
+
+#### Actions Taken (gap follow-up)
+
+- **Sitemap fixed** — Added `/events/` entry; added `<lastmod>2026-03-13</lastmod>` to all entries; removed transactional pages (`merch/checkout.html`, `merch/success/`) that should not be indexed.
+- **merch.js fallback** — If Worker API is unreachable or returns non-OK, `loadCatalog()` now falls back to `/content/merch.json` before throwing. Graceful degradation instead of hard error.
+- **GA4 on cancel page** — `merch/cancel/index.html` now has GA4 tag for consistent tracking of checkout abandonment events.
+
+#### Commits (gap follow-up)
+- `(pending)` Fix sitemap, merch.js fallback, cancel page GA4
+
+---
+
 ## Open / Pending
 
-### Awaiting gap assessment results
-- CORS policy in Worker — reflects any origin; may need locking to production domain (requires `wrangler deploy`)
-- Rate limiting — no rate limiting on `/api/checkout`, `/api/carts/abandoned`, or `/api/sync/products`
-- Expired abandoned cart purge — cron only syncs Printful; expired carts accumulate in D1
-- Sitemap completeness — secondary pages may be missing
-- Unsubscribe / cancel pages — GA4 and functionality TBD
-- Promo code form — placeholder "coming soon" message; visibility TBD
-- Admin CMS config (`admin/config.yml`) — verify collections match repo structure
+### Requires confirmation — Worker changes (need `wrangler deploy`)
+- [ ] **CORS lockdown** — `corsHeaders()` in `index.ts` reflects any origin. Should be locked to `https://www.stillgotitcollective.com`. Low blast radius code change, high security value.
+- [ ] **Checkout rate limiting** — `POST /api/checkout` has no rate limiting. Recommend IP-based limit (e.g., 10 attempts/min via `cf-connecting-ip`). Requires a `rate_limits` table or KV store.
+- [ ] **Abandoned cart cron cleanup** — Daily cron only runs Printful sync. Add `DELETE FROM abandoned_carts WHERE created_at < datetime('now', '-30 days')` to the `scheduled()` handler.
 
 ### Known longer-term items (from HANDOFF)
 - [ ] Migrate to full `merch-platform` stack (Node/Next/Prisma) — future, not urgent
