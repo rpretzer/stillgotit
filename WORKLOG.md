@@ -63,10 +63,19 @@ Full assessment run by subagent against 10 areas. Results:
 
 ## Open / Pending
 
-### Requires confirmation — Worker changes (need `wrangler deploy`)
-- [ ] **CORS lockdown** — `corsHeaders()` in `index.ts` reflects any origin. Should be locked to `https://www.stillgotitcollective.com`. Low blast radius code change, high security value.
-- [ ] **Checkout rate limiting** — `POST /api/checkout` has no rate limiting. Recommend IP-based limit (e.g., 10 attempts/min via `cf-connecting-ip`). Requires a `rate_limits` table or KV store.
-- [ ] **Abandoned cart cron cleanup** — Daily cron only runs Printful sync. Add `DELETE FROM abandoned_carts WHERE created_at < datetime('now', '-30 days')` to the `scheduled()` handler.
+### Worker changes — code committed, awaiting manual deploy
+
+All three Worker changes are coded and committed. `CLOUDFLARE_API_TOKEN` is not
+available in this environment so `wrangler deploy` must be run manually.
+
+```bash
+cd workers/merch-backend
+wrangler deploy
+```
+
+- [x] **CORS lockdown** — `corsHeaders()` now validates origin against allowlist (`www` + apex). Rejects unknown origins by returning the primary domain header (browser will block the request).
+- [x] **Checkout rate limiting** — `POST /api/checkout` now checks the `orders` table for recent attempts: max 3 per email per 5 minutes. Returns 429 on breach. Uses existing D1 table, no migration required.
+- [x] **Abandoned cart cron cleanup** — Daily `scheduled()` handler now runs both Printful sync and `DELETE FROM abandoned_carts WHERE created_at < datetime('now', '-30 days')` in parallel.
 
 ### Known longer-term items (from HANDOFF)
 - [ ] Migrate to full `merch-platform` stack (Node/Next/Prisma) — future, not urgent
