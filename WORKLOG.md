@@ -4,6 +4,39 @@ Most recent entries at the top.
 
 ---
 
+## 2026-03-14
+
+### Session: claude/review-project-QZTyu (continued)
+
+#### Actions Taken
+
+- **Keystatic CMS scaffolding** — Built `keystatic/` directory: a minimal Astro
+  app that hosts the Keystatic admin at `/keystatic`. Deploys to Cloudflare Pages
+  as a separate app (e.g. `cms.stillgotitcollective.com`). Main GitHub Pages site
+  is untouched.
+
+- **`keystatic.config.ts`** — Full schema mapping all Decap CMS collections to
+  Keystatic singletons. All 10 content files covered:
+  `content/site.json`, `content/updates.json`, `data/events.json`,
+  `content/gallery.json`, `content/merch.json`, and all 5 page JSON files.
+  Configured for `storage: { kind: 'cloud' }` — requires Keystatic Cloud project
+  slug to be filled in after signup.
+
+- **`KEYSTATIC_SETUP.md`** — Step-by-step setup guide: Keystatic Cloud signup,
+  Cloudflare Pages deploy config, editor invites, local dev workflow.
+
+#### Commits
+- `(pending)` feat: add Keystatic CMS admin app (keystatic/ directory)
+
+#### Next steps for user
+1. Sign up at keystatic.cloud, create project → `rpretzer/stillgotit`
+2. Paste project slug into `keystatic/keystatic.config.ts`
+3. Deploy `keystatic/` to Cloudflare Pages with root dir = `keystatic`
+4. Add `cms.stillgotitcollective.com` custom domain
+5. Invite editors via Keystatic Cloud dashboard
+
+---
+
 ## 2026-03-13 (continued)
 
 ### Session: claude/review-project-QZTyu
