@@ -1,6 +1,17 @@
 {
   "updates": [
     {
+      "title": "Disco Nights — April 16",
+      "date": "2026-03-14",
+      "pinned": true,
+      "body": "The groove is back. Still Got It Collective is turning up the heat with Disco Nights — an evening of glitter, gold, and whatever you're wearing that makes you feel like the center of the dance floor. B-Side Lounge, April 16, 6–9 PM. Reasonable bedtime guaranteed.",
+      "imageUpload": "/assets/images/uploads/disco-nights-poster.jpg",
+      "alt": "Still Got It Collective Disco Nights poster — April 16 at B-Side Lounge",
+      "ctaLabel": "Get Tickets",
+      "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-disco-nights-16432",
+      "ctaStyle": "primary"
+    },
+    {
       "ctaStyle": "primary",
       "body": "Tired of staring at the same four walls? Break out. Still Got It Collective is serving up the antidote to your February funk: signature dance vibes, curated whiskey flights, and a packed room ready to move. Winter ends when you say it does.",
       "ctaLabel": "Get Tickets",
@@ -10,7 +21,7 @@
       "pinned": false,
       "image": "",
       "imageUpload": "/assets/images/uploads/cabin_fever2.png",
-      "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-129-cure-your-cabin-fever-flannel-lace-dance-party-15277"
+      "ctaUrl": "https://ticketscandy.com/e/still-got-it-collective-disco-nights-16432"
     },
     {
       "pinned": true,

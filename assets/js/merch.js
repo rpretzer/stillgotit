@@ -583,9 +583,17 @@
     const url = new URL(src, window.location.href);
     // Add cache-busting to ensure fresh catalog
     const fetchUrl = url.toString() + (url.toString().includes('?') ? '&' : '?') + `t=${Date.now()}`;
-    const res = await fetchWithTimeout(fetchUrl, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Failed to load merch catalog (${res.status})`);
-    return await res.json();
+    try {
+      const res = await fetchWithTimeout(fetchUrl, { cache: 'no-store' });
+      if (res.ok) return await res.json();
+      console.warn(`Worker API returned ${res.status}, falling back to static catalog`);
+    } catch (err) {
+      console.warn('Worker API unreachable, falling back to static catalog:', err?.message);
+    }
+    // Fallback: static catalog managed via /admin
+    const fallback = await fetch('/content/merch.json');
+    if (!fallback.ok) throw new Error('Could not load product catalog');
+    return await fallback.json();
   }
 
   function hookUI(catalog) {
